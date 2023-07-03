@@ -4,6 +4,8 @@ namespace App\Models\SalaryPayCheck;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\SalaryPayCheck;
 
 class Item extends Model
 {
@@ -17,4 +19,9 @@ class Item extends Model
         'description',
         'note',
     ];
+
+    public function paycheck(): BelongsTo
+    {
+        return $this->belongsTo(SalaryPayCheck::class, 'paycheck_id', 'id');
+    }
 }

@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('tracking_numbers', 255); // 1092739013,12031203,102371283s
             $table->unsignedFloat('total_amount');
             $table->string('status', 20);
+            $table->string('note', 255);
             $table->timestamps();
         });
     }

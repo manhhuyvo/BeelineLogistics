@@ -37,6 +37,39 @@ class Customer extends Model
         'default_receiver' => 'array',
     ];
 
+    const STATUS_ACTIVE = 1;
+    const STATUS_CANCEL = 2;
+    const STATUS_PENDING = 3;
+
+    const TYPE_RETAILER = 1;
+    const TYPE_WHOLESALER = 2;
+    const TYPE_BUSINESS = 3;
+
+    const CUSTOMER_TYPES = [
+        self::TYPE_RETAILER,
+        self::TYPE_WHOLESALER,
+        self::TYPE_BUSINESS,
+    ];
+
+    const CUSTOMER_STATUSES = [
+        self::STATUS_ACTIVE,
+        self::STATUS_CANCEL,
+        self::STATUS_PENDING,
+    ];
+
+    const MAP_TYPES = [
+        self::TYPE_RETAILER => 'Retailer',
+        self::TYPE_WHOLESALER => 'Wholesaler',
+        self::TYPE_BUSINESS => 'Business',
+    ];
+
+    const MAP_STATUSES = [
+        self::STATUS_ACTIVE => 'Active',
+        self::STATUS_CANCEL => 'Cancel',
+        self::STATUS_PENDING => 'Pending',
+        self::STATUS_PENDING => 'Pending',
+    ];
+
     public function account(): HasOne
     {
         return $this->hasOne(User::class, 'target_id', 'id');

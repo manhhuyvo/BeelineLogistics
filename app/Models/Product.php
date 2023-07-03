@@ -24,6 +24,19 @@ class Product extends Model
         'price_configs',
     ];
 
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 2;
+
+    const PRODUCT_STATUSES = [
+        self::STATUS_ACTIVE,
+        self::STATUS_INACTIVE,
+    ];
+
+    const MAP_STATUSES = [
+        self::STATUS_ACTIVE => 'Active',
+        self::STATUS_INACTIVE => 'Inactive',
+    ];
+
     protected $casts = [
         'price_configs' => 'array',
     ];

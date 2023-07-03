@@ -15,8 +15,23 @@ class Group extends Model
     protected $fillable = [
         'name',
         'description',
-        'status',
         'note',
+    ];
+
+    const NAME_IMPORT = 'import';
+    const NAME_EXPORT = 'export';
+    const NAME_PURCHASE_CHECKOUT = 'checkout';
+
+    const GROUP_NAMES = [
+        self::NAME_IMPORT,
+        self::NAME_EXPORT,
+        self::NAME_PURCHASE_CHECKOUT,
+    ];
+
+    const MAP_NAMES = [
+        self::NAME_IMPORT => 'Import',
+        self::NAME_EXPORT => 'Export',
+        self::NAME_PURCHASE_CHECKOUT => 'Purchase and Checkout',
     ];
 
     public function products(): HasMany

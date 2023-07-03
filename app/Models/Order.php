@@ -34,6 +34,25 @@ class Order extends Model
         'note',
     ];
 
+    const STATUS_ACTIVE = 1;
+    const STATUS_CANCEL = 2;
+    const STATUS_PENDING = 3;
+    const STATUS_DELETE = 4;
+
+    const ORDER_STATUSES = [
+        self::STATUS_ACTIVE,
+        self::STATUS_CANCEL,
+        self::STATUS_PENDING,
+        self::STATUS_DELETE,
+    ];
+
+    const MAP_STATUSES = [
+        self::STATUS_ACTIVE => 'Active',
+        self::STATUS_CANCEL => 'Cancel',
+        self::STATUS_PENDING => 'Pending',
+        self::STATUS_DELETE => 'Delete',
+    ];
+
     protected $casts = [
         'config_type' => 'array',
     ];

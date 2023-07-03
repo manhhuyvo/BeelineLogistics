@@ -26,6 +26,16 @@ class Transaction extends Model
         'transaction_date',
     ];
 
+    const TARGET_INVOICE = 'invoices';
+    const TARGET_BILL = 'bills';
+    const TARGET_PAYCHECK = 'salary_paychecks';
+
+    const TRANSACTION_TARGET = [
+        self::TARGET_INVOICE,
+        self::TARGET_BILL,
+        self::TARGET_PAYCHECK,
+    ];
+
     public function payment(): BelongsTo
     {
         return $this->belongsTo(Payment::class, 'payment_id', 'id');

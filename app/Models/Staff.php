@@ -15,7 +15,7 @@ class Staff extends Model
 {
     use HasFactory;
 
-    protected $table = 'users';
+    protected $table = 'staffs';
 
     protected $fillable = [
         'full_name',
@@ -39,12 +39,14 @@ class Staff extends Model
     const POSITION_ACCOUNTANT = 2;
     const POSITION_SALES = 3;
     const POSITION_CUSTOMER_SERVICE = 4;
+    const POSITION_IT = 5;
 
     const STAFF_POSITIONS = [
         self::POSITION_DIRECTOR,
         self::POSITION_ACCOUNTANT,
         self::POSITION_SALES,
         self::POSITION_CUSTOMER_SERVICE,
+        self::POSITION_IT,
     ];
 
     const STAFF_STATUSES = [
@@ -58,6 +60,7 @@ class Staff extends Model
         self::POSITION_ACCOUNTANT => 'Accountant',
         self::POSITION_SALES => 'Sales',
         self::POSITION_CUSTOMER_SERVICE => 'Customer Service',
+        self::POSITION_IT => 'IT',
     ];
 
     const MAP_STATUSES = [

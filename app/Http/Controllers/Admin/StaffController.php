@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,7 +8,6 @@ use App\Enums\ResponseStatusEnum;
 use App\Models\Helpers\ApiResponseFormat;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Validator as ValidationValidator;
 
 class StaffController extends Controller
 {
@@ -30,8 +29,8 @@ class StaffController extends Controller
      * Return view of one single staff
      */
     public function show(string $staff)
-    {        
-        $thisStaff = Staff::where('id', $staff)->first();
+    {
+        $thisStaff = Staff::find($staff);
 
         if (!$thisStaff) {
             return apiResponseFormat()->error()->message('Unable to retrieve staff with this ID.')->send();

@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\StaffController;
+use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\AuthController;
+use App\Models\Staff;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,15 +17,35 @@ use App\Http\Controllers\Api\StaffController;
 */
 
 Route::prefix('admin')->group(function () {
+    Route::group(['middleware' => ['staff.login.redirect']], function() {
+        /* [ADMIN AUTHENTICATION] */
+        Route::get('/', [AuthController::class,'index'])->name('admin.index');
 
-    /* [STAFF ROUTES] START */
-    Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.list');
-    Route::get('/staff/create', [StaffController::class, 'create'])->name('admin.staff.create.form');
-    Route::post('/staff', [StaffController::class, 'store'])->name('admin.staff.store');
-    Route::get('/staff/{staff}', [StaffController::class, 'show'])->name('admin.staff.show');
-    Route::get('/staff/{staff}/edit', [StaffController::class, 'edit'])->name('admin.staff.edit.form');
-    Route::put('/staff/{staff}', [StaffController::class, 'update'])->name('admin.staff.update');
-    Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('admin.staff.delete');
-    /* [STAFF ROUTES] END */
+        /* [ADMIN LOGIN ROUTES] */
+        Route::get('/login', [AuthController::class, 'loginView'])->name('admin.login.form');
+        Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
+    });
+
+    Route::get('/dashboard', function() {
+        return view('admin.welcome');
+    })->middleware('auth')->name('admin.dashboard');
+
+    /* [ADMIN LOGOUT ROUTE] */
+    Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
+
+    Route::group(['middleware' => 'staff.permission:'. Staff::POSITION_DIRECTOR], function () {
+        /* [TEMPORARY ADMIN REGISTER ROUTE] */
+        Route::get('/register', [AuthController::class, 'registerView'])->name('admin.register.form');
+        Route::post('/register', [AuthController::class, 'register'])->name('admin.register');
+
+        /* [STAFF ROUTES] START */
+        Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.list');
+        Route::get('/staff/create', [StaffController::class, 'create'])->name('admin.staff.create.form');
+        Route::post('/staff', [StaffController::class, 'store'])->name('admin.staff.store');
+        Route::get('/staff/{staff}', [StaffController::class, 'show'])->name('admin.staff.show');
+        Route::get('/staff/{staff}/edit', [StaffController::class, 'edit'])->name('admin.staff.edit.form');
+        Route::put('/staff/{staff}', [StaffController::class, 'update'])->name('admin.staff.update');
+        Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('admin.staff.delete');
+    });
 
 });

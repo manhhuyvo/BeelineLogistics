@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Staff;
 use App\Models\Customer;
 use App\Models\Supplier;
 
-class User extends Model
+class User extends Model implements Authenticatable
 {
-    use HasFactory;
+    use HasFactory, AuthenticatableTrait;
 
     protected $table = "users";
 
@@ -25,14 +27,20 @@ class User extends Model
         'note',
     ];
 
+    const LEVEL_DIRECTOR = 1;
+    const LEVEL_ACCOUNTANT = 2;
+    const LEVEL_SALES = 3;
+    const LEVEL_CUSTOMER_SERVICE = 4;
+    const LEVEL_IT = 5;
+
     const STATUS_ACTIVE = 1;
     const STATUS_CANCEL = 2;
     const STATUS_PENDING = 3;
     const STATUS_DELETE = 4;
 
-    const TYPE_STAFF = 1;
-    const TYPE_CUSTOMER = 2;
-    const TYPE_SUPPLIER = 3;
+    const TYPE_STAFF = 'staffs';
+    const TYPE_CUSTOMER = 'customers';
+    const TYPE_SUPPLIER = 'suppliers';
 
     const USER_TYPES = [
         self::TYPE_STAFF,

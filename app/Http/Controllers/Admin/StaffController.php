@@ -14,15 +14,40 @@ class StaffController extends Controller
     /** 
      * Return view list of all staffs
      */
-    public function index()
+    public function index(Request $request)
     {
-        $allStaffs = Staff::all();
+        // Retrieve list of all first
+        $allStaffs = Staff::with('account');
 
-        if ($allStaffs->isEmpty()) {
-            return apiResponseFormat()->error()->message('There is no staff to view.')->send();
+        // Validate the filter request
+        $data = $request->all();
+        if (!empty($data)){
+            foreach($data as $key => $value) {
+                if (empty($value)) {
+                    continue;
+                }
+                // Escape to prevent break
+                $key = htmlspecialchars($key);
+                $value = htmlspecialchars($value);
+
+                // Add conditions
+                $allStaffs = $allStaffs->where($key, 'like', "%$value%");
+            }
         }
+        // Then add filter into the query
+        $allStaffs = $allStaffs->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
 
-        return apiResponseFormat()->success()->data($allStaffs)->message('Successfully retrieve list of staffs.')->send();
+        $returnData = collect($allStaffs)->only('data')->toArray();
+        $paginationData = collect($allStaffs)->except(['data'])->toArray();
+
+        return view('admin.staff.list', [
+            'staffs' => $returnData,
+            'pagination' => $paginationData,
+            'staffPositions' => Staff::MAP_POSITIONS,
+            'staffStatuses' => Staff::MAP_STATUSES,
+            'staffStatusColors' => Staff::MAP_STATUSES_COLOR,
+            'request' => $data,
+        ]);
     }
 
     /**

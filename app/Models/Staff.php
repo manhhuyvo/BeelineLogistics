@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\User;
 use App\Models\SalaryPayCheck;
 use App\Models\Order;
+use App\Enums\StaffPositionEnum;
 
 class Staff extends Model
 {
@@ -29,6 +30,9 @@ class Staff extends Model
 
     protected $casts = [
         'salary_configs' => 'array',
+        'dob' => 'date:d/m/Y',
+        'created_at' => 'date:d/m/Y',
+        'updated_at' => 'date:d/m/Y',
     ];
 
     const STATUS_CURRENT = 1;
@@ -61,6 +65,12 @@ class Staff extends Model
         self::POSITION_SALES => 'Sales',
         self::POSITION_CUSTOMER_SERVICE => 'Customer Service',
         self::POSITION_IT => 'IT',
+    ];
+
+    const MAP_STATUSES_COLOR = [
+        self::STATUS_CURRENT => 'green',
+        self::STATUS_TEMPORARY_OFF => 'orange',
+        self::STATUS_OFF => 'red',
     ];
 
     const MAP_STATUSES = [

@@ -59,7 +59,7 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
-        return redirect()->route('admin.dashboard', ['user' => Auth::user()]);
+        return redirect()->route('admin.dashboard');
     }
 
     public function logout()

@@ -1,6 +1,6 @@
 <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-md border-solid border-[1px] border-gray-200 py-1">
     <p class="text-lg px-3 py-1 font-medium text-blue-600">
-        Filter results
+        Filter table
     </p>
     <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.staff.list') }}" method="GET">
         <div class="row flex gap-2">
@@ -18,6 +18,21 @@
             </div>
         </div>
         <div class="row flex gap-2">
+            <div class="flex flex-col flex-1">
+                <label for="type" class="mb-2 text-sm font-medium text-gray-900">Type</label>
+                <select id="type" name="type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                    @if (empty($request['type']))
+                    <option selected disabled>Choose a type</option>
+                    @endif
+                @foreach($staffTypes as $key => $value)
+                    @if (!empty($request['type']) && $request['type'] == $key)
+                    <option selected value="{{ $key }}">{{ $value }}</option>
+                    @else
+                    <option value="{{ $key }}">{{ $value }}</option>
+                    @endif
+                @endforeach
+                </select>
+            </div>
             <div class="flex flex-col flex-1">
                 <label for="position" class="mb-2 text-sm font-medium text-gray-900">Position</label>
                 <select id="position" name="position" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">

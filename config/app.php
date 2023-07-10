@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Session;
 
 return [
 
@@ -213,6 +214,7 @@ return [
         'StaffModel' => App\Models\Staff::class,
         'UserModel' => App\Models\User::class,
         'SupplierModel' => App\Models\Supplier::class,
+        'Session' => Session::class,
     ])->toArray(),
 
 ];

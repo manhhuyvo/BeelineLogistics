@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Enums\ResponseStatusEnum;
-use App\Models\Helpers\ApiResponseFormat;
+use App\Enums\ResponseMessageEnum;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class StaffController extends Controller
 {
@@ -43,6 +43,7 @@ class StaffController extends Controller
         return view('admin.staff.list', [
             'staffs' => $returnData,
             'pagination' => $paginationData,
+            'staffTypes' => Staff::MAP_TYPES,
             'staffPositions' => Staff::MAP_POSITIONS,
             'staffStatuses' => Staff::MAP_STATUSES,
             'staffStatusColors' => Staff::MAP_STATUSES_COLOR,
@@ -67,9 +68,15 @@ class StaffController extends Controller
     /**
      * Return view of create new staff form
      */
-    public function create()
+    public function create(Request $request)
     {
-
+        return view('admin.staff.create', [            
+            'staffPositions' => Staff::MAP_POSITIONS,
+            'staffStatuses' => Staff::MAP_STATUSES,
+            'staffTypes' => Staff::MAP_TYPES,
+            'staffCommissionUnits' => Staff::MAP_COMMISSION_UNITS,
+            'staffCommissionTypes' => Staff::MAP_COMMISSION_TYPES,
+        ]);
     }
 
     /**
@@ -87,14 +94,26 @@ class StaffController extends Controller
     {
         // Validate the request coming
         $validation = $this->validateRequest($request);
+        
         if ($validation->fails()) {
-            return apiResponseFormat()->error()->data($validation)->message("Failed to validate request inputs.")->send();
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('admin.staff.create.form')->with(['response' => $responseData]);
         }
 
         // We only want to take necessary fields
-        $data = $this->sanitizeInputs($request);
+        $data = $this->formatRequestData($request);
+        
+        $newStaff = new Staff($data);
+        if (!$newStaff->save()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_ADD_NEW_RECORD)->send();
 
-        return apiResponseFormat()->success()->message("Successfully create new staff.")->send();
+            return redirect()->route('admin.staff.create.form')->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->data($newStaff->toArray())->message(ResponseMessageEnum::SUCCESS_ADD_NEW_RECORD)->send();
+
+        return redirect()->route('admin.staff.create.form')->with(['response' => $responseData]);
     }
 
     /**
@@ -111,11 +130,11 @@ class StaffController extends Controller
         // Validate the request coming
         $validation = $this->validateRequest($request);
         if ($validation->fails()) {
-            return apiResponseFormat()->error()->data($validation)->message("Failed to validate request inputs.")->send();
+            return apiResponseFormat()->error()->data($validation)->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
         }
         
         // We only want to take necessary fields
-        $data = $this->sanitizeInputs($request);
+        //$data = $this->sanitizeInputs($request);
 
         return apiResponseFormat()->success()->message("Successfully update staff details.")->send();
     }
@@ -140,28 +159,78 @@ class StaffController extends Controller
 
     private function validateRequest(Request $request)
     {
-        return Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "full_name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
             "phone" => ["required", "regex:/^[0-9\s]+$/"],
-            "salary_configs" => ["require"],
             "address" => ["required"],
-            "position" => ["required"],
+            "base_salary" => ["required", "regex:/^[0-9]+$/"],
+            "position" => ["required", "integer"],
+            "type" => ["required", "integer"],
             "dob" => ["required"],
-            "status" => ["required", "in_array:". Staff::STAFF_STATUSES],
+            "status" => ["required", "integer"],
         ]);
+
+        $validator->sometimes('commission_amount', ["required", "regex:/^[0-9\.\,]+$/"], function ($input) {
+            return $input->apply_commission != null;
+        });
+
+        return $validator;
     }
 
-    private function sanitizeInputs(Request $request)
+    private function formatRequestData(Request $request)
     {
-        return $request->collect([
+
+        $data = $request->all();
+        if (Str::contains($data['base_salary'], [',', '.'])) {
+            $data['base_salary'] = Str::remove([',', '.'], $data['base_salary']);
+        }
+
+        // Add base salary to list first
+        $salaryConfigs = [
+            'base_salary' => $data['base_salary'],
+        ];
+
+        if (!empty($data['apply_commission']) && $data['apply_commission'] == 'on') {
+            if (empty($data['commission_amount']) || empty($data['commission_type']) || empty($data['commission_unit'])) {
+                return false;
+            }
+
+            if (Str::contains($data['commission_amount'], ',')) {
+                $data['commission_amount'] = Str::replace(',', '.', $data['commission_amount']);
+            }
+            $commissionData = [
+                'commission_amount' => $data['commission_amount'],
+                'commission_unit' => $data['commission_unit'],
+                'commission_type' => $data['commission_type'],
+            ];
+
+            $salaryConfigs = array_merge(
+                ['base_salary' => $data['base_salary']],
+                ['commission' => $commissionData]
+            );
+        }
+
+        // Serialize the salary configs
+        $data['salary_configs'] = serialize($salaryConfigs);
+        //Avoid null values
+        foreach ($data as $key => $value) {
+            if ($value) {
+                continue;
+            }
+            
+            $data[$key] = "";
+        }
+
+        return collect($data)->only([
             'full_name',
             'phone',
             'address',
             'salary_configs',
             'dob',
             'position',
+            'type',
             'status',
             'note',
-        ]);
+        ])->toArray();
     }
 }

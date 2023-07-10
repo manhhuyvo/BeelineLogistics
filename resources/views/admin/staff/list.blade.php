@@ -37,6 +37,9 @@
                     DOB
                 </th>
                 <th scope="col" class="px-6 py-3">
+                    Type
+                </th>
+                <th scope="col" class="px-6 py-3">
                     Username
                 </th>
                 <th scope="col" class="px-6 py-3">
@@ -70,6 +73,9 @@
                 </td>
                 <td class="px-6 py-4">
                     {{ $staff['dob'] }}
+                </td>
+                <td class="px-6 py-4">
+                    {{ $staffTypes[$staff['type']] }}
                 </td>
                 <td class="px-6 py-4">
                     {{ $staff['account']['username'] ?? "Not found" }}

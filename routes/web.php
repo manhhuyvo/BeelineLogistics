@@ -44,7 +44,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/staff', [StaffController::class, 'store'])->name('admin.staff.store');
         Route::get('/staff/{staff}', [StaffController::class, 'show'])->name('admin.staff.show');
         Route::get('/staff/{staff}/edit', [StaffController::class, 'edit'])->name('admin.staff.edit.form');
-        Route::put('/staff/{staff}', [StaffController::class, 'update'])->name('admin.staff.update');
+        Route::post('/staff/{staff}', [StaffController::class, 'update'])->name('admin.staff.update');
         Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('admin.staff.delete');
     });
 

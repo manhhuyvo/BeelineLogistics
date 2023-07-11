@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Session;
 
@@ -215,6 +216,7 @@ return [
         'UserModel' => App\Models\User::class,
         'SupplierModel' => App\Models\Supplier::class,
         'Session' => Session::class,
+        'Carbon' => Carbon::class,
     ])->toArray(),
 
 ];

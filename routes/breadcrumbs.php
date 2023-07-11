@@ -18,7 +18,7 @@ Breadcrumbs::for('admin.staff.show', function (BreadcrumbTrail $trail, $staff): 
 });
 Breadcrumbs::for('admin.staff.edit.form', function (BreadcrumbTrail $trail, $staff): void {
     $trail->parent('admin.staff.list');
-    $trail->push('Edit Staff', route('admin.staff.edit.form', ['staff' => $staff->id]));
+    $trail->push("Edit {$staff->full_name}", route('admin.staff.edit.form', ['staff' => $staff->id]));
 });
 Breadcrumbs::for('admin.staff.create.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.staff.list');

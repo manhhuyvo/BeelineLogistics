@@ -37,7 +37,7 @@ class StaffController extends Controller
         }
 
         // Then add filter into the query
-        $allStaffs = $allStaffs->paginate($perpage = 1, $columns = ['*'], $pageName = 'page');
+        $allStaffs = $allStaffs->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
         $allStaffs = $allStaffs->appends(request()->except('page'));        
         $returnData = collect($allStaffs)->only('data')->toArray();
         $paginationData = collect($allStaffs)->except(['data'])->toArray();
@@ -99,9 +99,21 @@ class StaffController extends Controller
     /**
      * Return view of edit a staff form
      */
-    public function edit(string $staff)
+    public function edit(Request $request, Staff $staff)
     {
+        // Get and validate staff data     
+        $data = collect($staff)->toArray();
+        $staff->salary_configs = !empty($staff->salary_configs) ? unserialize($data['salary_configs']) : []; // turn salary configs to array
 
+        return view('admin.staff.edit', [ 
+            'staff' => $staff->toArray(),            
+            'staffPositions' => Staff::MAP_POSITIONS,
+            'staffStatuses' => Staff::MAP_STATUSES,
+            'staffTypes' => Staff::MAP_TYPES,
+            'staffStatusColors' => Staff::MAP_STATUSES_COLOR,
+            'staffCommissionUnits' => Staff::MAP_COMMISSION_UNITS,
+            'staffCommissionTypes' => Staff::MAP_COMMISSION_TYPES,
+        ]);
     }
 
     /**
@@ -136,25 +148,30 @@ class StaffController extends Controller
     /**
      * Handle UPDATE a staff request
      */
-    public function update(Request $request, string $staff)
-    {        
-        // Find current staff details
-        $currentStaff = Staff::where('id', $staff)->first();
-        if (!$currentStaff) {
-            return apiResponseFormat()->error()->message('Unable to retrieve staff with this ID.')->send();
-        }
-
+    public function update(Request $request, Staff $staff)
+    {     
         // Validate the request coming
         $validation = $this->validateRequest($request);
+        
         if ($validation->fails()) {
-            return apiResponseFormat()->error()->data($validation)->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('admin.staff.edit.form', ['staff' => $staff->id])->with(['response' => $responseData]);
         }
         
         // We only want to take necessary fields
-        //$data = $this->sanitizeInputs($request);
+        $data = $this->formatRequestData($request);
+        if (!$staff->update($data)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
 
-        return apiResponseFormat()->success()->message("Successfully update staff details.")->send();
+            return redirect()->route('admin.staff.edit.form', ['staff' => $staff->id])->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->data($staff->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->route('admin.staff.show', ['staff' => $staff->id])->with(['response' => $responseData]);
     }
+
     /**
      * Handle DELETE a staff request
      */

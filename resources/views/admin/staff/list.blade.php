@@ -6,7 +6,7 @@
     <h2 class="text-2xl font-medium mt-2 mb-3">All staffs</h2>
     <div class="w-full flex justify-between mb-3 items-center">
         <div class="sm:w-[40%]">
-            <input type="text" name="staff-search" placeholder="Search for products" class="text-sm py-2 px-2 rounded-[5px] border-solid border-[1px] border-gray-200 bg-gray-100 text-gray-600 w-full focus:ring-blue-500 focus:border-blue-500">
+            <input type="text" name="staff-search" placeholder="Search for staff names" class="text-sm py-2 px-2 rounded-[5px] border-solid border-[1px] border-gray-200 bg-gray-100 text-gray-600 w-full focus:ring-blue-500 focus:border-blue-500">
         </div>
         <a href="{{ route('admin.staff.create.form') }}" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium hover:shadow-lg hover:bg-blue-500 flex items-center gap-3">
             <i class="fa-solid fa-plus"></i>

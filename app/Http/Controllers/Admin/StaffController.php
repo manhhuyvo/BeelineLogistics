@@ -8,6 +8,7 @@ use App\Enums\ResponseMessageEnum;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 
 class StaffController extends Controller
 {
@@ -23,7 +24,7 @@ class StaffController extends Controller
         $data = $request->all();
         if (!empty($data)){
             foreach($data as $key => $value) {
-                if (empty($value)) {
+                if (empty($value) || $key == 'page' || $key == '_method') {
                     continue;
                 }
                 // Escape to prevent break
@@ -34,11 +35,21 @@ class StaffController extends Controller
                 $allStaffs = $allStaffs->where($key, 'like', "%$value%");
             }
         }
-        // Then add filter into the query
-        $allStaffs = $allStaffs->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
 
+        // Then add filter into the query
+        $allStaffs = $allStaffs->paginate($perpage = 1, $columns = ['*'], $pageName = 'page');
+        $allStaffs = $allStaffs->appends(request()->except('page'));        
         $returnData = collect($allStaffs)->only('data')->toArray();
         $paginationData = collect($allStaffs)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
 
         return view('admin.staff.list', [
             'staffs' => $returnData,
@@ -54,15 +65,21 @@ class StaffController extends Controller
     /**
      * Return view of one single staff
      */
-    public function show(string $staff)
-    {
-        $thisStaff = Staff::find($staff);
+    public function show(Request $request, Staff $staff)
+    {   
+        // Get and validate staff data     
+        $data = collect($staff)->toArray();
+        $staff->salary_configs = !empty($staff->salary_configs) ? unserialize($data['salary_configs']) : []; // turn salary configs to array
 
-        if (!$thisStaff) {
-            return apiResponseFormat()->error()->message('Unable to retrieve staff with this ID.')->send();
-        }
-
-        return apiResponseFormat()->success()->data($thisStaff)->message('Successfully retrieve staff details.')->send();
+        return view('admin.staff.show', [
+            'staff' => $staff->toArray(),            
+            'staffPositions' => Staff::MAP_POSITIONS,
+            'staffStatuses' => Staff::MAP_STATUSES,
+            'staffTypes' => Staff::MAP_TYPES,
+            'staffStatusColors' => Staff::MAP_STATUSES_COLOR,
+            'staffCommissionUnits' => Staff::MAP_COMMISSION_UNITS,
+            'staffCommissionTypes' => Staff::MAP_COMMISSION_TYPES,
+        ]);
     }
 
     /**

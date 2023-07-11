@@ -14,7 +14,7 @@
     <script src="https://kit.fontawesome.com/520bf41886.js" crossorigin="anonymous"></script>
     <title>Beeline Logsitics - Admin Login</title>
 </head>
-<body>
+<body class="relative">
     @yield('content')
 
     @stack('js')

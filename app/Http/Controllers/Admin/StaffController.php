@@ -175,20 +175,18 @@ class StaffController extends Controller
     /**
      * Handle DELETE a staff request
      */
-    public function destroy(string $staff)
-    {                
-        // Find current staff details
-        $currentStaff = Staff::where('id', $staff)->first();
-        if (!$currentStaff) {
-            return apiResponseFormat()->error()->message('Unable to retrieve staff with this ID.')->send();
-        }
-
+    public function destroy(Request $request, Staff $staff)
+    {         
         // Perform deletion
-        if (!$currentStaff->delete()) {
-            return apiResponseFormat()->error()->message('Failed to delete staff.')->send();
+        if (!$staff->delete()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_DELETE_RECORD)->send();
+
+            return redirect()->route('admin.staff.list')->with(['response' => $responseData]);
         }
 
-        return apiResponseFormat()->success()->message("Successfully delete staff #{$staff} ({$currentStaff->full_name})")->send();
+        $responseData = viewResponseFormat()->success()->data($staff->toArray())->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
+
+        return redirect()->route('admin.staff.list')->with(['response' => $responseData]);
     }
 
     private function validateRequest(Request $request)

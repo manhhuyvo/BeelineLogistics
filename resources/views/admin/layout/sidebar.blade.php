@@ -1,3 +1,6 @@
+@php
+   $userLoggedIn = Auth::user();
+@endphp
 <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
       <div class="flex items-center justify-between">
@@ -24,7 +27,7 @@
               <div class="z-50 hidden my-4 text-base list-none bg-gray-100 divide-y divide-gray-200 rounded shadow mr-3" id="dropdown-user">
                 <div class="px-4 py-3" role="none">
                   <p class="text-sm text-gray-900" role="none">
-                    Neil Sims
+                    {{ $userLoggedIn->username }}
                   </p>
                   <p class="text-sm font-medium text-gray-900 truncate" role="none">
                     neil.sims@flowbite.com
@@ -35,7 +38,7 @@
                     <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex items-center" role="menuitem"><i class="fa-sharp fa-solid fa-house text-[12px] mr-2"></i>Dashboard</a>
                   </li>
                   <li>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex items-center" role="menuitem"><i class="fa-solid fa-user text-[12px] mr-2"></i>Profile</a>
+                    <a href="{{ route('admin.user.profile.form') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex items-center" role="menuitem"><i class="fa-solid fa-user text-[12px] mr-2"></i>Profile</a>
                   </li>
                   <li>
                     <a href="{{ route('admin.logout') }}" class="block px-4 py-2 font-medium text-sm text-red-500 hover:text-white hover:bg-red-500 flex items-center" role="menuitem"><i class="fa-solid fa-arrow-right-from-bracket text-[12.5px] mr-2"></i>Sign out</a>

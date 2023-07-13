@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Models\Staff;
 
 /*
@@ -52,6 +53,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/dashboard', function() {
             return view('admin.welcome');
         })->name('admin.dashboard');
+
+        Route::get('/profile', [ProfileController::class, 'index'])->name('admin.user.profile.form');
+        Route::post('/profile', [ProfileController::class, 'update'])->name('admin.user.profile.update');
+        Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('admin.user.profile.change-password');
     });
 
 });

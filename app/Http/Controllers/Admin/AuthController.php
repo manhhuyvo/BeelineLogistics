@@ -10,21 +10,21 @@ use Exception;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Validator as ValidationValidator;
+use App\Enums\ResponseMessageEnum;
 
 class AuthController extends Controller
 {
     public function index()
     {
-        // Navigate to login page if user not logged in
-        return redirect()->route('admin.login.form');
+        $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::LOGIN_REQUIRED)->send();
+
+        return redirect()->route('admin.login.form')->with(['response' => $responseData]);
+        //return redirect()->route('admin.login.form');
     }
 
     public function loginView()
     {
-        // Navigate to login page if user not logged in
         return view('admin.auth.login');
     }
 
@@ -38,24 +38,32 @@ class AuthController extends Controller
         ]);
 
         if ($validation->fails()) {
-            return apiResponseFormat()->error()->data($validation->messages()->toArray())->message("Failed to validate request inputs.")->send();
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('admin.login.form')->with(['response' => $responseData]);
         }
+
         $credentials = [
             'username' => $data['username'],
             'password' => $data['password'],
+            'status' => User::STATUS_ACTIVE,
         ];
 
         try {
             // Authenticate user's details
             $loginAttempt = Auth::attempt($credentials);
         } catch (Exception $e) {
-            return apiResponseFormat()->error()->data([
-                'errorMessage' => $e->getMessage(),
-            ])->message("Some error occurred. Please try again later.")->send();
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
         }
 
         if (!$loginAttempt) {
-            return back()->withErrors("Your username and password do not match our record.");
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::WRONG_CREDENTIALS)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
         }
 
         $request->session()->regenerate();
@@ -68,10 +76,14 @@ class AuthController extends Controller
             Session::flush();
             Auth::logout();
         } catch (Exception $e) {
-            return back()->withErrors("Unable to logout. Please try again later");
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
         }
 
-        return redirect()->route('admin.index');
+        $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::LOGOUT_MESSAAGE)->send();
+
+        return redirect()->route('admin.login.form')->with(['response' => $responseData]);
     }
 
     public function registerView()

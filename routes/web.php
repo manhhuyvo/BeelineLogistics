@@ -26,10 +26,6 @@ Route::prefix('admin')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
     });
 
-    Route::get('/dashboard', function() {
-        return view('admin.welcome');
-    })->middleware('auth')->name('admin.dashboard');
-
     /* [ADMIN LOGOUT ROUTE] */
     Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
@@ -37,6 +33,9 @@ Route::prefix('admin')->group(function () {
         /* [TEMPORARY ADMIN REGISTER ROUTE] */
         Route::get('/register', [AuthController::class, 'registerView'])->name('admin.register.form');
         Route::post('/register', [AuthController::class, 'register'])->name('admin.register');
+
+        /** [DASHBOARD ADMIN ROUTES] */
+        Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
         /* [STAFF ROUTES] START */
         Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.list');
@@ -46,6 +45,13 @@ Route::prefix('admin')->group(function () {
         Route::get('/staff/{staff}/edit', [StaffController::class, 'edit'])->name('admin.staff.edit.form');
         Route::post('/staff/{staff}', [StaffController::class, 'update'])->name('admin.staff.update');
         Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('admin.staff.delete');
+    });
+
+    Route::group(['middleware' => 'staff.permission:all'], function () {
+        /** [DASHBOARD ADMIN ROUTES] */
+        Route::get('/dashboard', function() {
+            return view('admin.welcome');
+        })->name('admin.dashboard');
     });
 
 });

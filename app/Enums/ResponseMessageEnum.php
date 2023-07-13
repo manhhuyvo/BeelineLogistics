@@ -11,4 +11,13 @@ class ResponseMessageEnum
     const FAILED_UPDATE_RECORD = "Some errors occurred. Failed to update records.";   
     const SUCCESS_DELETE_RECORD = "Successfully deleted record.";
     const FAILED_DELETE_RECORD = "Some errors occurred. Failed to deleted records.";   
+
+    /** Unknown error */
+    const UNKNOWN_ERROR = "Some errors occurred. Please try again later.";
+
+    /** Auth Errors */
+    const LOGIN_REQUIRED = "You are not logged in. Please login to your account.";
+    const LOGOUT_MESSAAGE = "You have been logged out.";
+    const INVALID_ACCESS = "You don't have permission to access this page.";
+    const WRONG_CREDENTIALS = "Your username and password does not match our records or yoru account is not active. Please try again";
 }

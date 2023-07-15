@@ -21,7 +21,9 @@ class User extends Model implements Authenticatable
         'username',
         'password',
         'target',
-        'target_id',
+        'staff_id',
+        'customer_id',
+        'supplier_id',
         'level',
         'status',
         'note',
@@ -70,16 +72,16 @@ class User extends Model implements Authenticatable
 
     public function staff(): BelongsTo
     {
-        return $this->belongsTo(Staff::class, 'target_id', 'id');
+        return $this->belongsTo(Staff::class, 'staff_id', 'id');
     }
 
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class, 'target_id', 'id');
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
     public function supplier(): BelongsTo
     {
-        return $this->belongsTo(Supplier::class, 'target_id', 'id');
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
 }

@@ -1,6 +1,10 @@
 @extends('admin.layout.layout')
 @section('content')
 
+@php    
+    $request = session()->get('request');
+@endphp
+
 <div class="relative sm:rounded-lg">
     @include('admin.layout.response')
     <h2 class="text-2xl font-medium mt-2 mb-3">Add new staff</h2>
@@ -21,7 +25,7 @@
                 </div>
                 <div class="flex flex-col flex-1">
                     <label for="dob" class="mb-2 text-sm font-medium text-gray-900">Date of Birth</label>
-                    <input id="dob" type="date" name="dob" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Date of Birth" value="{{ $request['dob'] ?? '' }}">
+                    <input id="dob" type="date" name="dob" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Date of Birth" value="{{ !empty($request['dob']) ? Carbon::createFromFormat('d/m/Y', $request['dob'])->format('Y-m-d') : '' }}">
                 </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
@@ -56,7 +60,7 @@
                 <div class="flex flex-col flex-1">
                     <label for="status" class="mb-2 text-sm font-medium text-gray-900">Status</label>
                     <select id="status" name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
-                        @if (empty($request['position']))
+                        @if (empty($request['status']))
                         <option selected disabled>Choose a status</option>
                         @endif
                     @foreach($staffStatuses as $key => $value)
@@ -104,7 +108,7 @@
                         <input type="text" name="commission_amount" id="commission_amount" class="text-sm bg-transparent w-full p-2.5 border-none focus:ring-0" placeholder="Amount (Ex: 2.5)">
                         <select id="commission_unit" name="commission_unit" class="text-sm h-full font-medium text-sm focus:ring-1 flex-1 p-2.5 bg-gray-200 border-none pl-3 rounded-r-lg">
                         @foreach($staffCommissionUnits as $key => $value)
-                            @if (!empty($request['commission']) && $request['type'] == $key)
+                            @if (!empty($request['commission']) && !empty($request['type']) && $request['type'] == $key)
                             <option selected value="{{ $key }}">{{ $value }}</option>
                             @else
                             <option value="{{ $key }}">{{ $value }}</option>

@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('username', 100)->unique();
             $table->string('password', 255);
             $table->string('target', 100);
-            $table->unsignedBigInteger('target_id')->index();
+            $table->unsignedBigInteger('staff_id')->index();
+            $table->unsignedBigInteger('customer_id')->index();
+            $table->unsignedBigInteger('supplier_id')->index();
             $table->unsignedInteger('level');
             $table->string('status', 20);
             $table->string('note', 255);

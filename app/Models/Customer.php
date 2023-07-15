@@ -35,6 +35,24 @@ class Customer extends Model
     protected $casts = [
         'default_sender' => 'array',
         'default_receiver' => 'array',
+        'created_at' => 'date:d/m/Y',
+        'updated_at' => 'date:d/m/Y',
+    ];
+
+    const RECEIVER_HCM_ZONE = 1;
+    const RECEIVER_HANOI_ZONE = 2;
+    const RECEIVER_REGIONAL_ZONE = 3;
+
+    const MAP_ZONES = [
+        self::RECEIVER_HCM_ZONE => "HCM",
+        self::RECEIVER_HANOI_ZONE => "HANOI",
+        self::RECEIVER_REGIONAL_ZONE => "REGIONAL",
+    ];
+
+    const RECEIVER_ZONES = [
+        self::RECEIVER_HCM_ZONE,
+        self::RECEIVER_HANOI_ZONE,
+        self::RECEIVER_REGIONAL_ZONE,
     ];
 
     const STATUS_ACTIVE = 1;
@@ -57,6 +75,12 @@ class Customer extends Model
         self::STATUS_PENDING,
     ];
 
+    const MAP_STATUSES_COLOR = [
+        self::STATUS_ACTIVE => 'green',
+        self::STATUS_PENDING => 'yellow',
+        self::STATUS_CANCEL => 'red',
+    ];
+
     const MAP_TYPES = [
         self::TYPE_RETAILER => 'Retailer',
         self::TYPE_WHOLESALER => 'Wholesaler',
@@ -72,7 +96,7 @@ class Customer extends Model
 
     public function account(): HasOne
     {
-        return $this->hasOne(User::class, 'target_id', 'id');
+        return $this->hasOne(User::class, 'customer_id', 'id');
     }
 
     public function staff(): BelongsTo

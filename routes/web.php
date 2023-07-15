@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Models\Staff;
 
 /*
@@ -38,7 +39,7 @@ Route::prefix('admin')->group(function () {
         /** [DASHBOARD ADMIN ROUTES] */
         Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-        /* [STAFF ROUTES] START */
+        /* [STAFF ROUTES] */
         Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.list');
         Route::get('/staff/create', [StaffController::class, 'create'])->name('admin.staff.create.form');
         Route::post('/staff', [StaffController::class, 'store'])->name('admin.staff.store');
@@ -54,9 +55,19 @@ Route::prefix('admin')->group(function () {
             return view('admin.welcome');
         })->name('admin.dashboard');
 
+        /** [USER PROFILE ROUTES] */
         Route::get('/profile', [ProfileController::class, 'index'])->name('admin.user.profile.form');
         Route::post('/profile', [ProfileController::class, 'update'])->name('admin.user.profile.update');
         Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('admin.user.profile.change-password');
+
+        /** [CUSTOMER ROUTES] */
+        Route::get('/customer', [CustomerController::class, 'index'])->name('admin.customer.list');
+        Route::get('/customer/create', [CustomerController::class, 'create'])->name('admin.customer.create.form');
+        Route::post('/customer', [CustomerController::class, 'store'])->name('admin.customer.store');
+        Route::get('/customer/{customer}', [CustomerController::class, 'show'])->name('admin.customer.show');
+        Route::get('/customer/{customer}/edit', [CustomerController::class, 'edit'])->name('admin.customer.edit.form');
+        Route::post('/customer/{customer}', [CustomerController::class, 'update'])->name('admin.customer.update');
+        Route::delete('/customer/{customer}', [CustomerController::class, 'destroy'])->name('admin.customer.delete');
     });
 
 });

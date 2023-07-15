@@ -86,6 +86,7 @@ class StaffController extends Controller
      */
     public function create(Request $request)
     {
+        //return session()->get('request');
         return view('admin.staff.create', [            
             'staffPositions' => Staff::MAP_POSITIONS,
             'staffStatuses' => Staff::MAP_STATUSES,
@@ -126,7 +127,10 @@ class StaffController extends Controller
         if ($validation->fails()) {
             $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
 
-            return redirect()->route('admin.staff.create.form')->with(['response' => $responseData]);
+            return redirect()->route('admin.staff.create.form')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
         }
 
         // We only want to take necessary fields
@@ -136,7 +140,10 @@ class StaffController extends Controller
         if (!$newStaff->save()) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_ADD_NEW_RECORD)->send();
 
-            return redirect()->route('admin.staff.create.form')->with(['response' => $responseData]);
+            return redirect()->route('admin.staff.create.form')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
         }
 
         $responseData = viewResponseFormat()->success()->data($newStaff->toArray())->message(ResponseMessageEnum::SUCCESS_ADD_NEW_RECORD)->send();
@@ -188,6 +195,7 @@ class StaffController extends Controller
         return redirect()->route('admin.staff.list')->with(['response' => $responseData]);
     }
 
+    /** Validate the request for store or update functions */
     private function validateRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -208,6 +216,7 @@ class StaffController extends Controller
         return $validator;
     }
 
+    /** Format the request data before saving to database */
     private function formatRequestData(Request $request)
     {
 

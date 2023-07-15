@@ -144,7 +144,7 @@ class Staff extends Model
 
     public function account(): HasOne
     {
-        return $this->hasOne(User::class, 'target_id', 'id');
+        return $this->hasOne(User::class, 'staff_id', 'id');
     }
 
     public function paychecks(): HasMany

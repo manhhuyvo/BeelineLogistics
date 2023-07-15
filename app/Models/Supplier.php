@@ -64,7 +64,7 @@ class Supplier extends Model
 
     public function account(): HasOne
     {
-        return $this->hasOne(User::class, 'target_id', 'id');
+        return $this->hasOne(User::class, 'supplier_id', 'id');
     }
 
     public function bills(): HasMany

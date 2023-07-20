@@ -51,7 +51,7 @@
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-2">
                     <label for="note" class="mb-2 text-sm font-medium text-gray-900">Note</label>
-                    <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $customer['note'] ?? 'Not provided' }}</div>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2 min-h-[100px]">{{ $customer['note'] ?? 'Not provided' }}</div>
                 </div>
             </div>
             <p class="text-lg font-medium text-blue-600 mt-1">

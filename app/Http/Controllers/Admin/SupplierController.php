@@ -54,6 +54,59 @@ class SupplierController extends Controller
         return redirect()->route('admin.supplier.create.form')->with(['response' => $responseData]);
     }
 
+    /** Display the page for create new customer */
+    public function show(Request $request, Supplier $supplier)
+    {       
+        return view('admin.supplier.show', [
+            'supplier' => $supplier->toArray(),
+            'supplierTypes' => Supplier::MAP_TYPES,
+            'supplierStatuses' => Supplier::MAP_STATUSES,
+            'supplierStatusColors' => Supplier::MAP_STATUSES_COLOR,
+        ]);
+    }
+
+    /** Display the page for update customer details */
+    public function edit(Request $request, Supplier $supplier)
+    {    
+        return view('admin.supplier.edit', [
+            'supplier' => $supplier->toArray(),
+            'supplierTypes' => Supplier::MAP_TYPES,
+            'supplierStatuses' => Supplier::MAP_STATUSES,
+            'supplierStatusColors' => Supplier::MAP_STATUSES_COLOR,
+        ]);
+    }
+
+    /** Handle request update customer details */
+    public function update(Request $request, Supplier $supplier)
+    {
+        // Validate the request coming
+        $validation = $this->validateRequest($request, $supplier->customer_id);
+        
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('admin.supplier.edit.form', ['supplier' => $supplier->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // We only want to take necessary fields
+        $data = $this->formatRequestData($request);
+        if (!$supplier->update($data)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->route('admin.supplier.edit.form', ['supplier' => $supplier->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        $responseData = viewResponseFormat()->success()->data($supplier->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->route('admin.supplier.show', ['supplier' => $supplier->id])->with(['response' => $responseData]);
+    }
+
     /** Validate form request for store and update functions */
     private function validateRequest(Request $request)
     {
@@ -71,7 +124,16 @@ class SupplierController extends Controller
     /** Format the data before saving to database */
     private function formatRequestData(Request $request)
     {
-        return collect($request->all())->only([
+        $data = $request->all();
+        //Avoid null values
+        foreach ($data as $key => $value) {
+            if ($value) {
+                continue;
+            }
+            
+            $data[$key] = "";
+        }
+        return collect($data)->only([
             'full_name',
             'phone',
             'address',

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Models\Staff;
 
 /*

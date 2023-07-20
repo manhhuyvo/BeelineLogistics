@@ -49,6 +49,12 @@ class Supplier extends Model
         self::STATUS_STOP,
     ];
 
+    const MAP_STATUSES_COLOR = [
+        self::STATUS_CURRENT => 'green',
+        self::STATUS_TEMPORARY_STOP => 'orange',
+        self::STATUS_STOP => 'red',
+    ];
+
     const MAP_TYPES = [
         self::TYPE_AUSTRALIA => 'Australia',
         self::TYPE_USA => 'America',

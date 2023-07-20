@@ -71,7 +71,7 @@
               </a>
            </li>
            <li>
-              <a href="{{ route('admin.dashboard') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <a href="{{ route('admin.supplier.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   <i class="fa-solid fa-truck-field flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
                  <span class="ml-3">Suppliers</span>
               </a>

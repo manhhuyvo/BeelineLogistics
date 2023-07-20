@@ -47,6 +47,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/staff/{staff}/edit', [StaffController::class, 'edit'])->name('admin.staff.edit.form');
         Route::post('/staff/{staff}', [StaffController::class, 'update'])->name('admin.staff.update');
         Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('admin.staff.delete');
+
+        /** [SUPPLIER ROUTES] */
+        Route::get('/supplier', [SupplierController::class, 'index'])->name('admin.supplier.list');
+        Route::get('/supplier/create', [SupplierController::class, 'create'])->name('admin.supplier.create.form');
+        Route::post('/supplier', [SupplierController::class, 'store'])->name('admin.supplier.store');
+        Route::get('/supplier/{supplier}', [SupplierController::class, 'show'])->name('admin.supplier.show');
+        Route::get('/supplier/{supplier}/edit', [SupplierController::class, 'edit'])->name('admin.supplier.edit.form');
+        Route::post('/supplier/{supplier}', [SupplierController::class, 'update'])->name('admin.supplier.update');
+        Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('admin.supplier.delete');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {

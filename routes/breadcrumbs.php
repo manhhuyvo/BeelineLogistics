@@ -44,6 +44,24 @@ Breadcrumbs::for('admin.customer.edit.form', function (BreadcrumbTrail $trail, $
     $trail->push("Edit {$customer->full_name}", route('admin.customer.edit.form', ['customer' => $customer->id]));
 });
 
+/** Breadcrumbs for SUPPLIER */
+Breadcrumbs::for('admin.supplier.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Supplier', route('admin.supplier.list'));
+});
+Breadcrumbs::for('admin.supplier.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.supplier.list');
+    $trail->push('Add New Supplier', route('admin.supplier.create.form'));
+});
+Breadcrumbs::for('admin.supplier.show', function (BreadcrumbTrail $trail, $supplier): void {
+    $trail->parent('admin.supplier.list');
+    $trail->push("{$supplier->full_name}", route('admin.supplier.show', ['supplier' => $supplier->id]));
+});
+Breadcrumbs::for('admin.supplier.edit.form', function (BreadcrumbTrail $trail, $supplier): void {
+    $trail->parent('admin.supplier.list');
+    $trail->push("Edit {$supplier->full_name}", route('admin.supplier.edit.form', ['supplier' => $supplier->id]));
+});
+
 /** Breadcrumbs for USER PROFILE */
 Breadcrumbs::for('admin.user.profile.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.dashboard');

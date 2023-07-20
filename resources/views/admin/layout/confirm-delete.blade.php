@@ -11,9 +11,6 @@
             <p class="mb-4 text-gray-600 font-semibold">Are you sure you want to delete this record?</p>
             <p class="mb-4 text-red-500 font-semibold">This action cannot be undone.</p>
             <div class="flex justify-center items-center space-x-4">
-                <button data-modal-toggle="deleteModal" type="button" class="py-2 px-3 text-sm font-medium text-white bg-blue-600 rounded-lg border border-gray-200 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 focus:z-10">
-                    No, Cancel
-                </button>
                 <form id="delete-confirm-form" action="" method="post">
                     <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
                     @method('delete')
@@ -21,6 +18,9 @@
                         Yes, Delete
                     </button>
                 </form>
+                <button data-modal-toggle="deleteModal" type="button" class="py-2 px-3 text-sm font-medium text-white bg-blue-600 rounded-lg border border-gray-200 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 focus:z-10">
+                    No, Cancel
+                </button>
             </div>
         </div>
     </div>

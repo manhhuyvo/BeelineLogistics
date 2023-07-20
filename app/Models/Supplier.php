@@ -27,6 +27,11 @@ class Supplier extends Model
         'note',
     ];
 
+    protected $casts = [
+        'created_at' => 'date:d/m/Y',
+        'updated_at' => 'date:d/m/Y',
+    ];
+
     const STATUS_CURRENT = 1;
     const STATUS_TEMPORARY_STOP = 2;
     const STATUS_STOP = 3;

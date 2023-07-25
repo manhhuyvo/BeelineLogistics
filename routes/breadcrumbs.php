@@ -62,6 +62,24 @@ Breadcrumbs::for('admin.supplier.edit.form', function (BreadcrumbTrail $trail, $
     $trail->push("Edit {$supplier->full_name}", route('admin.supplier.edit.form', ['supplier' => $supplier->id]));
 });
 
+/** Breadcrumbs for USER */
+Breadcrumbs::for('admin.user.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('User', route('admin.user.list'));
+});
+Breadcrumbs::for('admin.user.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.user.list');
+    $trail->push('Add New User', route('admin.user.create.form'));
+});
+Breadcrumbs::for('admin.user.show', function (BreadcrumbTrail $trail, $user): void {
+    $trail->parent('admin.user.list');
+    $trail->push("{$user->username}", route('admin.user.show', ['user' => $user->id]));
+});
+Breadcrumbs::for('admin.user.edit.form', function (BreadcrumbTrail $trail, $user): void {
+    $trail->parent('admin.user.list');
+    $trail->push("Edit {$user->username}", route('admin.user.edit.form', ['user' => $user->id]));
+});
+
 /** Breadcrumbs for USER PROFILE */
 Breadcrumbs::for('admin.user.profile.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.dashboard');

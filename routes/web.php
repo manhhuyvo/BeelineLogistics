@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\UserController;
 use App\Models\Staff;
 
 /*
@@ -57,6 +58,18 @@ Route::prefix('admin')->group(function () {
         Route::get('/supplier/{supplier}/edit', [SupplierController::class, 'edit'])->name('admin.supplier.edit.form');
         Route::post('/supplier/{supplier}', [SupplierController::class, 'update'])->name('admin.supplier.update');
         Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('admin.supplier.delete');
+    });
+
+    // Only allow Director, Sales, Accountant to access user model
+    Route::group(['middleware' => 'staff.permission:'. Staff::POSITION_DIRECTOR . '|' . Staff::POSITION_SALES . '|' . Staff::POSITION_ACCOUNTANT], function () {
+        /* [USER MANAGEMENT] */
+        Route::get('/user', [UserController::class, 'index'])->name('admin.user.list');
+        Route::get('/user/create', [UserController::class, 'create'])->name('admin.user.create.form');
+        Route::post('/user', [UserController::class, 'store'])->name('admin.user.store');
+        Route::get('/user/{user}', [UserController::class, 'show'])->name('admin.user.show');
+        Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit.form');
+        Route::post('/user/{user}', [UserController::class, 'update'])->name('admin.user.update');
+        Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('admin.user.delete');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {

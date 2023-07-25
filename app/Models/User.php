@@ -29,11 +29,17 @@ class User extends Model implements Authenticatable
         'note',
     ];
 
+    // Staff User Level
     const LEVEL_DIRECTOR = 1;
     const LEVEL_ACCOUNTANT = 2;
     const LEVEL_SALES = 3;
     const LEVEL_CUSTOMER_SERVICE = 4;
     const LEVEL_IT = 5;
+
+    // Customer User Level
+    const LEVEL_CUSTOMER = 20;
+    // Supplier User Level
+    const LEVEL_SUPPLEIR = 30;
 
     const STATUS_ACTIVE = 1;
     const STATUS_CANCEL = 2;
@@ -55,6 +61,14 @@ class User extends Model implements Authenticatable
         self::STATUS_CANCEL,
         self::STATUS_PENDING,
         self::STATUS_DELETE,
+    ];
+
+    const MAP_USER_STAFF_LEVELS = [
+        self::LEVEL_DIRECTOR => "Director",
+        self::LEVEL_ACCOUNTANT => "Accountant",
+        self::LEVEL_SALES => "Sales",
+        self::LEVEL_CUSTOMER_SERVICE => "Customer Service",
+        self::LEVEL_IT => "IT",
     ];
 
     const MAP_TYPES = [

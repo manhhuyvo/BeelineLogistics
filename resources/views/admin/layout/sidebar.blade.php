@@ -87,7 +87,7 @@
            </li>
            @if ( in_array($user->level, [StaffModel::POSITION_DIRECTOR, StaffModel::POSITION_ACCOUNTANT]))
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <a href="{{ route('admin.user.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   <i class="fa-solid fa-user-check flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
                  <span class="flex-1 ml-3 whitespace-nowrap">Users</span>
               </a>

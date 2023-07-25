@@ -13,7 +13,7 @@
             Personal Details
         </p>
         <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.user.store') }}" method="POST">
-            <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
+            <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="type" class="mb-2 text-sm font-medium text-gray-900">User Type</label>
@@ -34,7 +34,7 @@
                     <label for="owner_search" class="mb-2 text-sm font-medium text-gray-900">User Owner</label>
                     <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
                         <input type="text" name="owner_search" id="owner_search" class="text-sm bg-transparent w-full p-2.5 border-none focus:ring-0" placeholder="Search Owner Name...">
-                        <div id="commission_unit" name="commission_unit" class="text-sm h-full font-medium text-sm focus:ring-1 flex-1 p-2.5 bg-gray-200 border-none pl-3 rounded-r-lg">
+                        <div class="text-sm h-full font-medium text-sm focus:ring-1 flex-1 p-2.5 bg-gray-200 border-none pl-3 rounded-r-lg">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </div>
                         <!-- Ajax search result for user owner -->
@@ -114,4 +114,42 @@
     </div>
 </div>
 
+<script>
+    const searchOwnerInput = $('#owner_search');
+    const ownerTypeSelect = $('#type');
+
+    $(document).ready(function() {
+        let csrfTokenValue = $('#csrfToken').val();
+        // Search input keyup event
+        searchOwnerInput.on('keyup', function() {
+            // Get value search
+            let searchTerm = $(this).val();
+            let ownerTypeSelectValue = ownerTypeSelect.val();
+
+            // Only send Ajax if search Term is not empty
+            if (searchTerm != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('admin.ajax.search-user-owner') }}",
+                    headers: {
+                        'X-CSRF-Token': csrfTokenValue,
+                    },
+                    data: {
+                        "target": ownerTypeSelectValue,
+                        "searchTerm": searchTerm,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                    },
+                    error: function(error) {
+                        let errorMessage = error.responseJSON.message;
+                        console.log(errorMessage);
+                    }
+                })
+            } else {
+                // Otherwise we do something here
+            }
+        })
+    })
+</script>
 @endsection

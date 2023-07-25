@@ -23,4 +23,8 @@ class ResponseMessageEnum
 
     /** User Profile */
     const CONRIM_PASSWORD_NOT_MATCH = "Password and confirm password do not match. Please try again.";
+
+    /** Ajax message */
+    const AJAX_SUCCESS_FOUND = "Successfully retrieved data.";
+    const AJAX_EMPTY_FOUND = "No records found.";
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AjaxController;
 use App\Models\Staff;
 
 /*
@@ -70,6 +71,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit.form');
         Route::post('/user/{user}', [UserController::class, 'update'])->name('admin.user.update');
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('admin.user.delete');
+        /* [AJAX USER OWNER SEARCH] */
+        Route::post('/ajax/search-user-owner', [AjaxController::class, 'searchUserOwner'])->name('admin.ajax.search-user-owner');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {

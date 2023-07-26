@@ -1,4 +1,7 @@
 <div class="row flex sm:flex-row flex-col gap-2 w-full" id="selected-owner-staff">
+    <p class="text-lg pb-1 font-medium text-yellow-600">
+        Staff Assigned
+    </p>
     <input type="hidden" name="staff_id">
     <div class="flex flex-col flex-1">
         <label for="staff_full_name" class="mb-2 text-sm font-medium text-gray-900">Name</label>
@@ -14,6 +17,9 @@
     </div>
 </div>
 <div class="row flex sm:flex-row flex-col gap-2 w-full" id="selected-owner-customer">
+    <p class="text-lg pb-1 font-medium text-yellow-600">
+        Customer Assigned
+    </p>
     <input type="hidden" name="customer_id">
     <div class="flex flex-col flex-1">
         <label for="customer_number" class="mb-2 text-sm font-medium text-gray-900">Customer ID</label>
@@ -29,6 +35,9 @@
     </div>
 </div>
 <div class="row flex sm:flex-row flex-col gap-2 w-full" id="selected-owner-supplier">
+    <p class="text-lg pb-1 font-medium text-yellow-600">
+        Supplier Assigned
+    </p>
     <input type="hidden" name="supplier_id">
     <div class="flex flex-col flex-1">
         <label for="supplier_full_name" class="mb-2 text-sm font-medium text-gray-900">Name</label>

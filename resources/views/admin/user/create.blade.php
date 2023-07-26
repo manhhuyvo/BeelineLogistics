@@ -49,21 +49,21 @@
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="username" class="mb-2 text-sm font-medium text-gray-900">Username</label>
-                    <input id="username" type="text" name="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Username" value="{{ $request['full_name'] ?? '' }}">
+                    <input id="username" type="text" name="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Username" value="{{ $request['username'] ?? '' }}">
                 </div>
                 <div class="flex flex-col flex-1">
                     <label for="password" class="mb-2 text-sm font-medium text-gray-900">Password</label>
-                    <input id="password" type="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Password" value="{{ $request['password'] ?? '' }}">
+                    <input id="password" type="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Password">
                 </div>
                 <div class="flex flex-col flex-1">
                     <label for="confirm_password" class="mb-2 text-sm font-medium text-gray-900">Confirm Password</label>
-                    <input id="confirm_password" type="password" name="confirm_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Confirm Password" value="{{ $request['confirm_password'] ?? '' }}">
+                    <input id="confirm_password" type="password" name="confirm_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Confirm Password">
                 </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-2">
                     <label for="note" class="mb-2 text-sm font-medium text-gray-900">Note</label>
-                    <textarea id="note" name="note" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Extra note" value="{{ $request['note'] ?? '' }}"></textarea>
+                    <textarea id="note" name="note" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Extra note" value="{{ $request['note'] ?? '' }}">{{ $request['note'] ?? '' }}</textarea>
                 </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
@@ -156,6 +156,8 @@
     hideAllNeededElements();
 
     $(document).ready(function() {
+        console.log(ownerTargetSelect.val())
+        ownerTargetSelect.change();
         let csrfTokenValue = $('#csrfToken').val();
         // Search input keyup event
         searchOwnerInput.on('keyup', function() {
@@ -192,15 +194,13 @@
 
     // Show the owner section according to the user type selected
     ownerTargetSelect.on('change', function() {
-        // Show section first
-        selectedUserOwner.show();
-
         let selectedValueTarget = $(this).val();
         // We need to empty the value of search field
         searchOwnerInput.val('');
 
         // Show or hide the section based on User Type
         if (selectedValueTarget == "{{ User::TARGET_STAFF }}") {
+            selectedUserOwner.show();
             // Owner section
             staffOwnerDiv.show();
             clearCustomerDiv();
@@ -215,6 +215,7 @@
             supplierLevelDropdown.hide();
             supplierLevelDropdown.get(0).selectedIndex = 0;
         } else if (selectedValueTarget == "{{ User::TARGET_CUSTOMER }}") {
+            selectedUserOwner.show();
             // Owner section
             customerOwnerDiv.show();
             clearStaffDiv();
@@ -229,6 +230,7 @@
             supplierLevelDropdown.hide();
             supplierLevelDropdown.get(0).selectedIndex = 0;
         } else if (selectedValueTarget == "{{ User::TARGET_SUPPLIER }}") {
+            selectedUserOwner.show();
             // Owner section
             supplierOwnerDiv.show();
             clearCustomerDiv();

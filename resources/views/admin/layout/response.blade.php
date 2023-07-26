@@ -13,7 +13,7 @@
             <div class="mt-2 mb-2 px-3 py-2.5 text-sm bg-red-500 text-white font-bold felx justify-center text-center items-center cursor-pointer" id="error-dropdown-btn" info="Show errors">
                 <i class="fa-solid fa-caret-down"></i>
             </div>
-            <div class="flex flex-col sm:w-[40%] w-full mt-2 mb-3 cursor-pointer items-end gap-1 absolute top-[52px] right-0 bg-white" id="response-error-list">
+            <div class="flex flex-col sm:w-[40%] w-full mt-2 mb-3 cursor-pointer items-end gap-1 absolute top-[52px] right-0 bg-white z-50" id="response-error-list">
                 @foreach($response['data'] as $key => $message)
                     <div class="cursor-pointer w-full px-3 py-2.5 text-sm bg-red-500 text-white font-medium flex justify-between gap-3 items-start text-center">
                         <div class="flex-1 text-center">{{ $message[0] }}</div>

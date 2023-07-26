@@ -16,13 +16,13 @@
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
-                    <label for="type" class="mb-2 text-sm font-medium text-gray-900">User Type</label>
-                    <select id="type" name="type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
-                        @if (empty($request['type']))
-                        <option selected disabled>Choose a type</option>
+                    <label for="target" class="mb-2 text-sm font-medium text-gray-900">User Target</label>
+                    <select id="target" name="target" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($request['target']))
+                        <option selected disabled>Choose a target</option>
                         @endif
                     @foreach($userTypes as $key => $value)
-                        @if (!empty($request['type']) && $request['type'] == $key)
+                        @if (!empty($request['target']) && $request['target'] == $key)
                         <option selected value="{{ $key }}">{{ $value }}</option>
                         @else
                         <option value="{{ $key }}">{{ $value }}</option>
@@ -48,8 +48,8 @@
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
-                    <label for="full_name" class="mb-2 text-sm font-medium text-gray-900">Username</label>
-                    <input id="full_name" type="text" name="full_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Full Name" value="{{ $request['full_name'] ?? '' }}">
+                    <label for="username" class="mb-2 text-sm font-medium text-gray-900">Username</label>
+                    <input id="username" type="text" name="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Username" value="{{ $request['full_name'] ?? '' }}">
                 </div>
                 <div class="flex flex-col flex-1">
                     <label for="password" class="mb-2 text-sm font-medium text-gray-900">Password</label>
@@ -62,10 +62,6 @@
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-2">
-                    <label for="address" class="mb-2 text-sm font-medium text-gray-900">Address</label>
-                    <input id="address" type="text" name="address" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Address" value="{{ $request['address'] ?? '' }}">
-                </div>
-                <div class="flex flex-col flex-2">
                     <label for="note" class="mb-2 text-sm font-medium text-gray-900">Note</label>
                     <textarea id="note" name="note" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Extra note" value="{{ $request['note'] ?? '' }}"></textarea>
                 </div>
@@ -73,7 +69,33 @@
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="level" class="mb-2 text-sm font-medium text-gray-900">Level</label>
-                    <select id="level" name="level" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                    <!-- For Customer Level -->
+                    <select id="customer_level" name="level" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($request['level']))
+                            <option selected disabled>Choose a level</option>
+                        @endif
+
+                        @if (!empty($request['level']) && $request['level'] == User::LEVEL_CUSTOMER)
+                            <option selected value="{{ User::LEVEL_CUSTOMER }}">Customer</option>
+                        @else
+                            <option value="{{ User::LEVEL_CUSTOMER }}">Customer</option>
+                        @endif
+                    </select>
+                    <!-- For Supplier Level -->
+                    <select id="supplier_level" name="level" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($request['level']))
+                            <option selected disabled>Choose a level</option>
+                        @endif
+                        
+                        @if (!empty($request['level']) && $request['level'] == User::LEVEL_CUSTOMER)
+                            <option selected value="{{ User::LEVEL_SUPPLIER }}">Supplier</option>
+                        @else
+                            <option value="{{ User::LEVEL_SUPPLIER }}">Supplier</option>
+                        @endif
+                    </select>
+                    
+                    <!-- For Staff Level -->
+                    <select id="staff_level" name="level" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
                         @if (empty($request['level']))
                         <option selected disabled>Choose a level</option>
                         @endif
@@ -116,7 +138,7 @@
 
 <script>
     const searchOwnerInput = $('#owner_search');
-    const ownerTypeSelect = $('#type');
+    const ownerTargetSelect = $('#target');
     const ajaxOwnerSearchResult = $('#ajax-owner-search-result');
 
     // Owner section variables
@@ -124,6 +146,11 @@
     const staffOwnerDiv = $('#selected-owner-staff')
     const customerOwnerDiv = $('#selected-owner-customer')
     const supplierOwnerDiv = $('#selected-owner-supplier')
+
+    // User Level dropdowns
+    const staffLevelDropdown = $('#staff_level')
+    const customerLevelDropdown = $('#customer_level')
+    const supplierLevelDropdown = $('#supplier_level')
 
     // Hide all elements at first
     hideAllNeededElements();
@@ -134,7 +161,7 @@
         searchOwnerInput.on('keyup', function() {
             // Get value search
             let searchTerm = $(this).val();
-            let ownerTypeSelectValue = ownerTypeSelect.val();
+            let ownerTargetSelectValue = ownerTargetSelect.val();
 
             // Only send Ajax if search Term is not empty
             if (searchTerm != "") {
@@ -145,7 +172,7 @@
                         'X-CSRF-Token': csrfTokenValue,
                     },
                     data: {
-                        "target": ownerTypeSelectValue,
+                        "target": ownerTargetSelectValue,
                         "searchTerm": searchTerm,
                     },
                     success: function(response) {
@@ -164,27 +191,57 @@
     })
 
     // Show the owner section according to the user type selected
-    ownerTypeSelect.on('change', function() {
+    ownerTargetSelect.on('change', function() {
         // Show section first
         selectedUserOwner.show();
 
-        let selectedValueType = $(this).val();
+        let selectedValueTarget = $(this).val();
         // We need to empty the value of search field
         searchOwnerInput.val('');
 
         // Show or hide the section based on User Type
-        if (selectedValueType == "{{ User::TYPE_STAFF }}") {
+        if (selectedValueTarget == "{{ User::TARGET_STAFF }}") {
+            // Owner section
             staffOwnerDiv.show();
             clearCustomerDiv();
             clearSupplierDiv();
-        } else if (selectedValueType == "{{ User::TYPE_CUSTOMER }}") {
+
+            // User Level dropdowns
+            staffLevelDropdown.show();
+            
+            customerLevelDropdown.hide();
+            customerLevelDropdown.get(0).selectedIndex = 0;
+
+            supplierLevelDropdown.hide();
+            supplierLevelDropdown.get(0).selectedIndex = 0;
+        } else if (selectedValueTarget == "{{ User::TARGET_CUSTOMER }}") {
+            // Owner section
             customerOwnerDiv.show();
             clearStaffDiv();
             clearSupplierDiv();
-        } else if (selectedValueType == "{{ User::TYPE_SUPPLIER }}") {
+
+            // User Level dropdowns
+            customerLevelDropdown.show();
+
+            staffLevelDropdown.hide();
+            staffLevelDropdown.get(0).selectedIndex = 0;
+
+            supplierLevelDropdown.hide();
+            supplierLevelDropdown.get(0).selectedIndex = 0;
+        } else if (selectedValueTarget == "{{ User::TARGET_SUPPLIER }}") {
+            // Owner section
             supplierOwnerDiv.show();
             clearCustomerDiv();
             clearStaffDiv();
+            
+            // User Level dropdowns
+            supplierLevelDropdown.show();
+
+            staffLevelDropdown.hide();
+            staffLevelDropdown.get(0).selectedIndex = 0;
+
+            customerLevelDropdown.hide();
+            customerLevelDropdown.get(0).selectedIndex = 0;
         }
     })
 
@@ -221,11 +278,16 @@
     }
 
     function hideAllNeededElements() {
+        // Hide the normal fields, divs
         selectedUserOwner.hide();
         ajaxOwnerSearchResult.hide();
         staffOwnerDiv.hide();
         customerOwnerDiv.hide();
         supplierOwnerDiv.hide();
+
+        // Hide the level dropdowns (we leave the staff level visible as default)
+        supplierLevelDropdown.hide();
+        customerLevelDropdown.hide();
     }
 </script>
 @endsection

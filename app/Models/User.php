@@ -39,21 +39,21 @@ class User extends Model implements Authenticatable
     // Customer User Level
     const LEVEL_CUSTOMER = 20;
     // Supplier User Level
-    const LEVEL_SUPPLEIR = 30;
+    const LEVEL_SUPPLIER = 30;
 
     const STATUS_ACTIVE = 1;
     const STATUS_CANCEL = 2;
     const STATUS_PENDING = 3;
     const STATUS_DELETE = 4;
 
-    const TYPE_STAFF = 'staffs';
-    const TYPE_CUSTOMER = 'customers';
-    const TYPE_SUPPLIER = 'suppliers';
+    const TARGET_STAFF = 'staffs';
+    const TARGET_CUSTOMER = 'customers';
+    const TARGET_SUPPLIER = 'suppliers';
 
-    const USER_TYPES = [
-        self::TYPE_STAFF,
-        self::TYPE_CUSTOMER,
-        self::TYPE_SUPPLIER,
+    const USER_TARGETS = [
+        self::TARGET_STAFF,
+        self::TARGET_CUSTOMER,
+        self::TARGET_SUPPLIER,
     ];
 
     const USER_STATUSES = [
@@ -61,6 +61,17 @@ class User extends Model implements Authenticatable
         self::STATUS_CANCEL,
         self::STATUS_PENDING,
         self::STATUS_DELETE,
+    ];
+
+    const USER_LEVELS = [
+        self::LEVEL_DIRECTOR,
+        self::LEVEL_ACCOUNTANT,
+        self::LEVEL_SALES,
+        self::LEVEL_CUSTOMER_SERVICE,
+        self::LEVEL_IT,
+        self::LEVEL_CUSTOMER,
+        self::LEVEL_SUPPLIER,
+
     ];
 
     const MAP_USER_STAFF_LEVELS = [
@@ -71,10 +82,10 @@ class User extends Model implements Authenticatable
         self::LEVEL_IT => "IT",
     ];
 
-    const MAP_TYPES = [
-        self::TYPE_STAFF => 'Staff',
-        self::TYPE_CUSTOMER => 'Customer',
-        self::TYPE_SUPPLIER => 'Supplier',
+    const MAP_TARGETS = [
+        self::TARGET_STAFF => 'Staff',
+        self::TARGET_CUSTOMER => 'Customer',
+        self::TARGET_SUPPLIER => 'Supplier',
     ];
 
     const MAP_STATUSES = [

@@ -19,9 +19,14 @@ class UserController extends Controller
     public function create(Request $request)
     {
         return view('admin.user.create', [            
-            'userTypes' => User::MAP_TYPES,
+            'userTypes' => User::MAP_TARGETS,
             'userStatuses' => User::MAP_STATUSES,
             'userStaffLevels' => User::MAP_USER_STAFF_LEVELS,
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        return $request->all();
     }
 }

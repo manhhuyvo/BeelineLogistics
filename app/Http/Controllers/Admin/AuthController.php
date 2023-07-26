@@ -139,7 +139,7 @@ class AuthController extends Controller
         $newUser = new User([
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
-            'target' => User::TYPE_STAFF,
+            'target' => User::TARGET_STAFF,
             'target_id' => $data['staff_id'],
             'level' => User::LEVEL_DIRECTOR,
             'status' => User::STATUS_ACTIVE,

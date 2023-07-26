@@ -73,7 +73,7 @@
     </div>
     
     <h2 class="text-2xl font-medium mt-2 mb-3 ml-1">Employment Details</h2>
-    @if ($user->target == User::TYPE_STAFF)
+    @if ($user->target == User::TARGET_STAFF)
     <div class="flex-1 mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 pt-2 pb-4 px-3">
         <p class="text-lg py-1 font-medium text-blue-600 mb-2">
             Salary Configurations

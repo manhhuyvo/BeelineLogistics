@@ -29,7 +29,7 @@ class StaffLoginRedirect
         // We only allow staff to login to admin portal
         $user = Auth::user();
 
-        if ($user->target != User::TYPE_STAFF || $user->status != User::STATUS_ACTIVE) {
+        if ($user->target != User::TARGET_STAFF || $user->status != User::STATUS_ACTIVE) {
             return redirect()->route('admin.logout');
         }
 

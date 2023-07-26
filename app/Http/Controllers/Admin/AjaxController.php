@@ -32,7 +32,7 @@ class AjaxController extends Controller
         $data = $this->formatRequestData($request);
         // Now we search
         switch($data['target']) {
-            case User::TYPE_STAFF:
+            case User::TARGET_STAFF:
                 // Search staff by name
                 $result = Staff::where('full_name', 'like', "%{$data['searchTerm']}%")->get();       
                 // If result is not empty, then we filter data 
@@ -54,7 +54,7 @@ class AjaxController extends Controller
                     $view = view('admin.user.components.user-staff-owner', ['data' => $returnData]);
                 }
                 break;
-            case User::TYPE_CUSTOMER:
+            case User::TARGET_CUSTOMER:
                 // Search by customer name or customer_id
                 $result = Customer::where('full_name', 'like', "%{$data['searchTerm']}%")
                 ->orWhere('customer_id', 'like', "%{$data['searchTerm']}%")
@@ -77,7 +77,7 @@ class AjaxController extends Controller
                     $view = view('admin.user.components.user-customer-owner', ['data' => $returnData]);
                 }
                 break;
-            case User::TYPE_SUPPLIER:
+            case User::TARGET_SUPPLIER:
                 // Search by supplier name
                 $result = Staff::where('full_name', 'like', "%{$data['searchTerm']}%")->get();        
                 // If result is not empty, then we filter data 
@@ -109,7 +109,7 @@ class AjaxController extends Controller
     private function validateRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "target" => ["required", Rule::in(User::USER_TYPES)],
+            "target" => ["required", Rule::in(User::USER_TARGETS)],
             "searchTerm" => ["required"],
         ]);
 

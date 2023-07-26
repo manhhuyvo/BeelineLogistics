@@ -37,7 +37,7 @@ class StaffPermission
             return redirect()->route('admin.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->target != User::TYPE_STAFF) {
+        if ($user->target != User::TARGET_STAFF) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 

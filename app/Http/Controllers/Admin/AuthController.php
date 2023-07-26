@@ -81,7 +81,7 @@ class AuthController extends Controller
             return redirect()->back()->with(['response' => $responseData]);
         }
 
-        $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::LOGOUT_MESSAAGE)->send();
+        $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::LOGOUT_MESSAGE)->send();
 
         return redirect()->route('admin.login.form')->with(['response' => $responseData]);
     }

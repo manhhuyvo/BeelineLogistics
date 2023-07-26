@@ -9,6 +9,9 @@ use App\Models\Staff;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Illuminate\Support\Facades\View;
+use App\Enums\ResponseMessageEnum;
+use Illuminate\Support\Facades\Session;
+use Exception;
 
 class StaffLoginRedirect
 {
@@ -30,7 +33,18 @@ class StaffLoginRedirect
         $user = Auth::user();
 
         if ($user->target != User::TARGET_STAFF || $user->status != User::STATUS_ACTIVE) {
-            return redirect()->route('admin.logout');
+            try{
+                Session::flush();
+                Auth::logout();
+            } catch (Exception $e) {
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+    
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+    
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+    
+            return redirect()->route('admin.login.form')->with(['response' => $responseData]);
         }
 
         View::share([ 'user' => $user]);

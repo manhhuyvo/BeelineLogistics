@@ -25,7 +25,7 @@ class AjaxController extends Controller
                 
         if ($validation->fails()) {
             // We don't want these data to be returned to AJAX while we don't need it
-            return apiResponseFormat()->error()->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+            return view('admin.user.components.user-empty-owner', ['message' => ResponseMessageEnum::FAILED_VALIDATE_INPUT]);
         }
 
         // We only want to take necessary fields
@@ -39,14 +39,19 @@ class AjaxController extends Controller
                 if (!$result->isEmpty()) {
                     $returnData = collect($result)->map(function($row) {
                         $row['position'] = Staff::MAP_POSITIONS[$row['position']] ?? "Unknown";
+                        $row['status_color'] = Staff::MAP_STATUSES_COLOR[$row['status']] ?? "";
                         $row['status'] = Staff::MAP_STATUSES[$row['status']] ?? "Unknown";
         
                         return collect($row)->only([
+                            'id',
                             'full_name',
                             'position',
                             'status',
+                            'status_color',
                         ]);
                     });
+
+                    $view = view('admin.user.components.user-staff-owner', ['data' => $returnData]);
                 }
                 break;
             case User::TYPE_CUSTOMER:
@@ -57,14 +62,19 @@ class AjaxController extends Controller
                 // If result is not empty, then we filter data 
                 if (!$result->isEmpty()) {
                     $returnData = collect($result)->map(function($row) {
+                        $row['status_color'] = Customer::MAP_STATUSES_COLOR[$row['status']] ?? '';
                         $row['status'] = Customer::MAP_STATUSES[$row['status']] ?? "Unknown";
         
                         return collect($row)->only([
+                            'id',
                             'customer_id',
                             'full_name',
                             'status',
+                            'status_color',
                         ]);
                     });
+
+                    $view = view('admin.user.components.user-customer-owner', ['data' => $returnData]);
                 }
                 break;
             case User::TYPE_SUPPLIER:
@@ -73,27 +83,27 @@ class AjaxController extends Controller
                 // If result is not empty, then we filter data 
                 if (!$result->isEmpty()) {
                     $returnData = collect($result)->map(function($row) {
+                        $row['status_color'] = Supplier::MAP_STATUSES_COLOR[$row['status']] ?? '';
                         $row['type'] = Supplier::MAP_TYPES[$row['type']] ?? "Unknown";
                         $row['status'] = Supplier::MAP_STATUSES[$row['status']] ?? "Unknown";
         
                         return collect($row)->only([
+                            'id',
                             'full_name',
                             'type',
                             'status',
+                            'status_color',
                         ]);
                     });
+
+                    $view = view('admin.user.components.user-supplier-owner', ['data' => $returnData]);
                 } 
                 break;
             default:
             break;
         }
 
-        //Return message according to data empty or found        
-        return apiResponseFormat()
-            ->success()
-            ->data($returnData ?? [])
-            ->message(!empty($returnData) ? ResponseMessageEnum::AJAX_SUCCESS_FOUND : ResponseMessageEnum::AJAX_EMPTY_FOUND)
-            ->send();
+        return $view ?? view('admin.user.components.user-empty-owner', ['message' => 'Cannot find records matched.']);
     }
 
     private function validateRequest(Request $request)

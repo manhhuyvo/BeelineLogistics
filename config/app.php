@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\User;
+use App\Models\Supplier;
+use App\Models\Staff;
+use App\Models\Customer;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
@@ -221,6 +224,9 @@ return [
         'Carbon' => Carbon::class,
         'Auth' => Auth::class,
         'User' => User::class,
+        'Staff' => Staff::class,
+        'Supplier' => Supplier::class,
+        'Customer' => Customer::class,
     ])->toArray(),
 
 ];

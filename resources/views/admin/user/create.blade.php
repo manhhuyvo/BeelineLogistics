@@ -38,7 +38,7 @@
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </div>
                         <!-- Ajax search result for user owner -->
-                        <div id="ajax-owner-search-result" class="min-h-[100px] w-full bg-white absolute top-[100%] border-solid border-x-[1px] border-y-[1px] border-gray-300 rounded-lg"></div>
+                        <div id="ajax-owner-search-result" class="min-h-[50px] w-full bg-gray-50 absolute top-[100%] border-solid border-x-[1px] border-y-[1px] border-gray-300 rounded-b-lg flex flex-col items-center gap-2 max-h-[200px] overflow-y-auto"></div>
                     </div>
                 </div>
             </div>
@@ -117,6 +117,16 @@
 <script>
     const searchOwnerInput = $('#owner_search');
     const ownerTypeSelect = $('#type');
+    const ajaxOwnerSearchResult = $('#ajax-owner-search-result');
+
+    // Owner section variables
+    const selectedUserOwner = $('#selected-user-owner')
+    const staffOwnerDiv = $('#selected-owner-staff')
+    const customerOwnerDiv = $('#selected-owner-customer')
+    const supplierOwnerDiv = $('#selected-owner-supplier')
+
+    // Hide all elements at first
+    hideAllNeededElements();
 
     $(document).ready(function() {
         let csrfTokenValue = $('#csrfToken').val();
@@ -138,18 +148,84 @@
                         "target": ownerTypeSelectValue,
                         "searchTerm": searchTerm,
                     },
-                    success: function(data) {
-                        console.log(data);
+                    success: function(response) {
+                        let html = response;
+                        // Show and append the view from ajax to this div
+                        ajaxOwnerSearchResult.show();
+                        ajaxOwnerSearchResult.html(html);
                     },
-                    error: function(error) {
-                        let errorMessage = error.responseJSON.message;
-                        console.log(errorMessage);
-                    }
+                    dataType: 'html'
                 })
             } else {
                 // Otherwise we do something here
+                ajaxOwnerSearchResult.hide();
             }
         })
     })
+
+    // Show the owner section according to the user type selected
+    ownerTypeSelect.on('change', function() {
+        // Show section first
+        selectedUserOwner.show();
+
+        let selectedValueType = $(this).val();
+        // We need to empty the value of search field
+        searchOwnerInput.val('');
+
+        // Show or hide the section based on User Type
+        if (selectedValueType == "{{ User::TYPE_STAFF }}") {
+            staffOwnerDiv.show();
+            clearCustomerDiv();
+            clearSupplierDiv();
+        } else if (selectedValueType == "{{ User::TYPE_CUSTOMER }}") {
+            customerOwnerDiv.show();
+            clearStaffDiv();
+            clearSupplierDiv();
+        } else if (selectedValueType == "{{ User::TYPE_SUPPLIER }}") {
+            supplierOwnerDiv.show();
+            clearCustomerDiv();
+            clearStaffDiv();
+        }
+    })
+
+    // Hide the ajax result when click outside
+    $('body').on('mouseup', function(e) {
+        // Hide the result 
+        if (!$(e.target).is(searchOwnerInput)) {
+            ajaxOwnerSearchResult.hide();
+        }
+    })
+
+    function clearStaffDiv(){
+        $('input[name="staff_id"]').val('')
+        $('input[name="staff_full_name"]').val('')
+        $('input[name="staff_position"]').val('')
+        $('input[name="staff_status"]').val('') 
+        staffOwnerDiv.hide();
+    }
+
+    function clearCustomerDiv() {
+        $('input[name="customer_id"]').val('')
+        $('input[name="customer_full_name"]').val('')
+        $('input[name="customer_number"]').val('')
+        $('input[name="customer_status"]').val('')    
+        customerOwnerDiv.hide();
+    }
+
+    function clearSupplierDiv() {
+        $('input[name="supplier_id"]').val('')
+        $('input[name="supplier_full_name"]').val('')
+        $('input[name="supplier_type"]').val('')
+        $('input[name="supplier_status"]').val('')    
+        supplierOwnerDiv.hide();
+    }
+
+    function hideAllNeededElements() {
+        selectedUserOwner.hide();
+        ajaxOwnerSearchResult.hide();
+        staffOwnerDiv.hide();
+        customerOwnerDiv.hide();
+        supplierOwnerDiv.hide();
+    }
 </script>
 @endsection

@@ -67,9 +67,10 @@
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
+                    <input type="hidden" name="level" value="{{ $user['level'] }}">
                     <label for="level" class="mb-2 text-sm font-medium text-gray-900">Level</label>
                     <!-- For Customer Level -->
-                    <select id="customer_level" name="level" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                    <select id="customer_level" name="level_view" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
                         @if (empty($user['level']))
                             <option selected disabled>Choose a level</option>
                         @endif
@@ -81,12 +82,12 @@
                         @endif
                     </select>
                     <!-- For Supplier Level -->
-                    <select id="supplier_level" name="level" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                    <select id="supplier_level" name="level_view" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
                         @if (empty($user['level']))
                             <option selected disabled>Choose a level</option>
                         @endif
                         
-                        @if (!empty($user['level']) && $user['level'] == User::LEVEL_CUSTOMER)
+                        @if (!empty($user['level']) && $user['level'] == User::LEVEL_SUPPLIER)
                             <option selected value="{{ User::LEVEL_SUPPLIER }}">Supplier</option>
                         @else
                             <option value="{{ User::LEVEL_SUPPLIER }}">Supplier</option>
@@ -94,17 +95,17 @@
                     </select>
                     
                     <!-- For Staff Level -->
-                    <select id="staff_level" name="level" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                    <select id="staff_level" name="level_view" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
                         @if (empty($user['level']))
                         <option selected disabled>Choose a level</option>
                         @endif
-                    @foreach($userStaffLevels as $key => $value)
-                        @if (!empty($user['level']) && $user['level'] == $key)
-                        <option selected value="{{ $key }}">{{ $value }}</option>
-                        @else
-                        <option value="{{ $key }}">{{ $value }}</option>
-                        @endif
-                    @endforeach
+                        @foreach($userStaffLevels as $key => $value)
+                            @if (!empty($user['level']) && $user['level'] == $key)
+                            <option selected value="{{ $key }}">{{ $value }}</option>
+                            @else
+                            <option value="{{ $key }}">{{ $value }}</option>
+                            @endif
+                        @endforeach
                     </select>
                 </div>
                 <div class="flex flex-col flex-1">
@@ -155,7 +156,6 @@
     hideAllNeededElements();
 
     $(document).ready(function() {
-        console.log(ownerTargetSelect.val())
         ownerTargetSelect.change();
         let csrfTokenValue = $('#csrfToken').val();
         // Search input keyup event
@@ -191,6 +191,11 @@
         })
     })
 
+    // Event for staff level changed
+    staffLevelDropdown.on('change', function() {
+        $('input[name="level"]').val(staffLevelDropdown.val());
+    })
+
     // Show the owner section according to the user type selected
     ownerTargetSelect.on('change', function() {
         let selectedValueTarget = $(this).val();
@@ -207,6 +212,7 @@
 
             // User Level dropdowns
             staffLevelDropdown.show();
+            $('input[name="level"]').val(staffLevelDropdown.val());
             
             customerLevelDropdown.hide();
             customerLevelDropdown.get(0).selectedIndex = 0;
@@ -222,6 +228,7 @@
 
             // User Level dropdowns
             customerLevelDropdown.show();
+            $('input[name="level"]').val(customerLevelDropdown.val());
 
             staffLevelDropdown.hide();
             staffLevelDropdown.get(0).selectedIndex = 0;
@@ -237,6 +244,7 @@
             
             // User Level dropdowns
             supplierLevelDropdown.show();
+            $('input[name="level"]').val(supplierLevelDropdown.val());
 
             staffLevelDropdown.hide();
             staffLevelDropdown.get(0).selectedIndex = 0;

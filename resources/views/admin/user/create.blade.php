@@ -10,7 +10,7 @@
     <h2 class="text-2xl font-medium mt-2 mb-3">Add new user</h2>
     <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-1">
         <p class="text-lg px-3 py-1 font-medium text-blue-600">
-            Personal Details
+            Account Details
         </p>
         <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.user.store') }}" method="POST">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
@@ -43,7 +43,7 @@
                 </div>
             </div>
             <!-- Display selected owner from the search -->
-            <div class="row flex justify-center bg-yellow-50 py-3 px-2 mx-2 border-yellow-400 border-[2px] rounded-lg" id="selected-user-owner">
+            <div class="row flex justify-center bg-blue-50 py-3 px-2 mx-2 border-blue-300 border-[2px] rounded-lg" id="selected-user-owner">
                 @include('admin.user.selected-owner')
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">

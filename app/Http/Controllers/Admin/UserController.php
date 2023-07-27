@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /** Display page for create new customer */
+    /** Display page for create new user */
     public function create(Request $request)
     {
         return view('admin.user.create', [            
@@ -24,6 +24,58 @@ class UserController extends Controller
             'userStatuses' => User::MAP_STATUSES,
             'userStaffLevels' => User::MAP_USER_STAFF_LEVELS,
         ]);
+    }
+
+    /** Display page for show user details */
+    public function show(Request $request, User $user)
+    {        
+        $owner = [];
+        switch ($user->target) {
+            case User::TARGET_STAFF:
+                $staff = $user->staff;
+                $owner = collect($staff)->only([
+                    'id',
+                    'full_name',
+                    'position',
+                    'status',
+                ])->toArray();
+                $owner['position'] = Staff::MAP_POSITIONS[$owner['position']];
+                $owner['status'] = Staff::MAP_STATUSES[$owner['status']];
+
+                break;
+            case User::TARGET_CUSTOMER:
+                $customer = $user->customer;
+                $owner = collect($customer)->only([
+                    'id',
+                    'full_name',
+                    'customer_id',
+                    'status',
+                ])->toArray();
+                $owner['status'] = Customer::MAP_STATUSES[$owner['status']];
+
+                break;
+            case User::TARGET_SUPPLIER:
+                $customer = $user->customer;
+                $owner = collect($customer)->only([
+                    'id',
+                    'full_name',
+                    'type',
+                    'status',
+                ])->toArray();
+                $owner['type'] = Supplier::MAP_TYPES[$owner['type']];
+                $owner['status'] = Supplier::MAP_STATUSES[$owner['status']];
+
+                break;
+        }
+
+        return view('admin.user.show', [    
+            'user' => $user->toArray(),
+            'owner' => $owner,        
+            'userTypes' => User::MAP_TARGETS,
+            'userStatuses' => User::MAP_STATUSES,
+            'userStaffLevels' => User::MAP_USER_STAFF_LEVELS,
+        ]);
+
     }
 
     /** Handle create new user request */

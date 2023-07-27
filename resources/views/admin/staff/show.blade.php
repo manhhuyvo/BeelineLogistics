@@ -81,7 +81,7 @@
             </div>
         </div>
     </div>       
-    <div class="row flex md:justify-end justify-center md:px-3 gap-2 w-full">
+    <div class="row flex md:justify-end justify-center gap-2 w-full">
         <a href="{{ route('admin.staff.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2 w-[20%]">
             <i class="fa-solid fa-arrow-left"></i>
             Back To List

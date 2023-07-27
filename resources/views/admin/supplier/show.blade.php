@@ -47,7 +47,7 @@
                     <div class="bg-gray-50 font-semibold text-{{ $supplierStatusColors[$supplier['status']] ?? 'red' }}-500 text-sm w-full py-2.5 px-2">{{ $supplierStatuses[$supplier['status']] ?? 'Not provided' }}</div>
                 </div>
             </div>       
-            <div class="row flex md:justify-end justify-center md:px-3 gap-2 w-full">
+            <div class="row flex md:justify-end justify-center gap-2 w-full">
                 <a href="{{ route('admin.supplier.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2 w-[20%]">
                     <i class="fa-solid fa-arrow-left"></i>
                     Back To List

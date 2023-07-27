@@ -29,6 +29,11 @@ class User extends Model implements Authenticatable
         'note',
     ];
 
+    protected $casts = [
+        'created_at' => 'date:d/m/Y',
+        'updated_at' => 'date:d/m/Y',
+    ];
+
     // Staff User Level
     const LEVEL_DIRECTOR = 1;
     const LEVEL_ACCOUNTANT = 2;
@@ -42,7 +47,6 @@ class User extends Model implements Authenticatable
     const LEVEL_SUPPLIER = 30;
 
     const STATUS_ACTIVE = 1;
-    const STATUS_CANCEL = 2;
     const STATUS_PENDING = 3;
     const STATUS_DELETE = 4;
 
@@ -58,7 +62,6 @@ class User extends Model implements Authenticatable
 
     const USER_STATUSES = [
         self::STATUS_ACTIVE,
-        self::STATUS_CANCEL,
         self::STATUS_PENDING,
         self::STATUS_DELETE,
     ];
@@ -72,6 +75,16 @@ class User extends Model implements Authenticatable
         self::LEVEL_CUSTOMER,
         self::LEVEL_SUPPLIER,
 
+    ];
+
+    const MAP_USER_LEVELS = [
+        self::LEVEL_DIRECTOR => "Director",
+        self::LEVEL_ACCOUNTANT => "Accountant",
+        self::LEVEL_SALES => "Sales",
+        self::LEVEL_CUSTOMER_SERVICE => "Customer Service",
+        self::LEVEL_IT => "IT",
+        self::LEVEL_CUSTOMER => "Customer",
+        self::LEVEL_SUPPLIER => "Supplier",
     ];
 
     const MAP_USER_STAFF_LEVELS = [
@@ -90,9 +103,14 @@ class User extends Model implements Authenticatable
 
     const MAP_STATUSES = [
         self::STATUS_ACTIVE => 'Active',
-        self::STATUS_CANCEL => 'Cancel',
         self::STATUS_PENDING => 'Pending',
         self::STATUS_DELETE => 'Delete',
+    ];
+
+    const MAP_STATUSES_COLOR = [
+        self::STATUS_ACTIVE => 'green',
+        self::STATUS_PENDING => 'yellow',
+        self::STATUS_DELETE => 'red',
     ];
 
     public function staff(): BelongsTo

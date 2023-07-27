@@ -16,6 +16,64 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    /** Display page for view all users */
+    /** Display the page for list of all suppliers */
+    public function index(Request $request)
+    {
+        // Retrieve list of all first
+        $allUsers = User::whereNotNull('id');
+
+        // Validate the filter request
+        $data = $request->all();
+        if (!empty($data)){
+            foreach($data as $key => $value) {
+                if (empty($value) || $key == 'page' || $key == '_method') {
+                    continue;
+                }
+                // Escape to prevent break
+                $key = htmlspecialchars($key);
+                $value = htmlspecialchars($value);
+
+                // Add conditions
+                $allUsers = $allUsers->where($key, 'like', "%$value%");
+            }
+        }
+
+        // Then add filter into the query
+        $allUsers = $allUsers->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
+
+        // Get user's owner
+        $owners = [];
+        foreach ($allUsers as $user) {
+            $owners[$user->id] = $this->getUserOwner($user);
+        }
+
+        $allUsers = $allUsers->appends(request()->except('page'));        
+        $returnData = collect($allUsers)->only('data')->toArray();
+        $paginationData = collect($allUsers)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
+
+        return view('admin.user.list', [
+            'users' => $returnData,
+            'owners' => $owners,
+            'pagination' => $paginationData,   
+            'userStatusColors' => User::MAP_STATUSES_COLOR,         
+            'userTypes' => User::MAP_TARGETS,
+            'userStatuses' => User::MAP_STATUSES,
+            'userStaffLevels' => User::MAP_USER_STAFF_LEVELS,
+            'userLevels' => User::MAP_USER_LEVELS,
+            'request' => $data,
+        ]);
+    }
+    
     /** Display page for create new user */
     public function create(Request $request)
     {
@@ -55,6 +113,7 @@ class UserController extends Controller
         ]);
     }
 
+    /** Handle request for edit user */
     public function update(Request $request, User $user)
     {
         // Validate the request coming
@@ -116,6 +175,21 @@ class UserController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_ADD_NEW_RECORD)->send();
 
         return redirect()->route('admin.user.create.form')->with(['response' => $responseData]);
+    }   
+
+    /** Handle request delete supplier */
+    public function destroy(Request $request, User $user)
+    {         
+        // Perform deletion
+        if (!$user->delete()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_DELETE_RECORD)->send();
+
+            return redirect()->route('admin.user.list')->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
+
+        return redirect()->route('admin.user.list')->with(['response' => $responseData]);
     }
 
     /** Validate form request for store and update functions */

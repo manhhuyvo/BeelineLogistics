@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ProductGroupController;
 use App\Http\Controllers\Admin\AjaxController;
 use App\Models\Staff;
 
@@ -73,6 +74,15 @@ Route::prefix('admin')->group(function () {
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('admin.user.delete');
         /* [AJAX USER OWNER SEARCH] */
         Route::post('/ajax/search-user-owner', [AjaxController::class, 'searchUserOwner'])->name('admin.ajax.search-user-owner');
+
+        /** [PRODUCT GROUP ROUTES] */
+        Route::get('/product-group', [ProductGroupController::class, 'index'])->name('admin.product-group.list');
+        Route::get('/product-group/create', [ProductGroupController::class, 'create'])->name('admin.product-group.create.form');
+        Route::post('/product-group', [ProductGroupController::class, 'store'])->name('admin.product-group.store');
+        Route::get('/product-group/{group}', [ProductGroupController::class, 'show'])->name('admin.product-group.show');
+        Route::get('/product-group/{group}/edit', [ProductGroupController::class, 'edit'])->name('admin.product-group.edit.form');
+        Route::post('/product-group/{group}', [ProductGroupController::class, 'update'])->name('admin.product-group.update');
+        Route::delete('/product-group/{group}', [ProductGroupController::class, 'destroy'])->name('admin.product-group.delete');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {

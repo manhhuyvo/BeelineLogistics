@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('group_id')->index();
             $table->string('name', 255);
             $table->string('description', 255);
+            $table->unsignedInteger('stock');
             $table->json('price_configs');
             $table->string('status', 20);
             $table->string('note', 255);

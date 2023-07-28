@@ -87,3 +87,21 @@ Breadcrumbs::for('admin.user.profile.form', function (BreadcrumbTrail $trail): v
     $user = Auth::user();
     $trail->push("{$user->username}", route('admin.user.profile.form'));
 });
+
+/** Breadcrumbs for PRODUCT GROUP */
+Breadcrumbs::for('admin.product-group.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Product Group', route('admin.product-group.list'));
+});
+Breadcrumbs::for('admin.product-group.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.product-group.list');
+    $trail->push('Add New Product Group', route('admin.product-group.create.form'));
+});
+Breadcrumbs::for('admin.product-group.show', function (BreadcrumbTrail $trail, $productGroup): void {
+    $trail->parent('admin.product-group.list');
+    $trail->push("{$productGroup->name}", route('admin.product-group.show', ['group' => $productGroup->id]));
+});
+Breadcrumbs::for('admin.product-group.edit.form', function (BreadcrumbTrail $trail, $productGroup): void {
+    $trail->parent('admin.product-group.list');
+    $trail->push("Edit {$productGroup->name}", route('admin.product-group.edit.form', ['group' => $productGroup->id]));
+});

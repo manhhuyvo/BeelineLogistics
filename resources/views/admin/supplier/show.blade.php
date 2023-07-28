@@ -46,18 +46,18 @@
                     <label for="status" class="mb-2 text-sm font-medium text-gray-900">Status</label>
                     <div class="bg-gray-50 font-semibold text-{{ $supplierStatusColors[$supplier['status']] ?? 'red' }}-500 text-sm w-full py-2.5 px-2">{{ $supplierStatuses[$supplier['status']] ?? 'Not provided' }}</div>
                 </div>
-            </div>       
-            <div class="row flex md:justify-end justify-center gap-2 w-full">
-                <a href="{{ route('admin.supplier.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2 w-[20%]">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Back To List
-                </a>
-                <a href="{{ route('admin.supplier.edit.form', ['supplier' => $supplier['id']]) }}" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2  w-[20%]">
-                    Edit Details
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
             </div>
         </div>
+    </div>       
+    <div class="row flex md:justify-end justify-center gap-2 w-full">
+        <a href="{{ route('admin.supplier.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2 w-[20%]">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back To List
+        </a>
+        <a href="{{ route('admin.supplier.edit.form', ['supplier' => $supplier['id']]) }}" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2  w-[20%]">
+            Edit Details
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
     </div>
 </div>
 

@@ -4,6 +4,8 @@ use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Staff;
 use App\Models\Customer;
+use App\Models\Product\Group;
+use App\Models\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
@@ -227,6 +229,8 @@ return [
         'Staff' => Staff::class,
         'Supplier' => Supplier::class,
         'Customer' => Customer::class,
+        'ProductGroup' => Group::class,
+        'Product' => Product::class,
     ])->toArray(),
 
 ];

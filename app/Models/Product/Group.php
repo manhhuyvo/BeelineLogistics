@@ -5,6 +5,7 @@ namespace App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Product;
 
 class Group extends Model
 {
@@ -16,6 +17,11 @@ class Group extends Model
         'name',
         'description',
         'note',
+    ];
+
+    protected $casts = [
+        'created_at' => 'date:d/m/Y',
+        'updated_at' => 'date:d/m/Y',
     ];
 
     const NAME_IMPORT = 'import';

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductGroupController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\AjaxController;
 use App\Models\Staff;
 
@@ -83,6 +84,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/product-group/{group}/edit', [ProductGroupController::class, 'edit'])->name('admin.product-group.edit.form');
         Route::post('/product-group/{group}', [ProductGroupController::class, 'update'])->name('admin.product-group.update');
         Route::delete('/product-group/{group}', [ProductGroupController::class, 'destroy'])->name('admin.product-group.delete');
+
+        /** [PRODUCT ROUTES] */
+        Route::get('/product', [ProductController::class, 'index'])->name('admin.product.list');
+        Route::get('/product/create', [ProductController::class, 'create'])->name('admin.product.create.form');
+        Route::post('/product', [ProductController::class, 'store'])->name('admin.product.store');
+        Route::get('/product/{product}', [ProductController::class, 'show'])->name('admin.product.show');
+        Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit.form');
+        Route::post('/product/{product}', [ProductController::class, 'update'])->name('admin.product.update');
+        Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('admin.product.delete');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {

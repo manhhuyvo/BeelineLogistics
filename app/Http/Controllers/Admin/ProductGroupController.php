@@ -18,6 +18,54 @@ use App\Models\Product\Group as ProductGroup;
 
 class ProductGroupController extends Controller
 {
+    /** Display the page for list of all product groups */
+    public function index(Request $request)
+    {
+        // Retrieve list of all first
+        $allProductGroups = ProductGroup::with('products');
+
+        // Validate the filter request
+        $data = $request->all();
+        if (!empty($data)){
+            foreach($data as $key => $value) {
+                if (empty($value) || $key == 'page' || $key == '_method') {
+                    continue;
+                }
+                // Escape to prevent break
+                $key = htmlspecialchars($key);
+                $value = htmlspecialchars($value);
+
+                // Add conditions
+                $allSuppliers = $allProductGroups->where($key, 'like', "%$value%");
+            }
+        }
+
+        // Then add filter into the query
+        $allProductGroups = $allProductGroups->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
+        $allProductGroups = $allProductGroups->appends(request()->except('page'));        
+        $returnData = collect($allProductGroups)->only('data')->toArray();
+        $returnData['data'] = collect($returnData['data'])->map(function($eachGroup) {
+            $eachGroup['productCount'] = count($eachGroup['products']);
+
+            return collect($eachGroup)->except(['products'])->toArray();
+        });
+        $paginationData = collect($allProductGroups)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
+
+        return view('admin.product.group.list', [
+            'productGroups' => $returnData,
+            'pagination' => $paginationData,
+        ]);
+    }
+
     /** Display page for create product group */
     public function create(Request $request)
     {        

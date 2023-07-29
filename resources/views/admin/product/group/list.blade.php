@@ -14,9 +14,9 @@
             Add group
         </a>
     </div>
-    {{-- @include('admin.product.group.filter') --}}
+    @include('admin.product.group.filter')
 
-    @if (empty($productGroups['data']))
+    @if (count($productGroups['data']) == 0)
         <p class="w-full text-center text-red-600 font-semibold text-lg">Unable to find any records.</p>
     @else
     @include('admin.layout.pagination')
@@ -39,7 +39,7 @@
                 <th scope="col" class="px-6 sm:py-3 py-2 text-center">
                     Date Created
                 </th>
-                <th scope="col" class="px-6 sm:py-3 py-2 text-center">
+                <th scope="col" class="px-6 sm:py-3 py-2">
                     Action
                 </th>
             </tr>
@@ -50,7 +50,7 @@
                 <th scope="col" class="pl-4 py-3">
                     {{ $index + 1 }}
                 </th>
-                <th scope="row" class="py-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                <th scope="row" class="py-4 font-medium text-gray-900 whitespace-nowrap">
                     {{ $productGroup['name'] }}
                 </th>
                 <td class="px-6 py-4">

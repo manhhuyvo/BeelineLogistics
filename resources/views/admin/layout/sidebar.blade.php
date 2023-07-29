@@ -104,10 +104,10 @@
               </button>
               <ul id="sidebar-product-dropdown" class="hidden bg-gray-100 text-sm">
                   <li>
-                     <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Product Groups</a>
+                     <a href="{{ route('admin.product-group.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Product Groups</a>
                   </li>
                   <li>
-                     <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Products List</a>
+                     <a href="{{ route('admin.product.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Products List</a>
                   </li>
               </ul>
            </li>

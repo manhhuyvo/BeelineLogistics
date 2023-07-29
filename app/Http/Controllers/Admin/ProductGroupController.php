@@ -63,6 +63,7 @@ class ProductGroupController extends Controller
         return view('admin.product.group.list', [
             'productGroups' => $returnData,
             'pagination' => $paginationData,
+            'request' => $data,
         ]);
     }
 
@@ -150,6 +151,21 @@ class ProductGroupController extends Controller
         $responseData = viewResponseFormat()->success()->data($group->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
 
         return redirect()->route('admin.product-group.show', ['group' => $group->id])->with(['response' => $responseData]);
+    }    
+
+    /** Handle request delete supplier */
+    public function destroy(Request $request, ProductGroup $group)
+    {         
+        // Perform deletion
+        if (!$group->delete()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_DELETE_RECORD)->send();
+
+            return redirect()->route('admin.product-group.list')->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->data($group->toArray())->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
+
+        return redirect()->route('admin.product-group.list')->with(['response' => $responseData]);
     }    
 
     /** Validate form request for store and update functions */

@@ -36,9 +36,28 @@ class Product extends Model
         self::STATUS_ACTIVE => 'Active',
         self::STATUS_INACTIVE => 'Inactive',
     ];
+    
+    const MAP_STATUS_COLORS = [        
+        self::STATUS_ACTIVE => 'green',
+        self::STATUS_INACTIVE => 'red',
+    ];
+
+    const UNIT_AUD = 'AUD';    
+    const UNIT_VND = 'VND';
+    const UNIT_USD = 'USD';
+    const UNIT_CAD = 'CAD';
+
+    const UNITS = [
+        self::UNIT_AUD,
+        self::UNIT_VND,
+        self::UNIT_USD,
+        self::UNIT_CAD,
+    ];
 
     protected $casts = [
         'price_configs' => 'array',
+        'created_at' => 'date:d/m/Y',
+        'updated_at' => 'date:d/m/Y',
     ];
 
     public function productGroup(): BelongsTo

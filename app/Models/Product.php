@@ -37,7 +37,7 @@ class Product extends Model
         self::STATUS_INACTIVE => 'Inactive',
     ];
     
-    const MAP_STATUS_COLORS = [        
+    const MAP_STATUSES_COLOR = [        
         self::STATUS_ACTIVE => 'green',
         self::STATUS_INACTIVE => 'red',
     ];

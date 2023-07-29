@@ -4,10 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Customer;
-use App\Models\Staff;
-use App\Models\User;
-use App\Models\Supplier;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
@@ -18,6 +14,68 @@ use App\Models\Product\Group as ProductGroup;
 
 class ProductController extends Controller
 {
+    /** Display the page for list of all products */
+    public function index(Request $request)
+    {
+        // Retrieve list of all first
+        $allProducts = Product::with('productGroup');
+
+        // Validate the filter request
+        $data = $request->all();
+        if (!empty($data)){
+            foreach($data as $key => $value) {
+                if (empty($value) || $key == 'page' || $key == '_method') {
+                    continue;
+                }
+                // Escape to prevent break
+                $key = htmlspecialchars($key);
+                $value = htmlspecialchars($value);
+
+                // Add conditions
+                $allProducts = $allProducts->where($key, 'like', "%$value%");
+            }
+        }
+
+        // Then add filter into the query
+        $allProducts = $allProducts->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
+        $allProducts = $allProducts->appends(request()->except('page'));        
+        $returnData = collect($allProducts)->only('data')->toArray();
+        $returnData['data'] = collect($returnData['data'])->map(function($product) {
+            // Unserialize the price configs
+            $product['price_configs'] = unserialize($product['price_configs']);
+
+            return $product;
+        });
+        $paginationData = collect($allProducts)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
+        
+        // Get all the current product groups
+        $allProductGroups = $this->getAllProductGroups();
+
+        // Format the product groups so we can map them in view
+        $allProductGroups = collect($allProductGroups)->mapWithKeys(function($group, int $index) {
+            return [$group['id'] => $group['name']];
+        });
+
+        return view('admin.product.list', [
+            'products' => $returnData,
+            'pagination' => $paginationData,   
+            'productGroups' => $allProductGroups,
+            'productStatuses' => Product::MAP_STATUSES,
+            'units' => Product::UNITS,
+            'productStatusColors' => Product::MAP_STATUSES_COLOR,
+            'request' => $data,
+        ]);
+    }
+
     /** Display the page for create new product */
     public function create(Request $request)
     {
@@ -118,8 +176,6 @@ class ProductController extends Controller
     }
 
     /** Handle request for edit product details */
-
-    /** Handle request update supplier details */
     public function update(Request $request, Product $product)
     {
         // Validate the request coming
@@ -149,6 +205,21 @@ class ProductController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
 
         return redirect()->route('admin.product.show', ['product' => $product->id])->with(['response' => $responseData]);
+    }    
+
+    /** Handle request delete product */
+    public function destroy(Request $request, Product $product)
+    {         
+        // Perform deletion
+        if (!$product->delete()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_DELETE_RECORD)->send();
+
+            return redirect()->route('admin.product.list')->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
+
+        return redirect()->route('admin.product.list')->with(['response' => $responseData]);
     }
     
     /** Validate form request for store and update functions */

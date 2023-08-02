@@ -24,7 +24,7 @@ class ProductController extends Controller
         $data = $request->all();
         if (!empty($data)){
             foreach($data as $key => $value) {
-                if (empty($value) || $key == 'page' || $key == '_method') {
+                if (empty($value) || in_array($key, ['page', '_method'])) {
                     continue;
                 }
                 // Escape to prevent break
@@ -38,7 +38,7 @@ class ProductController extends Controller
 
         // Then add filter into the query
         $allProducts = $allProducts->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
-        $allProducts = $allProducts->appends(request()->except('page'));        
+        $allProducts = $allProducts->appends(request()->except('page'));  
         $returnData = collect($allProducts)->only('data')->toArray();
         $returnData['data'] = collect($returnData['data'])->map(function($product) {
             // Unserialize the price configs

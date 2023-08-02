@@ -43,6 +43,10 @@ Breadcrumbs::for('admin.customer.edit.form', function (BreadcrumbTrail $trail, $
     $trail->parent('admin.customer.list');
     $trail->push("Edit {$customer->full_name}", route('admin.customer.edit.form', ['customer' => $customer->id]));
 });
+Breadcrumbs::for('admin.customer.price-configs.edit.form', function (BreadcrumbTrail $trail, $customer): void {
+    $trail->parent('admin.customer.show');
+    $trail->push("Price Configuration", route('admin.customer.price-configs.edit.form', ['customer' => $customer->id]));
+});
 
 /** Breadcrumbs for SUPPLIER */
 Breadcrumbs::for('admin.supplier.list', function (BreadcrumbTrail $trail): void {

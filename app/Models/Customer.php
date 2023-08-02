@@ -24,6 +24,7 @@ class Customer extends Model
         'full_name',
         'phone',
         'address',
+        'price_configs',
         'default_sender',
         'default_receiver',
         'type',
@@ -35,6 +36,7 @@ class Customer extends Model
     protected $casts = [
         'default_sender' => 'array',
         'default_receiver' => 'array',
+        'price_configs' => 'array',
         'created_at' => 'date:d/m/Y',
         'updated_at' => 'date:d/m/Y',
     ];

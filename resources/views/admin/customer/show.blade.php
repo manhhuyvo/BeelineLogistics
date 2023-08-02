@@ -3,9 +3,9 @@
 
 <div class="relative sm:rounded-lg">
     @include('admin.layout.response')
-    <h2 class="text-2xl font-medium mt-2 mb-3">View customer details</h2>
-    <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-1">
-        <div class="w-full flex flex-col gap-3 px-3 py-2 justify-center">
+    <h2 class="text-2xl font-medium mt-2">View customer details</h2>
+    <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-1 pb-3">
+        <div class="w-full flex flex-col gap-3 px-3 py-1 justify-center">
             <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
             <p class="text-lg font-medium text-blue-600 mt-1">
                 Customer Details
@@ -96,6 +96,57 @@
                     <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $customer['default_receiver']['address'] ?? 'Not provided' }}</div>
                 </div>
             </div>
+            
+            @if (!empty($customer['price_configs']))            
+            <div class="w-full flex  gap-3 mt-2 items-start">
+                <p class="text-lg font-medium text-red-600">
+                    Price Configuration
+                </p>
+                <a href="{{ route('admin.customer.price-configs.edit.form', ['customer' => $customer['id']]) }}" class="w-auto px-3 py-1 rounded-[5px] text-sm bg-blue-600 text-white font-medium hover:shadow-lg hover:bg-blue-500 flex items-center gap-3">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Edit Price
+                </a>
+            </div>
+                @if (!empty($customer['price_configs']['fulfillment_pricing']))            
+                <p class="text-[16px] font-medium text-blue-600 mt-1">
+                    Fulfillment Pricing
+                </p>
+                <div class="row flex sm:flex-row flex-col gap-2">
+                    @if (!empty($customer['price_configs']['fulfillment_pricing']['fulfillment_per_order']))
+                    <div class="flex flex-col flex-1 sm:max-w-[50%]">
+                        <label for="default_receiver_name" class="mb-2 text-sm font-medium text-gray-900">Per Order</label>
+                        <div class="w-full flex items-center text-sm bg-gray-50">
+                            <div class="bg-transparent text-gray-600 text-sm w-full py-2.5 px-2">{{ $customer['price_configs']['fulfillment_pricing']['fulfillment_per_order']['fulfillment_per_order_amount'] ?? '0' }}</div>
+                            <p class="text-sm h-full font-medium text-sm flex-1 p-2.5 bg-gray-100 border-none pl-3">{{ $customer['price_configs']['fulfillment_pricing']['fulfillment_per_order']['fulfillment_per_order_unit'] ?? 'Not Provided' }}
+                            </p>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if (!empty($customer['price_configs']['fulfillment_pricing']['fulfillment_percentage']))
+                    <div class="flex flex-col flex-1 sm:max-w-[50%]">
+                        <label for="default_receiver_name" class="mb-2 text-sm font-medium text-gray-900">Percentage</label>
+                        <div class="w-full flex items-center text-sm bg-gray-50">
+                            <div class="bg-transparent text-gray-600 text-sm w-full py-2.5 px-2">{{ $customer['price_configs']['fulfillment_pricing']['fulfillment_percentage']['fulfillment_percentage_amount'] ?? '0' }}</div>
+                            <p class="text-sm h-full font-medium text-sm flex-1 p-2.5 bg-gray-100 border-none pl-3">
+                                %
+                            </p>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @endif
+            @else            
+            <div class="w-full flex flex-col items-end mt-2 gap-2">
+                <a href="{{ route('admin.customer.price-configs.edit.form', ['customer' => $customer['id']]) }}" class="w-auto px-3 py-2 rounded-[5px] text-sm bg-green-600 text-white font-medium hover:shadow-lg hover:bg-green-500 flex items-center gap-3">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Add Price
+                </a>
+                <p class="text-md font-medium text-orange-600 text-center w-full">
+                    There is no price configurations for this customer
+                </p>
+            </div>
+            @endif
         </div>
     </div>       
     <div class="row flex md:justify-end justify-center gap-2 w-full">

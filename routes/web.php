@@ -114,6 +114,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/customer/{customer}/edit', [CustomerController::class, 'edit'])->name('admin.customer.edit.form');
         Route::post('/customer/{customer}', [CustomerController::class, 'update'])->name('admin.customer.update');
         Route::delete('/customer/{customer}', [CustomerController::class, 'destroy'])->name('admin.customer.delete');
+        Route::get('/customer/price-configs/create', [CustomerController::class, 'createPriceConfigsPage'])->name('admin.customer.price-configs.create.form');
+        Route::post('/customer/price-configs', [CustomerController::class, 'storePriceConfigs'])->name('admin.customer.price-configs.store');
+        Route::get('/customer/price-configs/{customer}/edit', [CustomerController::class, 'editPriceConfigsPage'])->name('admin.customer.price-configs.edit.form');
+        Route::post('/customer/price-configs/{customer}/edit', [CustomerController::class, 'updatePriceConfigs'])->name('admin.customer.price-configs.update');
     });
 
 });

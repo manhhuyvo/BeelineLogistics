@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Staff;
+use App\Models\Order;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
+use App\Models\Product;
 use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
@@ -113,15 +115,24 @@ class CustomerController extends Controller
         $data = collect($customer)->toArray();
         $customer->default_sender = !empty($customer->default_sender) ? unserialize($data['default_sender']) : []; // turn default sender to array
         $customer->default_receiver = !empty($customer->default_receiver) ? unserialize($data['default_receiver']) : []; // turn default sender to array
+        $customer->price_configs = !empty($customer->price_configs) ? unserialize($data['price_configs']) : []; // turn price configs to array
 
-        return view('admin.customer.show', [
+        $viewData = [            
             'customer' => $customer->toArray(),                      
             'customerTypes' => Customer::MAP_TYPES,
             'customerStatuses' => Customer::MAP_STATUSES,
             'staffsList' => $this->formatStaffsList(),
             'receiverZones' => Customer::MAP_ZONES,
             'customerStatusColors' => Customer::MAP_STATUSES_COLOR,
-        ]);
+        ];
+
+        if (!empty($customer->price_configs)) {
+            if (!empty($customer->price_configs['fulfillment_pricing'])) {
+                $viewData['fulfillment_pricing'] = $customer->price_configs['fulfillment_pricing'];
+            }
+        }
+
+        return view('admin.customer.show', $viewData);
     }
 
     /** Display the page for update customer details */
@@ -186,6 +197,134 @@ class CustomerController extends Controller
         $responseData = viewResponseFormat()->success()->data($customer->toArray())->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
 
         return redirect()->route('admin.customer.list')->with(['response' => $responseData]);
+    }
+
+    /** Displage page for edit price configuration */
+    public function editPriceConfigsPage(Request $request, Customer $customer)
+    {
+        $priceConfigs = unserialize($customer->price_configs);
+
+        return view('admin.customer.price-config', [
+            'customer' => $customer->toArray(),
+            'priceConfigs' => $priceConfigs,
+            'units' => Product::UNITS,
+        ]);
+    }
+
+    /** Handle request for saving price configuration */
+    public function updatePriceConfigs(Request $request, Customer $customer)
+    {
+        // Validate the request coming
+        $validation = $this->validatePriceConfigsRequest($request);
+        
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('admin.customer.price-configs.edit.form', ['customer' => $customer->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // We only want to take necessary fields
+        $data = $this->formatPriceConfigsRequest($request);
+
+        // Update details
+        if (!$customer->update($data)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->route('admin.customer.show', ['customer' => $customer->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->route('admin.customer.show', ['customer' => $customer->id])->with(['response' => $responseData]);
+    }
+
+    /** Validate price configs form request */
+    private function validatePriceConfigsRequest(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, []);
+
+        $validator->sometimes(
+            'fulfillment_per_order', 
+            ["required", "string", Rule::in(['on'])],
+            function ($input) {
+                return $input->apply_pricing_fulfillment == 'on' && empty($input->fulfillment_percentage);
+            }
+        );
+
+        $validator->sometimes(
+            'fulfillment_percentage', 
+            ["required", "string", Rule::in(['on'])],
+            function ($input) {
+                return $input->apply_pricing_fulfillment == 'on' && empty($input->fulfillment_per_order);
+            }
+        );
+
+        $validator->sometimes(
+            'fulfillment_per_order_amount', 
+            ["required", "numeric"],
+            function ($input) {
+                return $input->fulfillment_per_order == 'on';
+            }
+        );
+
+        $validator->sometimes(
+            'fulfillment_per_order_unit', 
+            ["required", Rule::in(Product::UNITS)],
+            function ($input) {
+                return $input->fulfillment_per_order == 'on';
+            }
+        );
+
+        $validator->sometimes(
+            'fulfillment_percentage_amount', 
+            ["required", "numeric"],
+            function ($input) {
+                return $input->fulfillment_percentage == 'on';
+            }
+        );
+        
+        return $validator;
+    }
+
+    private function formatPriceConfigsRequest(Request $request)
+    {
+        $data = $request->all();
+
+        //Avoid null values
+        foreach ($data as $key => $value) {
+            if ($value) {
+                continue;
+            }
+            
+            $data[$key] = "";
+        }
+
+        $returnData = [];
+        // Structure data for fulfillment per order
+        if (!empty($data['fulfillment_per_order'])) {
+            $returnData['fulfillment_pricing']['fulfillment_per_order'] = [
+                'fulfillment_per_order_amount' => $data['fulfillment_per_order_amount'],
+                'fulfillment_per_order_unit' => $data['fulfillment_per_order_unit'],
+            ];
+        }
+
+        // Structure data for fulfillment percentage
+        if (!empty($data['fulfillment_percentage'])) {
+            $returnData['fulfillment_pricing']['fulfillment_percentage'] = [
+                'fulfillment_percentage_amount' => $data['fulfillment_percentage_amount'],
+                'fulfillment_percentage_unit' => '%',
+            ];
+        }
+
+        // return for price configs
+        return ['price_configs' => serialize($returnData)];
     }
 
     /** Format the array for staffs list */

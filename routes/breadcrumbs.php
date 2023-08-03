@@ -127,3 +127,21 @@ Breadcrumbs::for('admin.product.edit.form', function (BreadcrumbTrail $trail, $p
     $trail->parent('admin.product.list');
     $trail->push("Edit {$product->name}", route('admin.product.edit.form', ['product' => $product->id]));
 });
+
+/** Breadcrumbs for FULFILLMENT */
+Breadcrumbs::for('admin.fulfillment.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Fulfillment', route('admin.fulfillment.list'));
+});
+Breadcrumbs::for('admin.fulfillment.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.fulfillment.list');
+    $trail->push('Add New Fulfillment', route('admin.fulfillment.create.form'));
+});
+Breadcrumbs::for('admin.fulfillment.show', function (BreadcrumbTrail $trail, $fulfillment): void {
+    $trail->parent('admin.fulfillment.list');
+    $trail->push("#{$fulfillment->id}", route('admin.fulfillment.show', ['fulfillment' => $fulfillment->id]));
+});
+Breadcrumbs::for('admin.fulfillment.edit.form', function (BreadcrumbTrail $trail, $fulfillment): void {
+    $trail->parent('admin.fulfillment.list');
+    $trail->push("Edit #{$fulfillment->id}", route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id]));
+});

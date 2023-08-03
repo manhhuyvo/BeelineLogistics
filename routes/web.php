@@ -118,6 +118,15 @@ Route::prefix('admin')->group(function () {
         Route::post('/customer/price-configs', [CustomerController::class, 'storePriceConfigs'])->name('admin.customer.price-configs.store');
         Route::get('/customer/price-configs/{customer}/edit', [CustomerController::class, 'editPriceConfigsPage'])->name('admin.customer.price-configs.edit.form');
         Route::post('/customer/price-configs/{customer}/edit', [CustomerController::class, 'updatePriceConfigs'])->name('admin.customer.price-configs.update');
+
+        /** [FULFILLMENT ROUTES] */
+        Route::get('/fulfillment', [ProductController::class, 'index'])->name('admin.fulfillment.list');
+        Route::get('/fulfillment/create', [ProductController::class, 'create'])->name('admin.fulfillment.create.form');
+        Route::post('/fulfillment', [ProductController::class, 'store'])->name('admin.fulfillment.store');
+        Route::get('/fulfillment/{fulfillment}', [ProductController::class, 'show'])->name('admin.fulfillment.show');
+        Route::get('/fulfillment/{fulfillment}/edit', [ProductController::class, 'edit'])->name('admin.fulfillment.edit.form');
+        Route::post('/fulfillment/{fulfillment}', [ProductController::class, 'update'])->name('admin.fulfillment.update');
+        Route::delete('/fulfillment/{fulfillment}', [ProductController::class, 'destroy'])->name('admin.fulfillment.delete');
     });
 
 });

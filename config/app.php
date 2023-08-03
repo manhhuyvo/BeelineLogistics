@@ -4,6 +4,7 @@ use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Staff;
 use App\Models\Customer;
+use App\Models\Fulfillment;
 use App\Models\Product\Group;
 use App\Models\Product;
 use Illuminate\Support\Carbon;
@@ -231,6 +232,7 @@ return [
         'Customer' => Customer::class,
         'ProductGroup' => Group::class,
         'Product' => Product::class,
+        'Fulfillment' => Fulfillment::class,
     ])->toArray(),
 
 ];

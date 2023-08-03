@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductGroupController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\FulfillmentController;
 use App\Http\Controllers\Admin\AjaxController;
 use App\Models\Staff;
 
@@ -120,13 +121,13 @@ Route::prefix('admin')->group(function () {
         Route::post('/customer/price-configs/{customer}/edit', [CustomerController::class, 'updatePriceConfigs'])->name('admin.customer.price-configs.update');
 
         /** [FULFILLMENT ROUTES] */
-        Route::get('/fulfillment', [ProductController::class, 'index'])->name('admin.fulfillment.list');
-        Route::get('/fulfillment/create', [ProductController::class, 'create'])->name('admin.fulfillment.create.form');
-        Route::post('/fulfillment', [ProductController::class, 'store'])->name('admin.fulfillment.store');
-        Route::get('/fulfillment/{fulfillment}', [ProductController::class, 'show'])->name('admin.fulfillment.show');
-        Route::get('/fulfillment/{fulfillment}/edit', [ProductController::class, 'edit'])->name('admin.fulfillment.edit.form');
-        Route::post('/fulfillment/{fulfillment}', [ProductController::class, 'update'])->name('admin.fulfillment.update');
-        Route::delete('/fulfillment/{fulfillment}', [ProductController::class, 'destroy'])->name('admin.fulfillment.delete');
+        Route::get('/fulfillment', [FulfillmentController::class, 'index'])->name('admin.fulfillment.list');
+        Route::get('/fulfillment/create', [FulfillmentController::class, 'create'])->name('admin.fulfillment.create.form');
+        Route::post('/fulfillment', [FulfillmentController::class, 'store'])->name('admin.fulfillment.store');
+        Route::get('/fulfillment/{fulfillment}', [FulfillmentController::class, 'show'])->name('admin.fulfillment.show');
+        Route::get('/fulfillment/{fulfillment}/edit', [FulfillmentController::class, 'edit'])->name('admin.fulfillment.edit.form');
+        Route::post('/fulfillment/{fulfillment}', [FulfillmentController::class, 'update'])->name('admin.fulfillment.update');
+        Route::delete('/fulfillment/{fulfillment}', [FulfillmentController::class, 'destroy'])->name('admin.fulfillment.delete');
     });
 
 });

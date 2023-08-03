@@ -156,7 +156,6 @@
     hideAllNeededElements();
 
     $(document).ready(function() {
-        console.log(ownerTargetSelect.val())
         ownerTargetSelect.change();
         let csrfTokenValue = $('#csrfToken').val();
         // Search input keyup event

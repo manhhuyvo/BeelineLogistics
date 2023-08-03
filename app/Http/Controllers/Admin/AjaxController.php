@@ -106,6 +106,43 @@ class AjaxController extends Controller
         return $view ?? view('admin.user.components.user-empty-owner', ['message' => 'Cannot find records matched.']);
     }
 
+    public function searchCustomer(Request $request)
+    {
+        // Validate the request coming
+        $validation = $this->validateRequest($request);
+                
+        if ($validation->fails()) {
+            // We don't want these data to be returned to AJAX while we don't need it
+            return view('admin.fulfillment.components.customer-empty', ['message' => ResponseMessageEnum::FAILED_VALIDATE_INPUT]);
+        }
+
+        // We only want to take necessary fields
+        $data = $this->formatRequestData($request);
+        // Search by customer name or customer_id
+        $result = Customer::where('full_name', 'like', "%{$data['searchTerm']}%")
+        ->orWhere('customer_id', 'like', "%{$data['searchTerm']}%")
+        ->get();       
+        // If result is not empty, then we filter data 
+        if (!$result->isEmpty()) {
+            $returnData = collect($result)->map(function($row) {
+                $row['status_color'] = Customer::MAP_STATUSES_COLOR[$row['status']] ?? '';
+                $row['status'] = Customer::MAP_STATUSES[$row['status']] ?? "Unknown";
+
+                return collect($row)->only([
+                    'id',
+                    'customer_id',
+                    'full_name',
+                    'status',
+                    'status_color',
+                ]);
+            });
+
+            $view = view('admin.fulfillment.components.customer-result', ['data' => $returnData]);
+        }
+
+        return $view ?? view('admin.fulfillment.components.customer-empty', ['message' => 'Cannot find records matched.']);
+    }
+
     private function validateRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [

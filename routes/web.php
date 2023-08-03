@@ -76,6 +76,7 @@ Route::prefix('admin')->group(function () {
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('admin.user.delete');
         /* [AJAX USER OWNER SEARCH] */
         Route::post('/ajax/search-user-owner', [AjaxController::class, 'searchUserOwner'])->name('admin.ajax.search-user-owner');
+        Route::post('/ajax/search-customer', [AjaxController::class, 'searchCustomer'])->name('admin.ajax.search-customer');
 
         /** [PRODUCT GROUP ROUTES] */
         Route::get('/product-group', [ProductGroupController::class, 'index'])->name('admin.product-group.list');

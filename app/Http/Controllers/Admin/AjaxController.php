@@ -143,6 +143,18 @@ class AjaxController extends Controller
         return $view ?? view('admin.fulfillment.components.customer-empty', ['message' => 'Cannot find records matched.']);
     }
 
+    public function searchFulfillmentProduct(Request $request)
+    {
+        // Validate the request coming
+        $validation = $this->validateRequest($request);
+                
+        if ($validation->fails()) {
+            // We don't want these data to be returned to AJAX while we don't need it
+            return view('admin.fulfillment.components.customer-empty', ['message' => ResponseMessageEnum::FAILED_VALIDATE_INPUT]);
+        }
+
+    }
+
     private function validateRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ProductGroupController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\FulfillmentController;
 use App\Http\Controllers\Admin\AjaxController;
+use App\Http\Controllers\Admin\SmallElementsLoader;
 use App\Models\Staff;
 
 /*
@@ -98,6 +99,9 @@ Route::prefix('admin')->group(function () {
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {
+        /** [SMALL ELEMENTS LOADER] */
+        Route::get('/small-elements/product-row', [SmallElementsLoader::class, 'getNewProductRow'])->name('admin.small-elements.product-row');
+
         /** [DASHBOARD ADMIN ROUTES] */
         Route::get('/dashboard', function() {
             return view('admin.welcome');

@@ -174,6 +174,18 @@
                     <input id="postage" type="text" name="postage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Postage Fee" value="{{ $request['postage'] ?? '' }}">
                 </div>
             </div>
+            <!-- PRODUCTS -->
+            <p class="text-lg font-medium text-blue-600 mt-1">
+                Products Details
+            </p>
+            <div class="row flex flex-col gap-2 px-2.5 justify-center" id="add_new_row_container">
+            </div>
+            <div class="row flex flex-row gap-2 px-2.5">
+                <button type="button" id="add_new_row" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2 w-fit">
+                    <i class="fa-solid fa-plus"></i>
+                    Add product
+                </button>
+            </div>
             <div class="row flex justify-center px-3 gap-2 mt-4">
                 <button type="submit" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">
                     Create
@@ -193,6 +205,10 @@
     // Owner section variables
     const selectedCustomerOwner = $('#selected-customer-owner')
     const customerOwnerDiv = $('#selected-owner-customer')
+
+    // Add new row
+    const addNewRowBtn = $('#add_new_row')
+    const addNewRowContainer = $('#add_new_row_container')
 
     // Hide all elements at first
     hideAllNeededElements();
@@ -229,6 +245,10 @@
                 ajaxCustomerSearchResult.hide();
             }
         })
+
+        addNewRowBtn.on('click', function() {
+            addNewRow();
+        })
     })
 
     // Hide the ajax result when click outside
@@ -250,6 +270,14 @@
     function hideAllNeededElements() {
         // Hide the normal fields, divs
         ajaxCustomerSearchResult.hide();
+    }
+
+    // Add new row
+    function addNewRow()
+    {
+        $.get("{{ route('admin.small-elements.product-row') }}", function(data) {
+            addNewRowContainer.append(data)
+        })
     }
 </script>
 @endsection

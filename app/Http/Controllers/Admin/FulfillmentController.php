@@ -19,18 +19,35 @@ class FulfillmentController extends Controller
 {
     public function create(Request $request)
     {
+        // Get all needed objects lists
         $staffsList = $this->formatStaffsList();
         $customersList = $this->formatCustomersList();
+        $productsList = $this->formatProductsList();
 
+        // Return the view
         return view('admin.fulfillment.create', [
             'staffsList' => $staffsList,
             'customersList' => $customersList,
+            'productsList' => $productsList,
             'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
             'fulfillmentStatusColors' => FulfillmentEnum::MAP_STATUS_COLORS,
             'paymentStatuses' => FulfillmentEnum::MAP_PAYMENT_STATUSES,
             'paymentStatusColors' => FulfillmentEnum::MAP_PAYMENT_COLORS,
             'countries' => FulfillmentEnum::MAP_COUNTRIES,
         ]);
+    }
+
+    /** Format the array for products list */
+    private function formatProductsList()
+    {
+        // Load all products with their groups
+        $allProducts = Product::with('productGroup')->get();
+        // Get group name and filter the un-used keys
+        return collect($allProducts)->map(function(Product $product) {
+            $product['group_name'] = $product->productGroup->name ?? '';
+
+            return collect($product)->only(['id', 'group_id', 'group_name', 'name', 'stock', 'status'])->toArray();
+        })->toArray();
     }
 
     /** Format the array for customers list */

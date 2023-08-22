@@ -187,4 +187,4 @@
   
   <div class="p-4 sm:ml-60 bg-white min-h-screen">
      <div class="mt-14 bt-white">
-      {{-- @include('admin.layout.breadcrumbs') --}}
+      @include('admin.layout.breadcrumbs')

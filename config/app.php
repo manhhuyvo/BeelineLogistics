@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\FulfillmentEnum;
 use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Staff;
@@ -233,6 +234,8 @@ return [
         'ProductGroup' => Group::class,
         'Product' => Product::class,
         'Fulfillment' => Fulfillment::class,
+        // Enums
+        'FulfillmentEnum' => FulfillmentEnum::class,
     ])->toArray(),
 
 ];

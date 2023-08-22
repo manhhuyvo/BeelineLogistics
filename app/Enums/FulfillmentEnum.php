@@ -68,4 +68,18 @@ class FulfillmentEnum
         self::COUNTRY_US => 'America',
         self::COUNTRY_CA => 'Canada',
     ];
+
+    /** Available shipping services */
+    const SHIPPING_ECONOMY = 1;
+    const SHIPPING_EXPRESS = 2;
+    const SHIPPING_ECONOMY_SIGNATURE = 3;
+    const SHIPPING_EXPRESS_SIGNATURE = 4;
+
+    const MAP_SHIPPING = [
+        self::SHIPPING_ECONOMY => 'Economy',
+        self::SHIPPING_EXPRESS => 'Express',
+        self::SHIPPING_ECONOMY_SIGNATURE => 'Economy - Signature Required',
+        self::SHIPPING_EXPRESS_SIGNATURE => 'Express - Signature Required',
+    ];
+
 }

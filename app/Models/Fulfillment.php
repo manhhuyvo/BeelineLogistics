@@ -28,7 +28,6 @@ class Fulfillment extends Model
         'state',
         'postcode',
         'country',
-        'labour_configs',
         'shipping_type',
         'postage',
         'tracking_number',
@@ -42,7 +41,6 @@ class Fulfillment extends Model
 
     protected $casts = [
         'product_configs' => 'array',
-        'labour_configs' => 'array',
         'created_at' => 'date:d/m/Y',
         'updated_at' => 'date:d/m/Y',
     ];

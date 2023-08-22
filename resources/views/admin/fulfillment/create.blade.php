@@ -11,6 +11,7 @@
     <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-1">
         <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.fulfillment.store') }}" method="POST">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
+            <!-- FULFILLMENT DETAILS -->
             <p class="text-lg font-medium text-blue-600 mt-1">
                 Fulfillment Details
             </p>
@@ -47,21 +48,6 @@
                 @include('admin.fulfillment.selected-customer')
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
-                <div class="flex flex-col flex-1">
-                    <label for="fulfillment_status" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Status</label>
-                    <select id="fulfillment_status" name="fulfillment_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
-                        @if (empty($request['fulfillment_status']))
-                        <option selected disabled>Choose a status</option>
-                        @endif
-                    @foreach($fulfillmentStatuses as $key => $value)
-                        @if (!empty($request['fulfillment_status']) && $request['fulfillment_status'] == $key)
-                        <option selected value="{{ $key }}">{{ $value }}</option>
-                        @else
-                        <option value="{{ $key }}">{{ $value }}</option>
-                        @endif
-                    @endforeach
-                    </select>
-                </div>
                 <div class="flex flex-col flex-1">
                     <label for="name" class="mb-2 text-sm font-medium text-gray-900">Full Name</label>
                     <input id="name" type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Full Name" value="{{ $request['name'] ?? '' }}">
@@ -107,9 +93,85 @@
                 </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
+                <div class="flex flex-col flex-1">
+                    <label for="fulfillment_status" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Status</label>
+                    <select id="fulfillment_status" name="fulfillment_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($request['fulfillment_status']))
+                        <option selected disabled>Choose a status</option>
+                        @endif
+                    @foreach($fulfillmentStatuses as $key => $value)
+                        @if (!empty($request['fulfillment_status']) && $request['fulfillment_status'] == $key)
+                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        @else
+                        <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <label for="product_payment_status" class="mb-2 text-sm font-medium text-gray-900">Product Payment Status</label>
+                    <select id="product_payment_status" name="product_payment_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($request['product_payment_status']))
+                        <option selected disabled>Choose a status</option>
+                        @endif
+                    @foreach($paymentStatuses as $key => $value)
+                        @if (!empty($request['product_payment_status']) && $request['product_payment_status'] == $key)
+                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        @else
+                        <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <label for="labour_payment_status" class="mb-2 text-sm font-medium text-gray-900">Labour Payment Status</label>
+                    <select id="labour_payment_status" name="labour_payment_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($request['labour_payment_status']))
+                        <option selected disabled>Choose a status</option>
+                        @endif
+                    @foreach($paymentStatuses as $key => $value)
+                        @if (!empty($request['labour_payment_status']) && $request['labour_payment_status'] == $key)
+                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        @else
+                        <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-2">
                     <label for="note" class="mb-2 text-sm font-medium text-gray-900">Note</label>
                     <textarea id="note" name="note" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Extra note" value="{{ $request['note'] ?? '' }}"></textarea>
+                </div>
+            </div>
+            <!-- SHIPPING INFORMATION -->
+            <p class="text-lg font-medium text-blue-600 mt-1">
+                Shipping Details
+            </p>
+            <div class="row flex sm:flex-row flex-col gap-2">
+                <div class="flex flex-col flex-1">
+                    <label for="shipping_type" class="mb-2 text-sm font-medium text-gray-900">Shipping Type</label>
+                    <select id="shipping_type" name="shipping_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($request['shipping_type']))
+                        <option selected disabled>Choose a shipping</option>
+                        @endif
+                    @foreach(FulfillmentEnum::MAP_SHIPPING as $key => $value)
+                        @if (!empty($request['shipping_type']) && $request['shipping_type'] == $key)
+                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        @else
+                        <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <label for="tracking_number" class="mb-2 text-sm font-medium text-gray-900">Tracking Number</label>
+                    <input id="tracking_number" type="text" name="tracking_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Tracking Number" value="{{ $request['tracking_number'] ?? '' }}">
+                </div>
+                <div class="flex flex-col flex-1">
+                    <label for="postage" class="mb-2 text-sm font-medium text-gray-900">Postage</label>
+                    <input id="postage" type="text" name="postage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Postage Fee" value="{{ $request['postage'] ?? '' }}">
                 </div>
             </div>
             <div class="row flex justify-center px-3 gap-2 mt-4">

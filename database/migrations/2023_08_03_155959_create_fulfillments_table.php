@@ -26,7 +26,6 @@ return new class extends Migration
             $table->string('state', 100);
             $table->string('postcode', 10);
             $table->string('country', 100);
-            $table->json('labour_configs');
             $table->string('shipping_type', 50);
             $table->unsignedFloat('postage');
             $table->string('tracking_number', 255);

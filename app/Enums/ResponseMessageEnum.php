@@ -19,7 +19,7 @@ class ResponseMessageEnum
     const LOGIN_REQUIRED = "You are not logged in. Please login to your account.";
     const LOGOUT_MESSAGE = "You have been logged out.";
     const INVALID_ACCESS = "You don't have permission to access this page.";
-    const WRONG_CREDENTIALS = "Your username and password does not match our records or yoru account is not active. Please try again";
+    const WRONG_CREDENTIALS = "Your username and password does not match our records or your account is not active. Please try again";
 
     /** User Profile */
     const CONRIM_PASSWORD_NOT_MATCH = "Password and confirm password do not match. Please try again.";

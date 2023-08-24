@@ -69,6 +69,8 @@ class FulfillmentEnum
         self::COUNTRY_CA => 'Canada',
     ];
 
+    /** Available units */
+
     /** Available shipping services */
     const SHIPPING_ECONOMY = 1;
     const SHIPPING_EXPRESS = 2;

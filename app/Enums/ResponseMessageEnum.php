@@ -27,4 +27,10 @@ class ResponseMessageEnum
     /** Ajax message */
     const AJAX_SUCCESS_FOUND = "Successfully retrieved data.";
     const AJAX_EMPTY_FOUND = "No records found.";
+
+    /** Other customized error messages */
+    const INVALID_PRODUCTS_PROVIDED = "There was no valid products provided.";
+    const FAILED_PRODUCT_PRICING_RETRIEVE = "Some errors occurred. Failed to retrieve product pricing.";
+    const FAILED_CUSTOMER_RETRIEVE = "Some errors occurred. Failed to retrieve customer details.";
+    const FAILED_CUSTOMER_PRICING_RETRIEVE = "Some errors occurred. Failed to retrieve customer pricing.";
 }

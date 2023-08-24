@@ -1,9 +1,8 @@
-
 <div class="flex sm:flex-row sm:items-end flex-col gap-2 flex-1 bg-gray-50 border-solid border-[1px] border-gray-500 rounded-lg py-3 m-0 sm:gap-0 gap-3" data-name="huy">
     <div class="flex flex-col flex-1">
         <label class="mb-2 text-sm font-medium text-gray-900">Product Name</label>
         <select name="selected_products[]" class="select_products bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
-            <option selected disabled>Add a product to list</option>
+            <option selected value=''>Add a product to list...</option>
         @foreach($productsList as $key => $value)
             <option value="{{ $key }}">{{ $value }}</option>
         @endforeach

@@ -66,11 +66,15 @@
                     <label for="address2" class="mb-2 text-sm font-medium text-gray-900">Address 2</label>
                     <input id="address2" type="text" name="address2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Address 2" value="{{ $request['address2'] ?? '' }}">
                 </div>
-            </div>
-            <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="suburb" class="mb-2 text-sm font-medium text-gray-900">Suburb</label>
                     <input id="suburb" type="text" name="suburb" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Suburb" value="{{ $request['suburb'] ?? '' }}">
+                </div>
+            </div>
+            <div class="row flex sm:flex-row flex-col gap-2">
+                <div class="flex flex-col flex-1">
+                    <label for="state" class="mb-2 text-sm font-medium text-gray-900">State</label>
+                    <input id="state" type="text" name="state" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="State" value="{{ $request['state'] ?? '' }}">
                 </div>
                 <div class="flex flex-col flex-1">
                     <label for="postcode" class="mb-2 text-sm font-medium text-gray-900">Postcode</label>
@@ -181,7 +185,7 @@
             <div class="row flex flex-col gap-2 px-2.5 justify-center" id="add_new_row_container">
             </div>
             <div class="row flex flex-row gap-2 px-2.5">
-                <button type="button" id="add_new_row" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2 w-fit">
+                <button type="button" id="add_new_row" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-blue-800 text-white font-medium w-auto hover:bg-blue-700 flex items-center gap-2 w-fit">
                     <i class="fa-solid fa-plus"></i>
                     Add product
                 </button>

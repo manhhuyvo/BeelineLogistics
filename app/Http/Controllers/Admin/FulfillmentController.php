@@ -37,6 +37,11 @@ class FulfillmentController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        return $request->all();
+    }
+
     /** Format the array for products list */
     private function formatProductsList()
     {

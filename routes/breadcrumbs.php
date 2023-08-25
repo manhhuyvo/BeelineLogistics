@@ -139,9 +139,9 @@ Breadcrumbs::for('admin.fulfillment.create.form', function (BreadcrumbTrail $tra
 });
 Breadcrumbs::for('admin.fulfillment.show', function (BreadcrumbTrail $trail, $fulfillment): void {
     $trail->parent('admin.fulfillment.list');
-    $trail->push("#{$fulfillment->id}", route('admin.fulfillment.show', ['fulfillment' => $fulfillment->id]));
+    $trail->push("Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('admin.fulfillment.show', ['fulfillment' => $fulfillment->id]));
 });
 Breadcrumbs::for('admin.fulfillment.edit.form', function (BreadcrumbTrail $trail, $fulfillment): void {
     $trail->parent('admin.fulfillment.list');
-    $trail->push("Edit #{$fulfillment->id}", route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id]));
+    $trail->push("Edit Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id]));
 });

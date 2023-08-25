@@ -205,6 +205,95 @@ class FulfillmentController extends Controller
         ]);
     }
 
+    public function update(Request $request, Fulfillment $fulfillment)
+    {
+        // Validate the request coming
+        $validation = $this->validateRequest($request);                
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Validate and format the products list provided
+        $productList = $this->validateAndFormatProductListRequest($request);
+        if (!$productList) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_PRODUCTS_PROVIDED)->send();
+
+            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // We only want to take necessary fields
+        $data = $this->formatRequestData($request);
+
+        // TODO: WE HAVE TO CONSIDER ON STOCK CONTROL AND INVOICE, BILLING STUFFS LATER ON
+
+        // Calculate total product cost and labour cost
+        $totalProductCost = $this->calculateTotalProductsCost($productList);
+        // If some errors occured during the calculation process, just throw error messages to FE
+        if (!$totalProductCost) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_PRODUCT_PRICING_RETRIEVE)->send();
+
+            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Get customer model
+        $customerModel = $fulfillment->customer;
+        // If this customer doesn't have any pricing configs for fulfillment, just end it and throw errors back to FE
+        if (empty($customerModel->price_configs) || empty(unserialize($customerModel->price_configs)['fulfillment_pricing'])) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_CUSTOMER_PRICING_RETRIEVE)->send();
+
+            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+        
+        // Get customer's default labour config
+        $customerFulfillmentPricing = unserialize($customerModel->price_configs)['fulfillment_pricing'] ?? [];
+        // We will always have something for the labour cost, so no need to validate
+        $totalLabourCost = $this->calculateTotalLabourCost($customerFulfillmentPricing, $totalProductCost);
+
+        // Set data for the product amount and labour amount
+        $fulfillmentTotalAmounts = [
+            'total_product_amount' => $totalProductCost['amount'] ?? 0,
+            'product_unit' => $totalProductCost['unit'] ?? '',
+            'total_labour_amount' => $totalLabourCost['amount'] ?? 0,
+            'labour_unit' => $totalLabourCost['unit'] ?? '',
+        ];
+
+        // Set data for the product list configs
+        $productList = [
+            'product_configs' => serialize($productList),
+        ];
+
+        // Merge the fulfillment details and the product configs together
+        $data = array_merge($data, $productList, $fulfillmentTotalAmounts);
+
+        // Update data for this record
+        if (!$fulfillment->update($data)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->route('admin.fulfillment.show', ['fulfillment' => $fulfillment->id])->with(['response' => $responseData]);
+    }
+
     /** Calculate total cost of labour */
     private function calculateTotalLabourCost(array $labourConfigs, array $productCost)
     {
@@ -311,7 +400,20 @@ class FulfillmentController extends Controller
                 continue;
             }
 
-            $finalData[] = [
+            // If there are some duplicated products, then we add total quantities of them together
+            $duplicate = !empty($finalData) 
+                        ? collect($finalData)->filter(function ($row) use ($productId) {
+                            return $row['product_id'] == $productId;
+                        })->first()
+                        : [];
+            // If we found a duplicate record, then we add the extra quantity into the current quantity
+            if (!empty($duplicate)) {
+                $finalData[$productId]['quantity'] += $selectedQuantities[$index];
+                continue;
+            }
+
+            // Otherwise if it doesn't exist, then simply add this array to the list
+            $finalData[$productId] = [
                 'product_id' => $productId,
                 'quantity' => $selectedQuantities[$index],
             ];

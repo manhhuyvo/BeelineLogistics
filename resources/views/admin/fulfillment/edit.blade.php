@@ -18,7 +18,7 @@
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer Owner</label>
-                    <select name="selected_products[]" class="select_products bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
+                    <select name="customer_id" class="select_products bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
                     @if (empty($fulfillment['customer_id']))
                         <option selected value=''>Assign to a customer...</option>
                     @endif
@@ -217,67 +217,11 @@
     const addNewRowBtn = $('#add_new_row')
     const addNewRowContainer = $('#add_new_row_container')
 
-    // Hide all elements at first
-    hideAllNeededElements();
-
     $(document).ready(function() {
-        let csrfTokenValue = $('#csrfToken').val();
-        // Search input keyup event
-        searchCustomerInput.on('keyup', function() {
-            // Get value search
-            let searchTerm = $(this).val();
-
-            // Only send Ajax if search Term is not empty
-            if (searchTerm != "") {
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ route('admin.ajax.search-customer') }}",
-                    headers: {
-                        'X-CSRF-Token': csrfTokenValue,
-                    },
-                    data: {
-                        "target": 'customers',
-                        "searchTerm": searchTerm,
-                    },
-                    success: function(response) {
-                        let html = response;
-                        // Show and append the view from ajax to this div
-                        ajaxCustomerSearchResult.show();
-                        ajaxCustomerSearchResult.html(html);
-                    },
-                    dataType: 'html'
-                })
-            } else {
-                // Otherwise we do something here
-                ajaxCustomerSearchResult.hide();
-            }
-        })
-
         addNewRowBtn.on('click', function() {
             addNewRow();
         })
     })
-
-    // Hide the ajax result when click outside
-    $('body').on('mouseup', function(e) {
-        // Hide the result 
-        if (!$(e.target).is(searchCustomerInput)) {
-            ajaxCustomerSearchResult.hide();
-        }
-    })
-
-    function clearCustomerDiv() {
-        $('input[name="customer_id"]').val('')
-        $('input[name="customer_full_name"]').val('')
-        $('input[name="customer_number"]').val('')
-        $('input[name="customer_status"]').val('')    
-        customerOwnerDiv.hide();
-    }
-
-    function hideAllNeededElements() {
-        // Hide the normal fields, divs
-        ajaxCustomerSearchResult.hide();
-    }
 
     // Add new row
     function addNewRow()

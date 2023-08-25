@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\FulfillmentEnum;
 use App\Models\User;
 use App\Models\Supplier;
@@ -236,6 +237,7 @@ return [
         'Fulfillment' => Fulfillment::class,
         // Enums
         'FulfillmentEnum' => FulfillmentEnum::class,
+        'CurrencyAndCountryEnum' => CurrencyAndCountryEnum::class,
     ])->toArray(),
 
 ];

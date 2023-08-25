@@ -138,6 +138,37 @@ class FulfillmentController extends Controller
         return redirect()->route('admin.fulfillment.create.form')->with(['response' => $responseData]);
     }
 
+    /** Display a specific fulfillment */
+    public function show(Request $request, Fulfillment $fulfillment)
+    {
+        // Get staff model
+        $staff = collect($fulfillment->staff)->toArray();
+
+        // Get customer model
+        $customer = collect($fulfillment->customer)->toArray();
+
+        // Turn the fulfillment into an array
+        $fulfillment = collect($fulfillment)->toArray();
+
+        // Get product model and assign it to the fulfillment
+        $fulfillment['product_configs'] = collect(unserialize($fulfillment['product_configs']))->map(function ($product) {
+            // Find the product model, product group and turn it to array
+            $productModel = Product::find($product['product_id']) ?? [];
+            $productGroup = !empty($productModel) ? collect($productModel->productGroup)->toArray() : [];
+            $product['model'] = array_merge(collect($productModel)->toArray(), ['product_group' => $productGroup]);
+
+            // Return this product back to list
+            return $product;
+        })->toArray();
+
+        // Return the view
+        return view('admin.fulfillment.show', [
+            'fulfillment' => $fulfillment,
+            'staff' => $staff,
+            'customer' => $customer,
+        ]);
+    }
+
     /** Calculate total cost of labour */
     private function calculateTotalLabourCost(array $labourConfigs, array $productCost)
     {

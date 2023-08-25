@@ -130,7 +130,7 @@
             <p class="text-lg font-medium text-blue-600 mt-1">
                 Products Details
             </p>
-            <div class="row flex flex-col gap-2 px-2.5 justify-center" id="add_new_row_container">
+            <div class="row flex flex-col gap-2 px-2.5 justify-center">
                 @foreach ($fulfillment['product_configs'] as $product)
                 <div class="flex sm:flex-row sm:items-end flex-col gap-2 flex-1 bg-gray-100 border-solid border-[1px] border-gray-500 rounded-lg py-3 m-0 sm:gap-0 gap-3">
                     <div class="flex flex-col flex-1">

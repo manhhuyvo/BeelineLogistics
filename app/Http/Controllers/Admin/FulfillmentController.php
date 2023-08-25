@@ -18,6 +18,7 @@ use Illuminate\Validation\Rule;
 
 class FulfillmentController extends Controller
 {
+    /** Display the page for create new fulfillment */
     public function create(Request $request)
     {
         // Get all needed objects lists
@@ -138,7 +139,7 @@ class FulfillmentController extends Controller
         return redirect()->route('admin.fulfillment.create.form')->with(['response' => $responseData]);
     }
 
-    /** Display a specific fulfillment */
+    /** Display the page for viewing fulfillment */
     public function show(Request $request, Fulfillment $fulfillment)
     {
         // Get staff model
@@ -166,6 +167,41 @@ class FulfillmentController extends Controller
             'fulfillment' => $fulfillment,
             'staff' => $staff,
             'customer' => $customer,
+        ]);
+    }
+
+    /** Display the page for edit fulfillment */
+    public function edit(Request $request, Fulfillment $fulfillment)
+    {
+        // Get all needed objects lists
+        $staffsList = $this->formatStaffsList();
+        $customersList = $this->formatCustomersList();
+        $productsList = $this->formatProductsList();
+
+        // Turn the fulfillment into an array
+        $fulfillment = collect($fulfillment)->toArray();
+
+        // Get product model and assign it to the fulfillment
+        $fulfillment['product_configs'] = collect(unserialize($fulfillment['product_configs']))->map(function ($product) {
+            // Find the product model, product group and turn it to array
+            $productModel = Product::find($product['product_id']) ?? [];
+            $product['model'] = collect($productModel)->toArray();
+
+            // Return this product back to list
+            return $product;
+        })->toArray();
+
+        // Return the view
+        return view('admin.fulfillment.edit', [
+            'fulfillment' => $fulfillment,
+            'staffsList' => $staffsList,
+            'customersList' => $customersList,
+            'productsList' => $productsList,
+            'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
+            'fulfillmentStatusColors' => FulfillmentEnum::MAP_STATUS_COLORS,
+            'paymentStatuses' => FulfillmentEnum::MAP_PAYMENT_STATUSES,
+            'paymentStatusColors' => FulfillmentEnum::MAP_PAYMENT_COLORS,
+            'countries' => FulfillmentEnum::MAP_COUNTRIES,
         ]);
     }
 
@@ -334,11 +370,15 @@ class FulfillmentController extends Controller
         // Load all products with their groups
         $allProducts = Product::with('productGroup')->get();
         // Get group name and filter the un-used keys
-        return collect($allProducts)->map(function(Product $product) {
+        $allProducts = collect($allProducts)->mapWithKeys(function(Product $product, int $index) {
             $product['group_name'] = $product->productGroup->name ?? '';
+            $product = collect($product)->only(['id', 'group_id', 'group_name', 'name', 'stock', 'status'])->toArray();
+            $formattedStatus = Product::MAP_STATUSES[$product['status']];
 
-            return collect($product)->only(['id', 'group_id', 'group_name', 'name', 'stock', 'status'])->toArray();
+            return [$product['id'] => "{$product['name']} - Group: {$product['group_name']} - Stock: {$product['stock']} ({$formattedStatus})"];
         })->toArray();
+
+        return $allProducts;
     }
 
     /** Format the array for customers list */

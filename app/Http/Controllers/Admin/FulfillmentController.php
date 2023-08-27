@@ -126,7 +126,6 @@ class FulfillmentController extends Controller
     /** Handle request for storing new fulfillment */
     public function store(Request $request)
     {
-        return $request->all();
         // Validate the request coming
         $validation = $this->validateRequest($request);                
         if ($validation->fails()) {
@@ -461,6 +460,12 @@ class FulfillmentController extends Controller
 
         // Eventually just return the total cost array
         return $totalProductCost;
+    }
+
+    /** Validate request for bulk actions */
+    private function validateBulkRequest(Request $request)
+    {
+
     }
     
     /** Validate form request for store and update functions */

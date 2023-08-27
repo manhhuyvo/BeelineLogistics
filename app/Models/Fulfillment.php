@@ -40,6 +40,7 @@ class Fulfillment extends Model
         'fulfillment_status',
         'product_payment_status',
         'labour_payment_status',
+        'shipping_status',
         'note',
     ];
 

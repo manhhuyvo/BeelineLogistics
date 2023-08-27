@@ -58,6 +58,19 @@ class FulfillmentEnum
         self::PAYMENT_STATUS_DEFAULT => 'orange',
     ];
 
+    /** Shipping Status constants */
+    const SHIPPING_WAITING = 1;
+    const SHIPPING_SHIPPED = 2;    
+    const SHIPPING_DELIVERED = 3;
+    const SHIPPING_RETURNED = 4;
+
+    const MAP_SHIPPING_STATUSES = [
+        self::SHIPPING_WAITING => 'Waiting',
+        self::SHIPPING_SHIPPED => 'Shipped',
+        self::SHIPPING_DELIVERED => 'Delivered',
+        self::SHIPPING_RETURNED => 'Returned',
+    ];
+
     /** Available countries */
     const COUNTRY_AU = 'AU';
     const COUNTRY_US = 'US';
@@ -69,7 +82,20 @@ class FulfillmentEnum
         self::COUNTRY_CA => 'Canada',
     ];
 
-    /** Available units */
+    /** Available bulk actions */
+    const BULK_MARK_SHIPPED = 'mark_shipped';
+    const BULK_MARK_DELIVERED = 'mark_delivered';
+    const BULK_MARK_RETURNED = 'mark_returned';
+    const BULK_MARK_LABOUR_PAID = 'mark_labour_paid';
+    const BULK_EXPORT_CSV = 'export_csv';
+
+    const MAP_BULK_ACTIONS = [
+        self::BULK_MARK_SHIPPED => 'Mark as Shipped',
+        self::BULK_MARK_DELIVERED => 'Mark as Delievered',
+        self::BULK_MARK_RETURNED => 'Mark as Returned',
+        self::BULK_MARK_LABOUR_PAID => 'Mark Paid Labour',
+        self::BULK_EXPORT_CSV => 'Export as CSV',
+    ];
 
     /** Available shipping services */
     const SHIPPING_ECONOMY = 1;

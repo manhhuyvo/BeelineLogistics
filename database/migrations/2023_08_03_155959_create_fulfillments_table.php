@@ -37,6 +37,7 @@ return new class extends Migration
             $table->string('fulfillment_status', 20);
             $table->string('product_payment_status', 20);
             $table->string('labour_payment_status', 20);
+            $table->string('shipping_status', 20);
             $table->string('note', 255);
             $table->timestamps();
         });

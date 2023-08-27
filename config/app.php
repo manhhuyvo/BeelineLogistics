@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 return [
 
@@ -227,6 +228,7 @@ return [
         'SupplierModel' => App\Models\Supplier::class,
         'Session' => Session::class,
         'Carbon' => Carbon::class,
+        'Str' => Str::class,
         'Auth' => Auth::class,
         'User' => User::class,
         'Staff' => Staff::class,

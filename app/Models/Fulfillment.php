@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Staff;
 use App\Models\Customer;
+use App\Models\Helpers\Serialize;
 use App\Models\Product;
 
 class Fulfillment extends Model

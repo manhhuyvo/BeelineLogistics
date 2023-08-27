@@ -18,6 +18,90 @@ use Illuminate\Validation\Rule;
 
 class FulfillmentController extends Controller
 {
+    /** Display the page for list of all customers */
+    public function index(Request $request)
+    {
+        // Retrieve list of all first
+        $allFulfillments = Fulfillment::with('staff', 'customer');
+
+        // Get staff and customer list
+        $staffsList = $this->formatStaffsList();
+        $customersList = $this->formatCustomersList();
+
+        // Validate the filter request
+        $data = $request->all();
+        if (!empty($data)){
+            // All other fields
+            foreach($data as $key => $value) {
+                if (empty($value) || $key == 'page' || $key == '_method' || Str::contains($key, 'date_')) {
+                    continue;
+                }
+                // Escape to prevent break
+                $key = htmlspecialchars($key);
+                $value = htmlspecialchars($value);
+
+                // Add conditions
+                $allFulfillments = $allFulfillments->where($key, 'like', "%$value%");
+            }
+
+            // Created between date range
+            if (!empty($data['date_from']) && !empty($data['date_to'])) {
+                $allFulfillments = $allFulfillments->whereBetween('created_at', [$data['date_from'], $data['date_to']]);
+            }
+        }
+
+        // Then add filter into the query
+        $allFulfillments = $allFulfillments->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
+        $allFulfillments = $allFulfillments->appends(request()->except('page'));        
+        $returnData = collect($allFulfillments)->only('data')->toArray();
+        // Getting the products models
+        $returnData['data'] = collect($returnData['data'])
+                ->map(function ($fulfillment) {
+                    $fulfillment['product_configs'] = unserialize($fulfillment['product_configs']);
+
+                    // Get product's model and its group model
+                    $productConfigsPlaceholder = [];
+                    foreach ($fulfillment['product_configs'] as $product) {
+                        // Find the product model, product group and turn it to array
+                        $productModel = Product::find($product['product_id']) ?? [];
+                        $productGroup = !empty($productModel) ? collect($productModel->productGroup)->toArray() : [];
+                        $product['model'] = array_merge(collect($productModel)->toArray(), ['product_group' => $productGroup]);
+
+                        // Assign this formatted product to the list
+                        $productConfigsPlaceholder[] = $product;
+                    }
+
+                    $fulfillment['product_configs'] = $productConfigsPlaceholder;
+                    
+                    return $fulfillment;
+                })->toArray();
+        // Get model for each of product in the fulfillment
+        $paginationData = collect($allFulfillments)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
+
+        return view('admin.fulfillment.list', [
+            'fulfillments' => $returnData,
+            'pagination' => $paginationData,   
+            'fulfillmentStatusColors' => FulfillmentEnum::MAP_STATUS_COLORS,
+            'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
+            'paymentStatuses' => FulfillmentEnum::MAP_PAYMENT_STATUSES,
+            'paymentStatusColors' => FulfillmentEnum::MAP_PAYMENT_COLORS,
+            'shippingTypes' => FulfillmentEnum::MAP_SHIPPING,
+            'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
+            'customersList' => $customersList,
+            'staffsList' => $staffsList,
+            'request' => $data,
+        ]);
+    }
+
     /** Display the page for create new fulfillment */
     public function create(Request $request)
     {
@@ -205,6 +289,7 @@ class FulfillmentController extends Controller
         ]);
     }
 
+    /** Handle request for updating fulfillment */
     public function update(Request $request, Fulfillment $fulfillment)
     {
         // Validate the request coming
@@ -292,6 +377,21 @@ class FulfillmentController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
 
         return redirect()->route('admin.fulfillment.show', ['fulfillment' => $fulfillment->id])->with(['response' => $responseData]);
+    }
+
+    /** Handle request for deleting fulfillment */
+    public function destroy(Request $request, Fulfillment $fulfillment)
+    {    
+        // Perform deletion
+        if (!$fulfillment->delete()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_DELETE_RECORD)->send();
+
+            return redirect()->route('admin.fulfillment.list')->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
+
+        return redirect()->route('admin.fulfillment.list')->with(['response' => $responseData]);
     }
 
     /** Calculate total cost of labour */

@@ -129,6 +129,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/fulfillment', [FulfillmentController::class, 'index'])->name('admin.fulfillment.list');
         Route::get('/fulfillment/create', [FulfillmentController::class, 'create'])->name('admin.fulfillment.create.form');
         Route::post('/fulfillment', [FulfillmentController::class, 'store'])->name('admin.fulfillment.store');
+        Route::post('/fulfillment/bulk', [FulfillmentController::class, 'bulk'])->name('admin.fulfillment.bulk');
         Route::get('/fulfillment/{fulfillment}', [FulfillmentController::class, 'show'])->name('admin.fulfillment.show');
         Route::get('/fulfillment/{fulfillment}/edit', [FulfillmentController::class, 'edit'])->name('admin.fulfillment.edit.form');
         Route::post('/fulfillment/{fulfillment}', [FulfillmentController::class, 'update'])->name('admin.fulfillment.update');

@@ -126,6 +126,7 @@ class FulfillmentController extends Controller
     /** Handle request for storing new fulfillment */
     public function store(Request $request)
     {
+        return $request->all();
         // Validate the request coming
         $validation = $this->validateRequest($request);                
         if ($validation->fails()) {
@@ -392,6 +393,12 @@ class FulfillmentController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
 
         return redirect()->route('admin.fulfillment.list')->with(['response' => $responseData]);
+    }
+
+    /** Handle request for bulk actions */
+    public function bulk(Request $request)
+    {        
+        return $request->all();
     }
 
     /** Calculate total cost of labour */

@@ -207,7 +207,7 @@ class FulfillmentController extends Controller
         ];
 
         // Merge the fulfillment details and the product configs together
-        $data = array_merge($data, $productList, $fulfillmentTotalAmounts, $shippingStatus);
+        $data = array_merge($data, $productList, $fulfillmentTotalAmounts);
 
         // Creating new record of fulfillment
         $newFulfillment = new Fulfillment($data);

@@ -1,7 +1,7 @@
 @extends('admin.layout.layout')
 @section('content')
 
-<div class="sm:rounded-lg">
+<div class="relative sm:rounded-lg">
     @include('admin.layout.confirm-delete')
     @include('admin.layout.response')
     <h2 class="text-2xl font-medium mt-2 mb-3">All fulfillments</h2>
@@ -34,6 +34,9 @@
                     </th>
                     <th scope="col" class="pl-4 sm:py-3 py-2">
                         Index
+                    </th>
+                    <th scope="col" class="px-4 sm:py-3 py-2">
+                        Current_Stage
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2">
                         Fulfillment_ID
@@ -99,6 +102,9 @@
                     </td>
                     <th scope="col" class="pl-4 py-3">
                         {{ $index + 1 }}
+                    </th>
+                    <th scope="row" class=" py-4 font-medium whitespace-nowrap text-[12px]">
+                        <span class="bg-{{ FulfillmentEnum::MAP_SHIPPING_COLORS[$fulfillment['shipping_status']] }}-500 py-2 px-3 rounded-lg text-white">{{ Str::upper(FulfillmentEnum::MAP_SHIPPING_STATUSES[$fulfillment['shipping_status']]) }}</span>
                     </th>
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {{ $fulfillment['id'] }}

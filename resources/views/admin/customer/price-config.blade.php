@@ -13,7 +13,7 @@
             <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex w-auto gap-2">
-                    <label for="apply_pricing_fulfillment" class="mb-2 text-sm font-medium text-gray-900">Import Custom Pricings?</label>
+                    <label for="apply_pricing_fulfillment" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Custom Pricings?</label>
                     <input id="apply_pricing_fulfillment" type="checkbox" name="apply_pricing_fulfillment" class="bg-gray-200 border-solid border-[1px] border-gray-500 rounded-[5px] focus:ring-blue-500 focus:border-blue-500 mt-[2px]" value="on"
                         @if (!empty($priceConfigs['fulfillment_pricing']))
                             checked = true
@@ -25,7 +25,7 @@
                     <input id="apply_pricing_import" type="checkbox" name="apply_pricing_import" class="bg-gray-200 border-solid border-[1px] border-gray-500 rounded-[5px] focus:ring-blue-500 focus:border-blue-500 mt-[2px]" value="on" disabled>
                 </div>
                 <div class="flex w-auto gap-2 opacity-40">
-                    <label for="apply_pricing_export" class="mb-2 text-sm font-medium text-gray-900">Import Custom Pricings?</label>
+                    <label for="apply_pricing_export" class="mb-2 text-sm font-medium text-gray-900">Export Custom Pricings?</label>
                     <input id="apply_pricing_export" type="checkbox" name="apply_pricing_export" class="bg-gray-200 border-solid border-[1px] border-gray-500 rounded-[5px] focus:ring-blue-500 focus:border-blue-500 mt-[2px]" value="on" disabled>
                 </div>
             </div>

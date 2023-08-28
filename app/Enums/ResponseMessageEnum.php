@@ -33,4 +33,9 @@ class ResponseMessageEnum
     const FAILED_PRODUCT_PRICING_RETRIEVE = "Some errors occurred. Failed to retrieve product pricing.";
     const FAILED_CUSTOMER_RETRIEVE = "Some errors occurred. Failed to retrieve customer details.";
     const FAILED_CUSTOMER_PRICING_RETRIEVE = "Some errors occurred. Failed to retrieve customer pricing.";
+
+    /** Bulk Actions messages */
+    const INVALID_BULK_ACTION = "The action provided is unvalid. Please try again.";
+    const SUCCESS_BULK_ACTION = "Successfully completed bulk action for all records.";
+    const FAILED_BULK_ACTION = "Unable to complete bulk action for all records. Please try again.";
 }

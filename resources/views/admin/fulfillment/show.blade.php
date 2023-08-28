@@ -89,6 +89,10 @@
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
+                    <label for="labour_payment_status" class="mb-2 text-sm font-medium text-gray-900">Shipping Status</label>
+                    <div class="bg-gray-50 font-semibold text-{{ FulfillmentEnum::MAP_SHIPPING_COLORS[$fulfillment['shipping_status']] }}-600 text-sm w-full py-2.5 px-2">{{ Str::upper(FulfillmentEnum::MAP_SHIPPING_STATUSES[$fulfillment['shipping_status']]) ?? 'Not Provided' }}</div>
+                </div>
+                <div class="flex flex-col flex-1">
                     <label for="shipping_type" class="mb-2 text-sm font-medium text-gray-900">Shipping Type</label>
                     <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ FulfillmentEnum::MAP_SHIPPING[$fulfillment['shipping_type']] ?? 'Not Provided' }}</div>
                 </div>

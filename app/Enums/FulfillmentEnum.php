@@ -71,6 +71,13 @@ class FulfillmentEnum
         self::SHIPPING_RETURNED => 'Returned',
     ];
 
+    const MAP_SHIPPING_COLORS = [
+        self::SHIPPING_WAITING => 'blue',
+        self::SHIPPING_SHIPPED => 'yellow',
+        self::SHIPPING_DELIVERED => 'green',
+        self::SHIPPING_RETURNED => 'red',
+    ];
+
     /** Available countries */
     const COUNTRY_AU = 'AU';
     const COUNTRY_US = 'US';
@@ -83,6 +90,7 @@ class FulfillmentEnum
     ];
 
     /** Available bulk actions */
+    const BULK_MARK_WAITING = 'mark_waiting';
     const BULK_MARK_SHIPPED = 'mark_shipped';
     const BULK_MARK_DELIVERED = 'mark_delivered';
     const BULK_MARK_RETURNED = 'mark_returned';
@@ -90,11 +98,20 @@ class FulfillmentEnum
     const BULK_EXPORT_CSV = 'export_csv';
 
     const MAP_BULK_ACTIONS = [
+        self::BULK_MARK_WAITING => 'Mark as Waiting',
         self::BULK_MARK_SHIPPED => 'Mark as Shipped',
         self::BULK_MARK_DELIVERED => 'Mark as Delievered',
         self::BULK_MARK_RETURNED => 'Mark as Returned',
         self::BULK_MARK_LABOUR_PAID => 'Mark Paid Labour',
         self::BULK_EXPORT_CSV => 'Export as CSV',
+    ];
+
+    const MAP_BULK_AND_STATUS = [
+        self::BULK_MARK_WAITING => self::SHIPPING_WAITING,
+        self::BULK_MARK_SHIPPED => self::SHIPPING_SHIPPED,
+        self::BULK_MARK_DELIVERED => self::SHIPPING_DELIVERED,
+        self::BULK_MARK_RETURNED => self::SHIPPING_RETURNED,
+        self::BULK_MARK_LABOUR_PAID => self::PAYMENT_STATUS_PAID,
     ];
 
     /** Available shipping services */

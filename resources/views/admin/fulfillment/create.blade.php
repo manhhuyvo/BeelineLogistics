@@ -155,6 +155,21 @@
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
+                    <label for="shipping_status" class="mb-2 text-sm font-medium text-gray-900">Shipping Status</label>
+                    <select id="shipping_status" name="shipping_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($request['shipping_status']))
+                        <option selected disabled>Choose a shipping</option>
+                        @endif
+                    @foreach(FulfillmentEnum::MAP_SHIPPING_STATUSES as $key => $value)
+                        @if (!empty($request['shipping_status']) && $request['shipping_status'] == $key)
+                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        @else
+                        <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col flex-1">
                     <label for="shipping_type" class="mb-2 text-sm font-medium text-gray-900">Shipping Type</label>
                     <select id="shipping_type" name="shipping_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
                         @if (empty($request['shipping_type']))
@@ -169,6 +184,8 @@
                     @endforeach
                     </select>
                 </div>
+            </div>
+            <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="tracking_number" class="mb-2 text-sm font-medium text-gray-900">Tracking Number</label>
                     <input id="tracking_number" type="text" name="tracking_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Tracking Number" value="{{ $request['tracking_number'] ?? '' }}">

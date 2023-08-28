@@ -1,16 +1,16 @@
-<div class="w-full flex sm:flex-row flex-col items-center gap-3 justify-end">
-    <p class="text-sm font-normal text-gray-500 w-fit text-right" id="selected-row-count-message">
+<div class="w-full flex flex-col gap-1 justify-start mt-3">
+    <p class="text-sm font-normal text-gray-500 ml-1 w-full font-bold" id="selected-row-count-message">
         <!-- Append the number of rows counted message here -->
     </p>
     <div class="flex gap-1 w-fit">        
-        <select id="bulk_action_dropdown" name="bulk_action" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5 w-fit">
-            <option selected disabled>Choose an action</option>
+        <select id="bulk_action_dropdown" name="bulk_action" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full">
+            <option selected disabled>Please choose an action</option>
             @foreach(FulfillmentEnum::MAP_BULK_ACTIONS as $key => $value)
                 <option value="{{ $key }}">{{ $value }}</option>
             @endforeach
         </select>
         <button type="button" onclick="performAction($(this))" class="px-3 py-2 rounded-[5px] sm:text-sm text-[12px] bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">
-            Submit
+            Perform
         </button>
     </div>
 </div>
@@ -24,6 +24,8 @@
     let bulkActionDropdown = $('#bulk_action_dropdown');
 
     $(document).ready(function () {
+        bulkActionDropdown.select2();
+        setUpSearchableDropdowns();
         // Event for select all rows checkbox
         selectAllRowsCheckbox.on('change', function() {
             // If select_all checkbox is checked

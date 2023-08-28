@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
 use App\Enums\CurrencyAndCountryEnum;
+use Exception;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class FulfillmentController extends Controller
 {
@@ -205,7 +207,7 @@ class FulfillmentController extends Controller
         ];
 
         // Merge the fulfillment details and the product configs together
-        $data = array_merge($data, $productList, $fulfillmentTotalAmounts);
+        $data = array_merge($data, $productList, $fulfillmentTotalAmounts, $shippingStatus);
 
         // Creating new record of fulfillment
         $newFulfillment = new Fulfillment($data);
@@ -397,7 +399,119 @@ class FulfillmentController extends Controller
     /** Handle request for bulk actions */
     public function bulk(Request $request)
     {        
-        return $request->all();
+        // Validate the request coming
+        $validation = $this->validateBulkRequest($request);                
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('admin.fulfillment.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Get the needed data from the request
+        $data = collect($request->all())->only(['selected_rows', 'bulk_action'])->toArray();
+        
+        // TODO: Process bulk export CSV first
+
+        // Array holders for success or fail records
+        $success = [];
+        $failed = [];
+        // Check the bulk action type and assign correct status
+        switch ($data['bulk_action']) {
+            case FulfillmentEnum::BULK_MARK_WAITING:
+            case FulfillmentEnum::BULK_MARK_SHIPPED:
+            case FulfillmentEnum::BULK_MARK_DELIVERED:
+            case FulfillmentEnum::BULK_MARK_RETURNED:
+                $newShippingStatus = FulfillmentEnum::MAP_BULK_AND_STATUS[$data['bulk_action']];
+                break;
+            case FulfillmentEnum::BULK_MARK_LABOUR_PAID:
+                $newPaymentStatus = FulfillmentEnum::MAP_BULK_AND_STATUS[$data['bulk_action']];
+                break;
+            default:
+                break;
+        }
+
+        // If the action provided is not within avaliable list, then return error
+        if (empty($newShippingStatus) && empty($newPaymentStatus)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_BULK_ACTION)->send();
+
+            return redirect()->route('admin.fulfillment.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        try {
+            DB::beginTransaction();
+            // Loop through list of records for action
+            foreach ($data['selected_rows'] as $fulfillmentId) {
+                // Get the fulfillment model
+                $fulfillment = Fulfillment::find($fulfillmentId);
+
+                // If the fulfillment is null, then add it to failed list
+                if (!$fulfillment) {
+                    $failed[$fulfillmentId] = ResponseMessageEnum::FAILED_VALIDATE_INPUT;
+                    continue;
+                }
+
+                // If it's correct valid record, then perform update
+                if (!empty($newShippingStatus)) {
+                    // Update status
+                    $fulfillment->shipping_status = $newShippingStatus;
+                }
+
+                // If it's correct valid record, then perform update
+                if (!empty($newPaymentStatus)) {
+                    // Update status
+                    $fulfillment->labour_payment_status = $newPaymentStatus;
+                }
+
+                // Save statuses to database
+                if (!$fulfillment->save()) {
+                    $failed[$fulfillmentId] = ResponseMessageEnum::FAILED_UPDATE_RECORD;
+                    continue;
+                }
+
+                // Add success list
+                $success[$fulfillmentId] = ResponseMessageEnum::SUCCESS_UPDATE_RECORD;
+
+                // TODO: add action logs for each fulfillment
+            }        
+
+            if (!empty($failed)) {
+                // if something fails in the middle, we rollback and return error message
+                DB::rollBack();
+    
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_BULK_ACTION)->send();
+    
+                return redirect()->route('admin.fulfillment.list')->with([
+                    'response' => $responseData,
+                    'request' => $request->all(),
+                ]);            
+            }
+    
+            // If no errors occurred, then we commit database and return success message
+            DB::commit();
+    
+            $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_BULK_ACTION)->send();
+    
+            return redirect()->route('admin.fulfillment.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]); 
+        } catch (Exception $e) {
+            // if something fails in the middle, we rollback and return error message
+            DB::rollBack();
+
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_BULK_ACTION)->send();
+
+            return redirect()->route('admin.fulfillment.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
     }
 
     /** Calculate total cost of labour */
@@ -465,7 +579,15 @@ class FulfillmentController extends Controller
     /** Validate request for bulk actions */
     private function validateBulkRequest(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            "bulk_action" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_BULK_ACTIONS))],
+            "selected_rows" => ["required", "array"],
+        ],
+        [
+            'selected_rows.required' => "Please provide a valid list of records for bulk action",
+        ]);
 
+        return $validator;
     }
     
     /** Validate form request for store and update functions */
@@ -486,6 +608,7 @@ class FulfillmentController extends Controller
             "product_payment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_PAYMENT_STATUSES))],
             "labour_payment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_PAYMENT_STATUSES))],
             "shipping_type" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_SHIPPING))],
+            'shipping_status' => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_SHIPPING_STATUSES))],
             "postage" => ["nullable", "numeric", "between:0, 9999.99"],
             "tracking_number" => ["nullable", "alpha_num"],
         ]);
@@ -571,6 +694,7 @@ class FulfillmentController extends Controller
             'product_payment_status',
             'labour_payment_status',
             'note',
+            'shipping_status',
             'shipping_type',
             'tracking_number',
             'postage',

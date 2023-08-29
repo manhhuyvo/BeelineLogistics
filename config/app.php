@@ -2,6 +2,7 @@
 
 use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\FulfillmentEnum;
+use App\Enums\GeneralEnum;
 use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Staff;
@@ -12,7 +13,9 @@ use App\Models\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 return [
@@ -207,6 +210,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
 
     ],
 
@@ -229,6 +233,8 @@ return [
         'Session' => Session::class,
         'Carbon' => Carbon::class,
         'Str' => Str::class,
+        'URL' => URL::class,
+        'Route' => Route::class,
         'Auth' => Auth::class,
         'User' => User::class,
         'Staff' => Staff::class,
@@ -240,6 +246,7 @@ return [
         // Enums
         'FulfillmentEnum' => FulfillmentEnum::class,
         'CurrencyAndCountryEnum' => CurrencyAndCountryEnum::class,
+        'GeneralEnum' => GeneralEnum::class,
     ])->toArray(),
 
 ];

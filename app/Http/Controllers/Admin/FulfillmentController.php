@@ -17,6 +17,9 @@ use App\Enums\CurrencyAndCountryEnum;
 use Exception;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Enums\GeneralEnum;
+use App\Enums\ResponseStatusEnum;
+use Illuminate\Support\Carbon;
 
 class FulfillmentController extends Controller
 {
@@ -35,7 +38,7 @@ class FulfillmentController extends Controller
         if (!empty($data)){
             // All other fields
             foreach($data as $key => $value) {
-                if (empty($value) || $key == 'page' || $key == '_method' || Str::contains($key, 'date_')) {
+                if (empty($value) || Str::contains($key, 'date_') || in_array($key, ['page', '_method', 'sort', 'direction'])) {
                     continue;
                 }
                 // Escape to prevent break
@@ -54,7 +57,7 @@ class FulfillmentController extends Controller
 
         // Then add filter into the query
         $allFulfillments = $allFulfillments->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
-        $allFulfillments = $allFulfillments->appends(request()->except('page'));        
+        $allFulfillments = $allFulfillments->appends(request()->except('page'));     
         $returnData = collect($allFulfillments)->only('data')->toArray();
         // Getting the products models
         $returnData['data'] = collect($returnData['data'])
@@ -412,8 +415,6 @@ class FulfillmentController extends Controller
 
         // Get the needed data from the request
         $data = collect($request->all())->only(['selected_rows', 'bulk_action'])->toArray();
-        
-        // TODO: Process bulk export CSV first
 
         // Array holders for success or fail records
         $success = [];
@@ -514,6 +515,132 @@ class FulfillmentController extends Controller
         }
     }
 
+    /** Handle request for export action */
+    public function export(Request $request)
+    {        
+        // Validate the request coming
+        $validation = $this->validateExportRequest($request);                
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('admin.fulfillment.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Get the needed data from the request
+        $data = collect($request->all())->only(['selected_rows', 'export_type'])->toArray();
+        
+        // Prepare data for export
+        foreach ($data['selected_rows'] as $fulfillmentId) {
+            
+            // Get the fulfillment model
+            $fulfillment = Fulfillment::find($fulfillmentId);
+
+            // If the fulfillment is null, then add it to failed list
+            if (!$fulfillment) {
+                $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+    
+                return redirect()->route('admin.fulfillment.list')->with([
+                    'response' => $responseData,
+                    'request' => $request->all(),
+                ]);
+            }
+        }
+
+        $allFulfillments = Fulfillment::with('staff', 'customer')
+                    ->whereIn('id', $data['selected_rows'])
+                    ->get();
+
+        // If we can't get the list of fulfillments, then just error out to the main page
+        if ($allFulfillments->isEmpty()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+
+            return redirect()->route('admin.fulfillment.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Getting the products models
+        $exportData = collect($allFulfillments)
+                ->map(function ($fulfillment) {
+                    $fulfillment['product_configs'] = unserialize($fulfillment['product_configs']);
+
+                    // Get product's model and its group model
+                    $productConfigsPlaceholder = [];
+                    foreach ($fulfillment['product_configs'] as $product) {
+                        // Find the product model, product group and turn it to array
+                        $productModel = Product::find($product['product_id']) ?? [];
+                        $productMessage = "{$productModel->name} x {$product['quantity']}";
+
+                        // Assign this formatted product to the list
+                        $productConfigsPlaceholder[] = $productMessage;
+                    }
+
+                    $fulfillment['customer_name'] = "{$fulfillment['customer']['customer_id']} {$fulfillment['customer']['full_name']}";
+                    $fulfillment['country'] = CurrencyAndCountryEnum::MAP_COUNTRIES[$fulfillment['country']] ?? ($fulfillment['country'] ?? '');
+                    $fulfillment['staff_manage'] = $fulfillment['staff']['full_name'] ?? $fulfillment['staff_id'];
+                    $fulfillment['shipping_type'] = FulfillmentEnum::MAP_SHIPPING[$fulfillment['shipping_type']] ?? 'Unknown';
+                    $fulfillment['fulfillment_status'] = FulfillmentEnum::MAP_FULFILLMENT_STATUSES[$fulfillment['fulfillment_status']] ?? 'Unknown';
+                    $fulfillment['shipping_status'] = FulfillmentEnum::MAP_SHIPPING_STATUSES[$fulfillment['shipping_status']] ?? 'Unknown';
+                    $fulfillment['product_payment_status'] = FulfillmentEnum::MAP_PAYMENT_STATUSES[$fulfillment['product_payment_status']] ?? 'Unknown';
+                    $fulfillment['labour_payment_status'] = FulfillmentEnum::MAP_PAYMENT_STATUSES[$fulfillment['labour_payment_status']] ?? 'Unknown';
+                    $fulfillment['date_created'] = Carbon::parse($fulfillment['created_at'])->format('d/m/Y');
+                    $fulfillment['products'] = implode(', ', $productConfigsPlaceholder);
+                    
+                    return collect($fulfillment)->only(FulfillmentEnum::EXPORT_COLUMNS)->toArray();
+                })->toArray();
+
+        // Prepare the file for export
+        $exportType = $data['export_type'] ?? GeneralEnum::EXPORT_TYPE_CSV;
+        $fileName = "fulfillment_export.{$exportType}";
+        $headers = array_merge(GeneralEnum::MAP_EXPORT_CONTENT_HEADERS[$exportType ?? GeneralEnum::EXPORT_TYPE_CSV], ['Content-Disposition' => "attachment; filename={$fileName}"]);
+        // Columns
+        $columns = collect(FulfillmentEnum::EXPORT_COLUMNS)->map(function($column) {
+            return ucwords(Str::replace('_', ' ', $column));
+        })->toArray();
+
+        return response()->stream(function() use($columns, $exportData) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($exportData as $row) {
+                $fileRow = [
+                    $row['id'] ?? '',
+                    $row['customer_name'] ?? '',
+                    $row['staff_manage'] ?? '',
+                    $row['products'] ?? '',
+                    $row['total_product_amount'] ?? '',
+                    $row['product_unit'] ?? '',
+                    $row['fulfillment_status'] ?? '',
+                    $row['shipping_status'] ?? '',
+                    $row['name'] ?? '',
+                    $row['phone'] ?? '',
+                    $row['address'] ?? '',
+                    $row['address2'] ?? '',
+                    $row['suburb'] ?? '',
+                    $row['state'] ?? '',
+                    $row['postcode'] ?? '',
+                    $row['country'] ?? '',
+                    $row['shipping_type'] ?? '',
+                    $row['tracking_number'] ?? '',
+                    $row['postage'] ?? '',
+                    $row['postage_unit'] ?? '',
+                    $row['total_labour_amount'] ?? '',
+                    $row['labour_unit'] ?? '',
+                    $row['product_payment_status'] ?? '',
+                    $row['labour_payment_status'] ?? '',
+                    $row['note'] ?? '',
+                    $row['date_created'] ?? '',
+                ];
+                fputcsv($file, $fileRow);
+            }
+            fclose($file);
+        }, ResponseStatusEnum::CODE_SUCCESS, $headers);
+    }
+
     /** Calculate total cost of labour */
     private function calculateTotalLabourCost(array $labourConfigs, array $productCost)
     {
@@ -574,6 +701,20 @@ class FulfillmentController extends Controller
 
         // Eventually just return the total cost array
         return $totalProductCost;
+    }
+
+    /** Validate request for export actions */
+    private function validateExportRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "export_type" => ["required", Rule::in(array_keys(GeneralEnum::MAP_EXPORT_TYPES))],
+            "selected_rows" => ["required", "array"],
+        ],
+        [
+            'selected_rows.required' => "Please provide a valid list of records for export",
+        ]);
+
+        return $validator;
     }
 
     /** Validate request for bulk actions */

@@ -2,16 +2,30 @@
     <p class="text-sm font-normal text-gray-500 ml-1 w-full font-bold" id="selected-row-count-message">
         <!-- Append the number of rows counted message here -->
     </p>
-    <div class="flex gap-1 w-fit">        
-        <select id="bulk_action_dropdown" name="bulk_action" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full">
-            <option selected disabled>Please choose an action</option>
-            @foreach(FulfillmentEnum::MAP_BULK_ACTIONS as $key => $value)
-                <option value="{{ $key }}">{{ $value }}</option>
-            @endforeach
-        </select>
-        <button type="button" onclick="performAction($(this))" class="px-3 py-2 rounded-[5px] sm:text-sm text-[12px] bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">
-            Perform
-        </button>
+    <div class="flex md:flex-row flex-col justify-between md:items-center gap-3">
+        <div class="flex gap-2 w-fit">        
+            <select id="bulk_action_dropdown" name="bulk_action" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full">
+                <option selected disabled>Please choose an action</option>
+                @foreach(FulfillmentEnum::MAP_BULK_ACTIONS as $key => $value)
+                    <option value="{{ $key }}">{{ $value }}</option>
+                @endforeach
+            </select>
+            <button type="button" onclick="performAction($(this))" class="px-3 py-2 rounded-[5px] sm:text-sm text-[12px] bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">
+                Update
+            </button>
+        </div>
+        <form class="flex gap-2 w-fit" method="POST" action="{{ route('admin.fulfillment.export') }}" id="export-form">
+            <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
+            <select name="export_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-[13px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full pl-3 pr-4 py-2.5">
+                <option selected disabled>Export Type</option>
+                @foreach(GeneralEnum::MAP_EXPORT_TYPES as $key => $value)
+                    <option value="{{ $key }}">{{ $value }}</option>
+                @endforeach
+            </select>
+            <button type="button" onclick="exportAction($(this))" class="px-3 py-2 rounded-[5px] sm:text-sm text-[12px] bg-yellow-600 text-white font-medium w-auto hover:bg-yellow-500 flex items-center gap-2">
+                Export
+            </button>
+        </form>
     </div>
 </div>
 
@@ -20,6 +34,7 @@
     let selectedRowsInputs = $('.selected_rows');
     let countMessageContainer = $('#selected-row-count-message');
     let mainPageForm = $('#main-page-form');
+    let exportForm = $('#export-form');
     let bulkActionField = $('#bulk_action');
     let bulkActionDropdown = $('#bulk_action_dropdown');
 
@@ -78,5 +93,14 @@
     function performAction(src)
     {
         mainPageForm.submit();
+    }
+
+    // Submit form for bulk action
+    function exportAction(src)
+    {
+        selectedRowsInputs.map(function() {
+            exportForm.append("<input type='hidden' name='selected_rows[]' value='" + $(this).val() + "' />");
+        });
+        exportForm.submit();
     }
 </script>

@@ -36,7 +36,12 @@
                         Index
                     </th>
                     <th scope="col" class="px-4 sm:py-3 py-2">
-                        Current_Stage
+                        <div class="flex items-center">
+                            <a href="#" class="flex items-center hover:underline">
+                                Current_Stage
+                                <i class="fa-solid fa-sort w-3 h-3 ml-1.5"></i>
+                            </a>
+                        </div>
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2">
                         Fulfillment_ID

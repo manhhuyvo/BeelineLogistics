@@ -95,7 +95,6 @@ class FulfillmentEnum
     const BULK_MARK_DELIVERED = 'mark_delivered';
     const BULK_MARK_RETURNED = 'mark_returned';
     const BULK_MARK_LABOUR_PAID = 'mark_labour_paid';
-    const BULK_EXPORT_CSV = 'export_csv';
 
     const MAP_BULK_ACTIONS = [
         self::BULK_MARK_WAITING => 'Mark as Waiting',
@@ -103,7 +102,6 @@ class FulfillmentEnum
         self::BULK_MARK_DELIVERED => 'Mark as Delievered',
         self::BULK_MARK_RETURNED => 'Mark as Returned',
         self::BULK_MARK_LABOUR_PAID => 'Mark Paid Labour',
-        self::BULK_EXPORT_CSV => 'Export as CSV',
     ];
 
     const MAP_BULK_AND_STATUS = [
@@ -127,4 +125,54 @@ class FulfillmentEnum
         self::SHIPPING_EXPRESS_SIGNATURE => 'Express - Signature Required',
     ];
 
+    /** Sortable fields */
+    const SORTABLE_FIELDS = [
+        'id',
+        'customer_id',
+        'staff_id',
+        'name',
+        'phone',
+        'address',
+        'shipping_status',
+        'shipping_type',
+        'tracking_number',
+        'postage',
+        'fulfillment_status',
+        'total_product_amount',
+        'product_payment_status',
+        'total_labour_amount',
+        'labour_payment_status',
+        'note',
+        'created_at',
+    ];
+
+    /** Columns for export */
+    const EXPORT_COLUMNS = [
+        'id',
+        'customer_name',
+        'staff_manage',
+        'products',
+        'total_product_amount',
+        'product_unit',
+        'fulfillment_status',
+        'shipping_status',
+        'name',
+        'phone',
+        'address',
+        'address2',
+        'suburb',
+        'state',
+        'postcode',
+        'country',
+        'shipping_type',
+        'tracking_number',
+        'postage',
+        'postage_unit',
+        'total_labour_amount',
+        'labour_unit',
+        'product_payment_status',
+        'labour_payment_status',
+        'note',
+        'date_created',
+    ];
 }

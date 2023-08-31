@@ -1,5 +1,5 @@
 <div class="w-full flex flex-col gap-1 justify-start mt-3">
-    <p class="text-sm font-normal text-gray-500 ml-1 w-full font-bold" id="selected-row-count-message">
+    <p class="text-sm font-normal text-red-500 ml-1 w-full font-bold" id="selected-row-count-message">
         <!-- Append the number of rows counted message here -->
     </p>
     <div class="flex md:flex-row flex-col justify-between md:items-center gap-3">

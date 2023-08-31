@@ -4,11 +4,11 @@
             Filter table
         </p>
         <p class="text-sm px-3 py-1 font-medium text-yellow-500 cursor-pointer hover:underline" id="toggle-filter">
-            <i class="fa-solid fa-eye mr-2"></i>
-            Visible
+            <i class="fa-solid fa-eye-slash mr-2"></i>
+            Hidden
         </p>
     </div>
-    <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.fulfillment.list') }}" method="get" id="filter-form">
+    <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center hidden" action="{{ route('admin.fulfillment.list') }}" method="get" id="filter-form">
         <div class="row flex gap-2 sm:flex-row flex-col">
             <div class="flex flex-col flex-1">
                 <label for="customer_id" class="mb-2 text-sm font-medium text-gray-900">Fulfillment ID</label>

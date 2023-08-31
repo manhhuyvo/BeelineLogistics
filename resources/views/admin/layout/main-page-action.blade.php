@@ -1,29 +1,39 @@
 <div class="w-full flex flex-col gap-1 justify-start mt-3">
-    <p class="text-sm font-normal text-red-500 ml-1 w-full font-bold" id="selected-row-count-message">
+    <p class="text-[15px] font-normal text-red-500 ml-1 w-full font-bold" id="selected-row-count-message">
         <!-- Append the number of rows counted message here -->
     </p>
-    <div class="flex md:flex-row flex-col justify-between md:items-center gap-3">
-        <div class="flex gap-2 w-fit">        
+    <h2 class="text-2xl font-medium mt-2 mb-3">Bulk Actions</h2>
+    <div class="flex md:flex-row flex-col md:items-center gap-3">
+        @if (!empty($generateInvoice))        
+        <form class="flex flex-col justify-between items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-green-500 p-3 bg-green-50 min-h-[121px]" method="POST" action='' id="generate-invoice-form">
+            <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
+            <p class="text-center text-sm font-semibold text-green-500 min-w-[175px]">Only apply for {{ $generateInvoice }}s of one customer</p>
+            <button type="button" onclick="exportAction($(this))" class="px-3 py-2.5 rounded-[5px] sm:text-sm text-[12px] bg-green-600 text-white font-medium hover:bg-green-500 flex justify-center items-center gap-1 w-full">
+                Create Invoice
+            </button>
+        </form>
+        @endif
+        <div class="flex flex-col items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-blue-500 p-3 bg-blue-50 min-h-[120px]">        
             <select id="bulk_action_dropdown" name="bulk_action" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full">
-                <option selected disabled>Please choose an action</option>
+                <option selected disabled>Please choose a status</option>
                 @foreach($bulkActions as $key => $value)
                     <option value="{{ $key }}">{{ $value }}</option>
                 @endforeach
             </select>
-            <button type="button" onclick="performAction($(this))" class="px-3 py-2 rounded-[5px] sm:text-sm text-[12px] bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">
-                Update
+            <button type="button" onclick="performAction($(this))" class="px-3 py-2 rounded-[5px] sm:text-sm text-[12px] bg-blue-600 text-white font-medium hover:bg-blue-500 flex items-center gap-2 flex gap-1 items-center justify-center w-full">
+                Update Status
             </button>
         </div>
-        <form class="flex gap-2 w-fit" method="POST" action='{{ route("{$exportRoute}") }}' id="export-form">
+        <form class="flex flex-col items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-yellow-500 p-3 bg-yellow-50 min-h-[121px] min-w-[175px]" method="POST" action='{{ route("{$exportRoute}") }}' id="export-form">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <select name="export_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-[13px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full pl-3 pr-4 py-2.5">
-                <option selected disabled>Export Type</option>
+                <option selected disabled>Choose an export type</option>
                 @foreach(GeneralEnum::MAP_EXPORT_TYPES as $key => $value)
                     <option value="{{ $key }}">{{ $value }}</option>
                 @endforeach
             </select>
-            <button type="button" onclick="exportAction($(this))" class="px-3 py-2 rounded-[5px] sm:text-sm text-[12px] bg-yellow-600 text-white font-medium w-auto hover:bg-yellow-500 flex items-center gap-2">
-                Export
+            <button type="button" onclick="exportAction($(this))" class="px-3 py-2 rounded-[5px] sm:text-sm text-[12px] bg-yellow-600 text-white font-medium hover:bg-yellow-500 flex justify-center items-center gap-1 w-full">
+                Export Data
             </button>
         </form>
     </div>

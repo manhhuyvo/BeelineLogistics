@@ -105,6 +105,7 @@ class FulfillmentController extends Controller
             'staffsList' => $staffsList,
             'bulkActions' => FulfillmentEnum::MAP_BULK_ACTIONS,
             'exportRoute' => 'admin.fulfillment.export',
+            'generateInvoice' => 'fulfillment',
             'request' => $data,
         ]);
     }

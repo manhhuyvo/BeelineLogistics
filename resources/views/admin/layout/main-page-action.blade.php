@@ -6,7 +6,7 @@
         <div class="flex gap-2 w-fit">        
             <select id="bulk_action_dropdown" name="bulk_action" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full">
                 <option selected disabled>Please choose an action</option>
-                @foreach(FulfillmentEnum::MAP_BULK_ACTIONS as $key => $value)
+                @foreach($bulkActions as $key => $value)
                     <option value="{{ $key }}">{{ $value }}</option>
                 @endforeach
             </select>
@@ -14,7 +14,7 @@
                 Update
             </button>
         </div>
-        <form class="flex gap-2 w-fit" method="POST" action="{{ route('admin.fulfillment.export') }}" id="export-form">
+        <form class="flex gap-2 w-fit" method="POST" action='{{ route("{$exportRoute}") }}' id="export-form">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <select name="export_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-[13px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full pl-3 pr-4 py-2.5">
                 <option selected disabled>Export Type</option>
@@ -99,7 +99,9 @@
     function exportAction(src)
     {
         selectedRowsInputs.map(function() {
-            exportForm.append("<input type='hidden' name='selected_rows[]' value='" + $(this).val() + "' />");
+            if ($(this).is(':checked')) {
+                exportForm.append("<input type='hidden' name='selected_rows[]' value='" + $(this).val() + "' />");
+            }
         });
         exportForm.submit();
     }

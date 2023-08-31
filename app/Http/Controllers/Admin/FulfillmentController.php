@@ -103,6 +103,8 @@ class FulfillmentController extends Controller
             'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
             'customersList' => $customersList,
             'staffsList' => $staffsList,
+            'bulkActions' => FulfillmentEnum::MAP_BULK_ACTIONS,
+            'exportRoute' => 'admin.fulfillment.export',
             'request' => $data,
         ]);
     }

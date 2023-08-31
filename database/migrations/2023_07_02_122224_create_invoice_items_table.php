@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('invoice_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('invoice_id')->index();
+            $table->unsignedBigInteger('order_id')->index();
+            $table->unsignedBigInteger('fulfillment_id')->index();
             $table->unsignedFloat('amount');
             $table->string('description', 255);
             $table->string('note', 255);

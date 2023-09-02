@@ -192,6 +192,7 @@
     let filterForm = $('#filter-form');
     let toggleFilterBtn = $('#toggle-filter');
 
+    filterForm.hide();
     $(document).ready(function () {
         $('#customer_id').select2();
         $('#staff_id').select2();

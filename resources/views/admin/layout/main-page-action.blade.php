@@ -5,9 +5,9 @@
     <h2 class="text-2xl font-medium mt-2 mb-3">Bulk Actions</h2>
     <div class="flex md:flex-row flex-col md:items-center gap-3">
         @if (!empty($generateInvoice))        
-        <form class="flex flex-col justify-between items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-green-500 p-3 bg-green-50 min-h-[121px]" method="POST" action='' id="generate-invoice-form">
+        <form class="flex flex-col justify-between items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-green-500 p-3 bg-green-50 min-h-[121px]" method="POST" action='{{ route('admin.invoice.store') }}' id="generate-invoice-form">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
-            <p class="text-center text-sm font-semibold text-green-500 min-w-[175px]">Only apply for {{ $generateInvoice }}s of one customer</p>
+            <p class="text-center text-sm font-semibold text-green-500 min-w-[175px]">Only apply for {{ $generateInvoice['type'] }}s of one customer</p>
             <button type="button" onclick="exportAction($(this))" class="px-3 py-2.5 rounded-[5px] sm:text-sm text-[12px] bg-green-600 text-white font-medium hover:bg-green-500 flex justify-center items-center gap-1 w-full">
                 Create Invoice
             </button>

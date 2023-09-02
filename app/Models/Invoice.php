@@ -19,31 +19,17 @@ class Invoice extends Model
         'customer_id',
         'total_amount',
         'outstanding_amount',
+        'due_date',
         'status',
+        'payment_status',
         'note',
-    ];
-
-    const STATUS_PAID = 1;
-    const STATUS_UNPAID = 2;
-    const STATUS_CANCEL = 3;    
-    const STATUS_DELETE = 4;
-
-    const INVOICE_STATUSES = [
-        self::STATUS_PAID,
-        self::STATUS_UNPAID,
-        self::STATUS_CANCEL,
-        self::STATUS_DELETE,
-    ];
-
-    const MAP_STATUSES = [
-        self::STATUS_PAID => 'Paid',
-        self::STATUS_UNPAID => 'Unpaid',
-        self::STATUS_CANCEL => 'Cancel',
-        self::STATUS_DELETE => 'Delete',
     ];
 
     protected $casts = [
         'price_configs' => 'array',
+        'due_date' => 'date:d/m/Y',
+        'created_at' => 'date:d/m/Y',
+        'updated_at' => 'date:d/m/Y',
     ];
 
     public function items(): HasMany

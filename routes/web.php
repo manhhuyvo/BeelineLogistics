@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\FulfillmentController;
 use App\Http\Controllers\Admin\AjaxController;
 use App\Http\Controllers\Admin\SmallElementsLoader;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Models\Staff;
 
 /*
@@ -96,6 +97,16 @@ Route::prefix('admin')->group(function () {
         Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit.form');
         Route::post('/product/{product}', [ProductController::class, 'update'])->name('admin.product.update');
         Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('admin.product.delete');
+
+        /** [INVOICE ROUTES] */
+        Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
+        Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice.list');
+        Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('admin.invoice.create.form');
+        Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
+        Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('admin.invoice.show');
+        Route::get('/invoice/{invoice}/edit', [InvoiceController::class, 'edit'])->name('admin.invoice.edit.form');
+        Route::post('/invoice/{invoice}', [InvoiceController::class, 'update'])->name('admin.invoice.update');
+        Route::delete('/invoice/{invoice}', [InvoiceController::class, 'destroy'])->name('admin.invoice.delete');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {

@@ -31,4 +31,31 @@ class InvoiceEnum
         self::STATUS_DEFAULT => 'Default',
     ];
 
+    /** List of targets that could be created invoice for */
+    public const TARGET_FULFILLMENT = 'fulfillment';
+    public const TARGET_ORDER = 'order';
+    public const TARGET_MANUAL = 'manual';
+
+    public const MAP_TARGETS = [
+        self::TARGET_FULFILLMENT => 'Fulfillment',
+        self::TARGET_ORDER => 'Order',
+        self::TARGET_MANUAL => 'Manual',
+    ];
+
+    public const AUTO_TARGETS = [
+        self::TARGET_FULFILLMENT,
+        self::TARGET_ORDER,
+    ];
+
+    /** Default item descriptions for each target */
+    public const DESCRIPTION_FULFILLMENT = "All the costs related to fulfillment.";
+    public const DESCRIPTION_ORDER = "All the costs related to order.";
+
+    public const MAP_DESCRIPTION_TARGET = [
+        self::TARGET_FULFILLMENT => self::DESCRIPTION_FULFILLMENT,
+        self::TARGET_ORDER => self::DESCRIPTION_ORDER,
+    ];
+
+    /** Invoice Default Due Date */
+    public const DEFAULT_DUE_DATE = 10;
 }

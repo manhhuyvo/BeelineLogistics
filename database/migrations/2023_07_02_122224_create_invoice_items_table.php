@@ -19,8 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id')->index();
             $table->unsignedBigInteger('fulfillment_id')->index();
             $table->unsignedFloat('amount');
-            $table->string('description', 255);
-            $table->string('note', 255);
+            $table->string('unit', 10);
+            $table->longText('description');
+            $table->longText('note');
             $table->timestamps();
         });
     }

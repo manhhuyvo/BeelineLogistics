@@ -7,8 +7,9 @@
         @if (!empty($generateInvoice))        
         <form class="flex flex-col justify-between items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-green-500 p-3 bg-green-50 min-h-[121px]" method="POST" action='{{ route('admin.invoice.store') }}' id="generate-invoice-form">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
+            <input type="hidden" name="create_invoice_from" value="{{ $generateInvoice['type'] }}"/>
             <p class="text-center text-sm font-semibold text-green-500 min-w-[175px]">Only apply for {{ $generateInvoice['type'] }}s of one customer</p>
-            <button type="button" onclick="exportAction($(this))" class="px-3 py-2.5 rounded-[5px] sm:text-sm text-[12px] bg-green-600 text-white font-medium hover:bg-green-500 flex justify-center items-center gap-1 w-full">
+            <button type="button" onclick="generateInvoiceAction($(this))" class="px-3 py-2.5 rounded-[5px] sm:text-sm text-[12px] bg-green-600 text-white font-medium hover:bg-green-500 flex justify-center items-center gap-1 w-full">
                 Create Invoice
             </button>
         </form>
@@ -43,8 +44,12 @@
     let selectAllRowsCheckbox = $('#select_all_rows');
     let selectedRowsInputs = $('.selected_rows');
     let countMessageContainer = $('#selected-row-count-message');
+
+    // Forms for bulk actions
     let mainPageForm = $('#main-page-form');
     let exportForm = $('#export-form');
+    let generateInvoiceForm = $('#generate-invoice-form');
+    
     let bulkActionField = $('#bulk_action');
     let bulkActionDropdown = $('#bulk_action_dropdown');
 
@@ -114,5 +119,16 @@
             }
         });
         exportForm.submit();
+    }
+
+    // Submit form for creating invoice
+    function generateInvoiceAction(src)
+    {        
+        selectedRowsInputs.map(function() {
+            if ($(this).is(':checked')) {
+                generateInvoiceForm.append("<input type='hidden' name='selected_rows[]' value='" + $(this).val() + "' />");
+            }
+        });
+        generateInvoiceForm.submit();
     }
 </script>

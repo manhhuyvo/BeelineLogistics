@@ -3,6 +3,7 @@
 
 <div class="relative sm:rounded-lg">
     @include('admin.layout.confirm-delete')
+    @include('admin.layout.confirm-window')
     @include('admin.layout.response')
     <h2 class="text-2xl font-medium mt-2 mb-3">All fulfillments</h2>
     <div class="w-full flex justify-between mb-3 items-center">

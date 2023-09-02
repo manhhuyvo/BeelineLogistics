@@ -9,7 +9,7 @@
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <input type="hidden" name="create_invoice_from" value="{{ $generateInvoice['type'] }}"/>
             <p class="text-center text-sm font-semibold text-green-500 min-w-[175px]">Only apply for {{ $generateInvoice['type'] }}s of one customer</p>
-            <button type="button" onclick="generateInvoiceAction($(this))" class="px-3 py-2.5 rounded-[5px] sm:text-sm text-[12px] bg-green-600 text-white font-medium hover:bg-green-500 flex justify-center items-center gap-1 w-full">
+            <button type="button" class="general-confirm-modal-initiate-btn px-3 py-2.5 rounded-[5px] sm:text-sm text-[12px] bg-green-600 text-white font-medium hover:bg-green-500 flex justify-center items-center gap-1 w-full" data-modal-toggle="generalActionModal" data-event-name="create new invoice from the selected records" data-event-handler="generateInvoiceAction" data-event-level="blue">
                 Create Invoice
             </button>
         </form>

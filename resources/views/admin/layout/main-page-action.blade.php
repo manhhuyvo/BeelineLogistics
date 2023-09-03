@@ -16,7 +16,7 @@
         </form>
         @endif
         <div class="flex flex-col items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-blue-500 p-3 bg-blue-50 min-h-[120px]">    
-            <p class="w-full text-sm font-semibold text-blue-500 min-w-[175px]">Update shipping or payment status for selected {{ $generateInvoice['type'] }}s</p>    
+            <p class="w-full text-sm font-semibold text-blue-500 min-w-[175px]">Update status for selected records</p>    
             <select id="bulk_action_dropdown" name="bulk_action" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full">
                 <option selected disabled>Please choose a status</option>
                 @foreach($bulkActions as $key => $value)
@@ -29,7 +29,7 @@
         </div>
         <form class="flex flex-col items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-yellow-500 p-3 bg-yellow-50 min-h-[121px] min-w-[175px]" method="POST" action='{{ route("{$exportRoute}") }}' id="export-form">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
-            <p class="w-full text-sm font-semibold text-yellow-500 min-w-[175px]">Export selected {{ $generateInvoice['type'] }}s into a file</p> 
+            <p class="w-full text-sm font-semibold text-yellow-500 min-w-[175px]">Export selected records into a file</p> 
             <select name="export_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-[13px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full pl-3 pr-4 py-2.5">
                 <option selected disabled>Choose an export type</option>
                 @foreach(GeneralEnum::MAP_EXPORT_TYPES as $key => $value)

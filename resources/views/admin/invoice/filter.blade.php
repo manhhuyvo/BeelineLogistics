@@ -19,8 +19,8 @@
                 <input type="number" step="0.01" name="total_amount_from" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" value="{{ $request['total_amount_from'] ?? '' }}">
             </div>
             <div class="flex flex-col flex-1">
-                <label for="total_amount_from" class="mb-2 text-sm font-medium text-gray-900">Total Amount To</label>
-                <input type="number" step="0.01" name="total_amount_from" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" value="{{ $request['total_amount_to'] ?? '' }}">
+                <label for="total_amount_to" class="mb-2 text-sm font-medium text-gray-900">Total Amount To</label>
+                <input type="number" step="0.01" name="total_amount_to" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" value="{{ $request['total_amount_to'] ?? '' }}">
             </div>
         </div>
         <div class="row flex gap-2 sm:flex-row flex-col">

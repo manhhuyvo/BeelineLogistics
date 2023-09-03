@@ -38,8 +38,8 @@ class ResponseMessageEnum
 
     /** Bulk Actions messages */
     const INVALID_BULK_ACTION = "The action provided is unvalid. Please try again.";
-    const SUCCESS_BULK_ACTION = "Successfully completed bulk action for all records.";
-    const FAILED_BULK_ACTION = "Unable to complete bulk action for all records. Please try again.";
+    const SUCCESS_BULK_ACTION = "Successfully completed bulk action for selected records.";
+    const FAILED_BULK_ACTION = "Unable to complete bulk action for selected records. Please try again.";
 
     /** Invoice Messages */
     const MANY_CUSTOMERS_ITEMS = "Some errors occurred. Please only select the records belong to one customer.";

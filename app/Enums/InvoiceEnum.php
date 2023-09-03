@@ -73,4 +73,27 @@ class InvoiceEnum
 
     /** Invoice Default Due Date */
     public const DEFAULT_DUE_DATE = 10;
+
+    /** Available Bulk Actions */
+    const BULK_MARK_ACTIVE = 'mark_active';
+    const BULK_MARK_PENDING = 'mark_pending';
+    const BULK_MARK_CANCELLED = 'mark_cancelled';
+    const BULK_MARK_WAIVED = 'mark_waived';
+    const BULK_MARK_OVERDUE = 'mark_overdue';
+
+    const MAP_BULK_ACTIONS = [
+        self::BULK_MARK_ACTIVE => 'Mark as Active',
+        self::BULK_MARK_PENDING => 'Mark as Pending',
+        self::BULK_MARK_CANCELLED => 'Mark as Cancelled',
+        self::BULK_MARK_WAIVED => 'Mark as Waived',
+        self::BULK_MARK_OVERDUE => 'Mark as Overdue',
+    ];
+
+    const MAP_BULK_AND_STATUS = [
+        self::BULK_MARK_ACTIVE => self::STATUS_ACTIVE,
+        self::BULK_MARK_PENDING => self::STATUS_PENDING,
+        self::BULK_MARK_CANCELLED => self::STATUS_CANCELLED,
+        self::BULK_MARK_WAIVED => self::STATUS_WAIVED,
+        self::BULK_MARK_OVERDUE => self::STATUS_OVERDUE,
+    ];
 }

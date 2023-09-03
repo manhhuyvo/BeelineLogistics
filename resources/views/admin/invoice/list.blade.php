@@ -21,7 +21,7 @@
         <p class="w-full text-center text-red-600 font-semibold text-lg">Unable to find any records.</p>
     @else
     @include('admin.layout.pagination')
-    <form class="w-full overflow-x-auto mb-2" method="POST" action="{{ route('admin.fulfillment.bulk') }}" id="main-page-form">
+    <form class="w-full overflow-x-auto mb-2" method="POST" action="{{ route('admin.invoice.bulk') }}" id="main-page-form">
         <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
         <input type="hidden" id="bulk_action" name="bulk_action" value=""/>
         <table class="w-full text-sm text-left text-gray-500 shadow-lg rounded-lg min-width">
@@ -141,7 +141,7 @@
             </tbody>
         </table>
     </form>
-    {{-- @include('admin.layout.main-page-action') --}}
+    @include('admin.layout.main-page-action')
     @endif
 </div>
 @endsection

@@ -66,7 +66,7 @@ class InvoiceController extends Controller
 
             // Total amount between range
             if (!empty($data['total_amount_from']) && !empty($data['total_amount_to'])) {
-                $allInvoices = $allInvoices->whereBetween('total_amount_from', [$data['total_amount_from'], $data['total_amount_to']]);
+                $allInvoices = $allInvoices->whereBetween('total_amount', [$data['total_amount_from'], $data['total_amount_to']]);
             }
         }
 
@@ -94,8 +94,8 @@ class InvoiceController extends Controller
             'invoiceStatuses' => InvoiceEnum::MAP_INVOICE_STATUSES,
             'paymentStatuses' => InvoiceEnum::MAP_PAYMENT_STATUSES,
             'paymentStatusColors' => InvoiceEnum::MAP_PAYMENT_STATUS_COLORS,
-            // 'bulkActions' => InvoiceEnum::MAP_BULK_ACTIONS,
-            // 'exportRoute' => 'admin.fulfillment.export',
+            'bulkActions' => InvoiceEnum::MAP_BULK_ACTIONS,
+            'exportRoute' => 'admin.invoice.export',
             'request' => $data,
         ]);
     }
@@ -170,6 +170,111 @@ class InvoiceController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
 
         return redirect()->route('admin.invoice.list')->with(['response' => $responseData]);
+    }
+
+    public function bulk(Request $request)
+    {
+        // Validate the request coming
+        $validation = $this->validateBulkRequest($request);                
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Get the needed data from the request
+        $data = collect($request->all())->only(['selected_rows', 'bulk_action'])->toArray();
+
+        // Array holders for success or fail records
+        $success = [];
+        $failed = [];
+        // Check the bulk action type and assign correct status
+        $newStatus = InvoiceEnum::MAP_BULK_AND_STATUS[$data['bulk_action']] ?? '';
+
+        // If the action provided is not within avaliable list, then return error
+        if (empty($newStatus)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_BULK_ACTION)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Start database action
+        try {
+            // begin database transaction
+            DB::beginTransaction();
+
+            // Loop through list of records for action
+            foreach ($data['selected_rows'] as $invoiceId) {
+                // Get the fulfillment model
+                $invoice = Invoice::find($invoiceId);
+
+                // If the fulfillment is null, then add it to failed list
+                if (!$invoice) {
+                    $failed[$invoiceId] = ResponseMessageEnum::FAILED_VALIDATE_INPUT;
+                    continue;
+                }
+
+                // If it's correct valid record, then perform update
+                if (!empty($newStatus)) {
+                    // Update status
+                    $invoice->status = $newStatus;
+                }
+
+                // Save statuses to database
+                if (!$invoice->save()) {
+                    $failed[$invoiceId] = ResponseMessageEnum::FAILED_UPDATE_RECORD;
+                    continue;
+                }
+
+                // Add success list
+                $success[$invoiceId] = ResponseMessageEnum::SUCCESS_UPDATE_RECORD;
+
+                // TODO: add action logs for each invoice
+            }        
+
+            if (!empty($failed)) {
+                // if something fails in the middle, we rollback and return error message
+                DB::rollBack();
+    
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_BULK_ACTION)->send();
+    
+                return redirect()->back()->with([
+                    'response' => $responseData,
+                    'request' => $request->all(),
+                ]);            
+            }
+    
+            // If no errors occurred, then we commit database and return success message
+            DB::commit();
+    
+            $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_BULK_ACTION)->send();
+    
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]); 
+        } catch (Exception $e) {
+            // if something fails in the middle, we rollback and return error message
+            DB::rollBack();
+
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_BULK_ACTION)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+    }
+
+    public function export(Request $request)
+    {
+
     }
 
     /** Handle request for generating invoice from Fulfillment list or Order list */
@@ -316,6 +421,20 @@ class InvoiceController extends Controller
 
         //  Make the validator
         $validator = Validator::make($data, $rules, $customMessage);
+
+        return $validator;
+    }
+
+    /** Validate request for bulk actions */
+    private function validateBulkRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "bulk_action" => ["required", Rule::in(array_keys(InvoiceEnum::MAP_BULK_ACTIONS))],
+            "selected_rows" => ["required", "array"],
+        ],
+        [
+            'selected_rows.required' => "Please provide a valid list of records for bulk action",
+        ]);
 
         return $validator;
     }

@@ -103,6 +103,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice.list');
         Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('admin.invoice.create.form');
         Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
+        Route::post('/invoice/bulk', [InvoiceController::class, 'bulk'])->name('admin.invoice.bulk');
+        Route::post('/invoice/export', [InvoiceController::class, 'export'])->name('admin.invoice.export');
         Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('admin.invoice.show');
         Route::get('/invoice/{invoice}/edit', [InvoiceController::class, 'edit'])->name('admin.invoice.edit.form');
         Route::post('/invoice/{invoice}', [InvoiceController::class, 'update'])->name('admin.invoice.update');

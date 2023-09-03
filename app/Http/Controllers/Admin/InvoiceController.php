@@ -211,10 +211,10 @@ class InvoiceController extends Controller
 
             // Loop through list of records for action
             foreach ($data['selected_rows'] as $invoiceId) {
-                // Get the fulfillment model
+                // Get the invoice model
                 $invoice = Invoice::find($invoiceId);
 
-                // If the fulfillment is null, then add it to failed list
+                // If the invoice is null, then add it to failed list
                 if (!$invoice) {
                     $failed[$invoiceId] = ResponseMessageEnum::FAILED_VALIDATE_INPUT;
                     continue;
@@ -274,7 +274,97 @@ class InvoiceController extends Controller
 
     public function export(Request $request)
     {
+        // Validate the request coming
+        $validation = $this->validateExportRequest($request);                
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
 
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Get the needed data from the request
+        $data = collect($request->all())->only(['selected_rows', 'export_type'])->toArray();
+        
+        // Prepare data for export
+        foreach ($data['selected_rows'] as $invoiceId) {
+            
+            // Get the invoice model
+            $invoice = Invoice::find($invoiceId);
+
+            // If the invoice is null, then add it to failed list
+            if (!$invoice) {
+                $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+    
+                return redirect()->back()->with([
+                    'response' => $responseData,
+                    'request' => $request->all(),
+                ]);
+            }
+        }
+
+        $allInvoices = Invoice::with('staff', 'customer', 'items')
+                    ->whereIn('id', $data['selected_rows'])
+                    ->get();
+
+        // If we can't get the list of invoices, then just error out to the main page
+        if ($allInvoices->isEmpty()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        $exportData = collect($allInvoices)->map(function($invoice) {            
+            // Manually assign an hcheck data for different columns
+            $invoice['customer_name'] = "{$invoice['customer']['customer_id']} {$invoice['customer']['full_name']}";
+            $invoice['staff_created'] = $invoice['staff']['full_name'] ?? $invoice['staff_id'];
+            $invoice['status'] = InvoiceEnum::MAP_INVOICE_STATUSES[$invoice['status']] ?? 'Unknown';
+            $invoice['payment_status'] = InvoiceEnum::MAP_PAYMENT_STATUSES[$invoice['payment_status']] ?? 'Unknown';
+            $invoice['invoice_items'] = count($invoice['items']) ?? 0;
+            $invoice['date_created'] = Carbon::parse($invoice['created_at'])->format('d/m/Y');
+                    
+            return collect($invoice)->only(InvoiceEnum::EXPORT_COLUMNS)->toArray();
+        })->toArray();
+        
+        // Prepare the file for export
+        $exportType = $data['export_type'] ?? GeneralEnum::EXPORT_TYPE_CSV;
+        $fileName = "invoice_export.{$exportType}";
+        $headers = array_merge(GeneralEnum::MAP_EXPORT_CONTENT_HEADERS[$exportType ?? GeneralEnum::EXPORT_TYPE_CSV], ['Content-Disposition' => "attachment; filename={$fileName}"]);
+        // Columns
+        $columns = collect(InvoiceEnum::EXPORT_COLUMNS)->map(function($column) {
+            return ucwords(Str::replace('_', ' ', $column));
+        })->toArray();
+
+        // Export the file
+        return response()->stream(function() use($columns, $exportData) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($exportData as $row) {
+                $fileRow = [
+                    $row['id'] ?? '',
+                    $row['customer_name'] ?? '',
+                    $row['reference'] ?? '',
+                    $row['total_amount'] ?? 0,
+                    $row['outstanding_amount'] ?? 0,
+                    $row['unit'] ?? '',
+                    $row['due_date'] ?? '',
+                    $row['status'] ?? '',
+                    $row['payment_status'] ?? '',
+                    $row['invoice_items'] ?? 0,
+                    $row['staff_created'] ?? '',
+                    $row['note'] ?? '',
+                    $row['date_created'] ?? '',
+                ];
+                fputcsv($file, $fileRow);
+            }
+            fclose($file);
+        }, ResponseStatusEnum::CODE_SUCCESS, $headers);
     }
 
     /** Handle request for generating invoice from Fulfillment list or Order list */
@@ -434,6 +524,20 @@ class InvoiceController extends Controller
         ],
         [
             'selected_rows.required' => "Please provide a valid list of records for bulk action",
+        ]);
+
+        return $validator;
+    }
+
+    /** Validate request for export actions */
+    private function validateExportRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "export_type" => ["required", Rule::in(array_keys(GeneralEnum::MAP_EXPORT_TYPES))],
+            "selected_rows" => ["required", "array"],
+        ],
+        [
+            'selected_rows.required' => "Please provide a valid list of records for export",
         ]);
 
         return $validator;

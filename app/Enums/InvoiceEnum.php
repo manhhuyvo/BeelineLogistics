@@ -96,4 +96,21 @@ class InvoiceEnum
         self::BULK_MARK_WAIVED => self::STATUS_WAIVED,
         self::BULK_MARK_OVERDUE => self::STATUS_OVERDUE,
     ];
+
+    /** Columns for export */
+    const EXPORT_COLUMNS = [
+        'id',
+        'customer_name',
+        'reference',
+        'total_amount',
+        'outstanding_amount',
+        'unit',
+        'due_date',
+        'status',
+        'payment_status',
+        'invoice_items',
+        'staff_created',
+        'note',
+        'date_created',
+    ];
 }

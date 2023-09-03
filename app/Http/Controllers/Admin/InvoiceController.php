@@ -22,6 +22,13 @@ use Illuminate\Support\Carbon;
 
 class InvoiceController extends Controller
 {
+    /** Displaying view for list of invoices */
+    public function list(Request $request)
+    {
+        
+    }
+    
+    /** Handle request for creating new invoice */
     public function store(Request $request)
     {
         // Validate the request coming
@@ -77,6 +84,7 @@ class InvoiceController extends Controller
         return redirect()->route('admin.fulfillment.list')->with(['response' => $responseData]);
     }
 
+    /** Handle request for generating invoice from Fulfillment list or Order list */
     private function handleAutoGeneration(string $type, array $recordsList)
     {
         // If some random errors occurred from somewhere, we just prevent it breaking the page by returning UNKNOWN error
@@ -143,7 +151,8 @@ class InvoiceController extends Controller
                 }
 
                 // If there was no errors occurred during looping and creating invoice items, then we update details for $invoice
-                $invoice->total_amount = $invoiceTotalAmount;           
+                $invoice->total_amount = $invoiceTotalAmount;
+                $invoice->outstanding_amount = $invoiceTotalAmount;           
                 // If some errors occurred during creating the invoice, then we rollback and return error
                 if(!$invoice->save()) {
                     // Rollback
@@ -312,6 +321,12 @@ class InvoiceController extends Controller
             }
 
             // TODO: INVOICE CREATED FOR ORDER
+            if ($type == InvoiceEnum::TARGET_ORDER) {
+                return [
+                    'error' => $type,
+                    'message' => ResponseMessageEnum::FAILED_ADD_NEW_RECORD,
+                ];
+            }
         }
 
         // Otherwise if this invoice is created manually, then we pick other fields

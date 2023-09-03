@@ -12,10 +12,18 @@ class InvoiceEnum
 
     public const MAP_INVOICE_STATUSES = [
         self::STATUS_ACTIVE => 'Active',
-        self::STATUS_ACTIVE => 'Pending',
-        self::STATUS_ACTIVE => 'Cancelled',
-        self::STATUS_ACTIVE => 'Waived',
-        self::STATUS_ACTIVE => 'Overdue',
+        self::STATUS_PENDING => 'Pending',
+        self::STATUS_CANCELLED => 'Cancelled',
+        self::STATUS_WAIVED => 'Waived',
+        self::STATUS_OVERDUE => 'Overdue',
+    ];
+
+    public const MAP_INVOICE_STATUS_COLORS = [
+        self::STATUS_ACTIVE => 'green',
+        self::STATUS_PENDING => 'blue',
+        self::STATUS_CANCELLED => 'orange',
+        self::STATUS_WAIVED => 'gray',
+        self::STATUS_OVERDUE => 'red',
     ];
 
     /** Invoice Payment Statuses */
@@ -29,6 +37,13 @@ class InvoiceEnum
         self::STATUS_UNPAID => 'Unpaid',
         self::STATUS_DEPOSIT => 'Deposit',
         self::STATUS_DEFAULT => 'Default',
+    ];
+
+    public const MAP_PAYMENT_STATUS_COLORS = [
+        self::STATUS_PAID => 'green',
+        self::STATUS_UNPAID => 'red',
+        self::STATUS_DEPOSIT => 'yellow',
+        self::STATUS_DEFAULT => 'gray',
     ];
 
     /** List of targets that could be created invoice for */

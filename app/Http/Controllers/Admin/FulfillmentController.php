@@ -51,7 +51,9 @@ class FulfillmentController extends Controller
 
             // Created between date range
             if (!empty($data['date_from']) && !empty($data['date_to'])) {
-                $allFulfillments = $allFulfillments->whereBetween('created_at', [$data['date_from'], $data['date_to']]);
+                $allFulfillments = $data['date_from'] == $data['date_to']
+                                ? $allFulfillments->whereDate('created_at', $data['date_from'])
+                                : $allFulfillments->whereBetween('created_at', [$data['date_from'], $data['date_to']]);
             }
         }
 

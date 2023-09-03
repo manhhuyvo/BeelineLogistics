@@ -145,3 +145,21 @@ Breadcrumbs::for('admin.fulfillment.edit.form', function (BreadcrumbTrail $trail
     $trail->parent('admin.fulfillment.list');
     $trail->push("Edit Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id]));
 });
+
+/** Breadcrumbs for INVOICE */
+Breadcrumbs::for('admin.invoice.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Invoice', route('admin.invoice.list'));
+});
+Breadcrumbs::for('admin.invoice.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.invoice.list');
+    $trail->push('Add New Invoice', route('admin.invoice.create.form'));
+});
+Breadcrumbs::for('admin.invoice.show', function (BreadcrumbTrail $trail, $invoice): void {
+    $trail->parent('admin.invoice.list');
+    $trail->push("Invoice #{$invoice->id} ({$invoice->name})", route('admin.invoice.show', ['invoice' => $invoice->id]));
+});
+Breadcrumbs::for('admin.invoice.edit.form', function (BreadcrumbTrail $trail, $invoice): void {
+    $trail->parent('admin.invoice.list');
+    $trail->push("Edit Invoice #{$invoice->id} ({$invoice->name})", route('admin.invoice.edit.form', ['invoice' => $invoice->id]));
+});

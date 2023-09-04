@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Customer;
+use App\Enums\InvoiceEnum;
 use Illuminate\Http\Request;
 
 class SmallElementsLoader extends Controller
@@ -14,6 +16,16 @@ class SmallElementsLoader extends Controller
 
         return view('admin.small_elements.product-row', [
             'productsList' => $productsList,
+        ]);
+    }
+
+    public function getNewInvoiceRow()
+    {
+        $customersList = $this->formatCustomersList();
+
+        return view('admin.small_elements.invoice-row', [
+            'customersList' => $customersList,
+            'createInvoiceFrom' => InvoiceEnum::MAP_TARGETS,
         ]);
     }
 
@@ -32,5 +44,25 @@ class SmallElementsLoader extends Controller
         })->toArray();
 
         return $allProducts;
+    }
+    
+    /** Format the array for customers list */
+    private function formatCustomersList(string $listType = '')
+    {
+        $filterStatuses = (!empty($listType) && $listType  == "all") ? Customer::CUSTOMER_STATUSES : [
+            Customer::STATUS_ACTIVE,
+            Customer::STATUS_PENDING,
+        ];
+
+        $allCustomers = Customer::whereIn('status', $filterStatuses)
+                    ->select('id', 'full_name', 'customer_id')
+                    ->get();
+        
+        $data = [];
+        foreach ($allCustomers as $customer) {
+            $data[$customer['id']] = "{$customer['full_name']} ({$customer['customer_id']})";
+        }
+
+        return $data;
     }
 }

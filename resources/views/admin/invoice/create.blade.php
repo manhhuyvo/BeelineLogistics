@@ -118,59 +118,40 @@
                     <tbody style="text-align: center !important;" id="add_new_row_container">
                         <tr class="bg-white border-b hover:bg-gray-50">
                             <td class="px-2 py-2">
-                                <button type="button" title="Remove row" class="font-medium text-red-600 hover:underline confirm-modal-initiate-btn">
-                                    <i class="fa-solid fa-trash-can text-lg"></i>
-                                </button>
                             </td>
-                            <th scope="row" class="px-2 py-2 text-center font-normal flex flex-col justify-start gap-2">
+                            <td scope="row" class="px-2 py-2 text-center font-normal flex flex-col justify-start gap-2">
                                 <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
-                                    <select id="item_type" name="item_type" class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
-                                        @if (empty($request['item_type']))
-                                        <option selected disabled>Choose item type</option>
-                                        @else
-                                        <option disabled>Choose item type</option>
-                                        @endif                    
+                                    <select name="item_type[]" class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
+                                        <option selected disabled>Choose item type</option>              
                                     @foreach($createInvoiceFrom as $key => $value)
-                                        @if (!empty($request['item_type']) && $request['item_type'] == $key)
-                                        <option selected value="{{ $key }}">{{ $value }}</option>
-                                        @else
                                         <option value="{{ $key }}">{{ $value }}</option>
-                                        @endif
                                     @endforeach
                                     </select>
                                 </div>
                                 <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
-                                    <select id="target_id" name="target_id" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5 searchableDropdowns">
-                                        @if (empty($request['target_id']))
-                                        <option selected disabled>Search item...</option>
-                                        @else
-                                        <option disabled>Search item...</option>
-                                        @endif                    
+                                    <select name="target_id[]" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5 searchableDropdowns target_id_dropdowns">
+                                        <option selected disabled>Choose item from list</option>        
                                     @foreach($customersList as $key => $value)
-                                        @if (!empty($request['target_id']) && $request['target_id'] == $key)
-                                        <option selected value="{{ $key }}">{{ $value }}</option>
-                                        @else
                                         <option value="{{ $key }}">{{ $value }}</option>
-                                        @endif
                                     @endforeach
                                     </select>
                                     <div class="text-sm h-full font-medium text-sm focus:ring-1 flex-1 p-2.5 bg-gray-200 border-none pl-3 rounded-r-lg">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </div>
                                 </div>
-                            </th>
-                            <th scope="row" class="px-2 py-2 font-normal text-gray-900 whitespace-nowrap">
-                                <textarea id="reference" type="text" name="reference" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-1.5 text-center resize-none min-h-[100px]"></textarea>
-                            </th>
-                            <th scope="row" class="px-2 py-2 font-normal">
-                                <input id="reference" type="number" min="0" step="0.01" name="reference" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]"/>
-                            </th>
-                            <th scope="row" class="px-2 py-2 font-normal">
-                                <input id="reference" type="number" min="0" name="reference" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]">
-                            </th>
-                            <th scope="row" class="px-2 py-2 font-normal">
-                                <input id="reference" type="number" min="0" step="0.01" name="reference" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]">
-                            </th>
+                            </td>
+                            <td scope="row" class="px-2 py-2 font-normal text-gray-900 whitespace-nowrap">
+                                <textarea type="text" name="description[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-1.5 text-center resize-none min-h-[100px]"></textarea>
+                            </td>
+                            <td scope="row" class="px-2 py-2 font-normal">
+                                <input type="number" min="0" step="0.01" name="price[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]"/>
+                            </td>
+                            <td scope="row" class="px-2 py-2 font-normal">
+                                <input type="number" min="0" name="quantity[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]">
+                            </td>
+                            <td scope="row" class="px-2 py-2 font-normal">
+                                <input type="number" min="0" step="0.01" name="amount[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]">
+                            </td>
                         </tr>
                     </tbody>
                     <tfoot>
@@ -222,7 +203,7 @@
 <script>
     // Add new row
     const addNewRowBtn = $('#add_new_row')
-    const addNewRowContainer = $('#add_new_row_container')
+    const addNewRowContainer = $('#add_new_row_container')    
 
     $(document).ready(function() {
         // Set up searchable dropdowns
@@ -230,7 +211,7 @@
         setUpSearchableDropdowns();
         // Don't round the border for this dropdown
         $('#customer_id').parent().find('.select2-container').removeClass('rounded-r-lg');
-        $('#target_id').parent().find('.select2-container').removeClass('rounded-r-lg');
+        $('.target_id_dropdowns').parent().find('.select2-container').removeClass('rounded-r-lg');
 
         // Add new row button click
         addNewRowBtn.on('click', function() {
@@ -241,7 +222,7 @@
     // Add new row
     function addNewRow()
     {
-        $.get("{{ route('admin.small-elements.product-row') }}", function(data) {
+        $.get("{{ route('admin.small-elements.invoice-row') }}", function(data) {
             addNewRowContainer.append(data)
         })
     }
@@ -251,7 +232,7 @@
     {
         // Set outter container's styling
         $('#customer_id').parent().find('.select2-container').addClass("bg-gray-50 text-gray-600 text-[12px] rounded-r-lg rounded-l-lg focus:ring-blue-500 focus:border-blue-500 w-full h-fit p-1.5 rounded-lg");
-        $('#target_id').parent().find('.select2-container').addClass("bg-white text-gray-600 text-[12px] w-full h-fit p-1.5 rounded-r-lg rounded-l-lg");
+        $('.target_id_dropdowns').parent().find('.select2-container').addClass("bg-white text-gray-600 text-[12px] w-full h-fit p-1.5 rounded-r-lg rounded-l-lg");
         $('.select2-container').attr('style', '');
         // Set inner div for dropdown
         $('.select2-selection').addClass("bg-transparent border-0");

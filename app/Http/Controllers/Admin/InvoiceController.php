@@ -99,6 +99,27 @@ class InvoiceController extends Controller
             'request' => $data,
         ]);
     }
+
+    /** Display view for create page */
+    public function create(Request $request)
+    {
+        // Get current logged-in user
+        $user = Auth::user();
+
+        // Get list of customer
+        $customersList = $this->formatCustomersList();
+
+        return view('admin.invoice.create', [
+            'user' => $user,
+            'customersList' => $customersList,
+            'invoiceStatusColors' => InvoiceEnum::MAP_INVOICE_STATUS_COLORS,
+            'invoiceStatuses' => InvoiceEnum::MAP_INVOICE_STATUSES,
+            'paymentStatuses' => InvoiceEnum::MAP_PAYMENT_STATUSES,
+            'paymentStatusColors' => InvoiceEnum::MAP_PAYMENT_STATUS_COLORS,
+            'currencies' => CurrencyAndCountryEnum::MAP_CURRENCIES,
+            'createInvoiceFrom' => InvoiceEnum::MAP_TARGETS,
+        ]);
+    }
     
     /** Handle request for creating new invoice */
     public function store(Request $request)
@@ -172,6 +193,7 @@ class InvoiceController extends Controller
         return redirect()->route('admin.invoice.list')->with(['response' => $responseData]);
     }
 
+    /** Handle requuest for bulk action */
     public function bulk(Request $request)
     {
         // Validate the request coming
@@ -272,6 +294,7 @@ class InvoiceController extends Controller
         }
     }
 
+    /** Handle request for export action */
     public function export(Request $request)
     {
         // Validate the request coming

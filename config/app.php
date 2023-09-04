@@ -3,6 +3,7 @@
 use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\FulfillmentEnum;
 use App\Enums\GeneralEnum;
+use App\Enums\InvoiceEnum;
 use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Staff;
@@ -245,6 +246,7 @@ return [
         'Fulfillment' => Fulfillment::class,
         // Enums
         'FulfillmentEnum' => FulfillmentEnum::class,
+        'InvoiceEnum' => InvoiceEnum::class,
         'CurrencyAndCountryEnum' => CurrencyAndCountryEnum::class,
         'GeneralEnum' => GeneralEnum::class,
     ])->toArray(),

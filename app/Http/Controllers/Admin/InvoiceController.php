@@ -106,7 +106,7 @@ class InvoiceController extends Controller
         // Get current logged-in user
         $user = Auth::user();
 
-        // Get list of customer
+        // Get list of needed models
         $customersList = $this->formatCustomersList();
 
         return view('admin.invoice.create', [
@@ -124,6 +124,7 @@ class InvoiceController extends Controller
     /** Handle request for creating new invoice */
     public function store(Request $request)
     {
+        return $request->all();
         // Validate the request coming
         $validation = $this->validateRequest($request);                
         if ($validation->fails()) {

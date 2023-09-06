@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Customer;
+use App\Models\Order;
 use App\Enums\InvoiceEnum;
+use App\Models\Fulfillment;
 use Illuminate\Http\Request;
 
 class SmallElementsLoader extends Controller
@@ -19,12 +21,27 @@ class SmallElementsLoader extends Controller
         ]);
     }
 
-    public function getNewInvoiceRow()
+    public function getNewInvoiceRow($target)
     {
         $customersList = $this->formatCustomersList();
+        if (!empty($target) && $target == InvoiceEnum::TARGET_MANUAL) {
+            return view('admin.small_elements.invoice-row', [
+                'customersList' => $customersList,
+                'target' => $target,
+                'createInvoiceFrom' => InvoiceEnum::MAP_TARGETS,
+            ]);
+        }
 
+        if (!empty($target) && $target == InvoiceEnum::TARGET_FULFILLMENT) {
+            $targetsList = $this->formatFulfillmentsList();
+        } else if (!empty($target) && $target == InvoiceEnum::TARGET_ORDER) {
+            $targetsList = $this->formatOrdersList();
+        }
+        
         return view('admin.small_elements.invoice-row', [
             'customersList' => $customersList,
+            'targetsList' => $targetsList,
+            'target' => $target,
             'createInvoiceFrom' => InvoiceEnum::MAP_TARGETS,
         ]);
     }
@@ -61,6 +78,34 @@ class SmallElementsLoader extends Controller
         $data = [];
         foreach ($allCustomers as $customer) {
             $data[$customer['id']] = "{$customer['full_name']} ({$customer['customer_id']})";
+        }
+
+        return $data;
+    }
+
+    /** Format the array for fulfillments list */
+    private function formatFulfillmentsList(string $listType = '')
+    {
+        $allFulfillments = Fulfillment::with('customer')
+                    ->get();
+        
+        $data = [];
+        foreach ($allFulfillments as $fulfillment) {
+            $data[$fulfillment['id']] = "Fulfillment #{$fulfillment['id']} ({$fulfillment['customer']['customer_id']})";
+        }
+
+        return $data;
+    }
+
+    /** Format the array for fulfillments list */
+    private function formatOrdersList(string $listType = '')
+    {
+        $allOrders = Order::with('customer')
+                    ->get();
+        
+        $data = [];
+        foreach ($allOrders as $order) {
+            $data[$order['id']] = "Order #{$order['id']} ({$order['customer']['customer_id']})";
         }
 
         return $data;

@@ -58,9 +58,9 @@
                         @endif
                     @foreach($currencies as $key => $value)
                         @if (!empty($request['unit']) && $request['unit'] == $key)
-                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        <option selected value="{{ $value }}">{{ $value }}</option>
                         @else
-                        <option value="{{ $key }}">{{ $value }}</option>
+                        <option value="{{ $value }}">{{ $value }}</option>
                         @endif
                     @endforeach
                     </select>
@@ -116,6 +116,7 @@
                         </tr>
                     </thead>
                     <tbody style="text-align: center !important;" id="add_new_row_container">
+                        <!--
                         <tr class="bg-white border-b hover:bg-gray-50">
                             <td class="px-2 py-2">
                             </td>
@@ -152,38 +153,50 @@
                             <td scope="row" class="px-2 py-2 font-normal">
                                 <input type="number" min="0" step="0.01" name="amount[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]">
                             </td>
-                        </tr>
+                        </tr> -->
                     </tbody>
                     <tfoot>
                         <tr class="font-normal text-gray-900">
                             <td colspan="2" class="pt-3">
-                                <div class="row flex flex-row gap-2 px-2.5">
-                                    <button type="button" id="add_new_row" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-blue-800 text-white font-medium w-auto hover:bg-blue-700 flex items-center gap-2 w-fit">
+                                <div class="row flex flex-col gap-2 px-2.5">
+                                    <button type="button" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 font-medium w-fit min-w-[150px] hover:bg-blue-800 hover:text-white flex items-center gap-2 w-fit add_new_row" data-target="{{ InvoiceEnum::TARGET_FULFILLMENT }}">
                                         <i class="fa-solid fa-plus"></i>
-                                        Add row
+                                        Add Fulfillment Row
                                     </button>
                                 </div>
                             </td>
                             <td class="p-2.5"></td>
                             <td class="p-2.5">Items</td>
                             <td class="p-2.5 text-center">x</td>
-                            <td class="p-2.5 text-center">5</td>
+                            <td class="p-2.5 text-center" id="total-item-count">0</td>
                         </tr>
                         <tr class="font-normal text-gray-900">
-                            <td class="p-2.5"></td>
-                            <td class="p-2.5"></td>
+                            <td colspan="2" class="pt-3">
+                                <div class="row flex flex-col gap-2 px-2.5">
+                                    <button type="button" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 hover:text-white font-medium w-fit min-w-[150px] hover:bg-blue-800 flex items-center gap-2 w-fit add_new_row" data-target="{{ InvoiceEnum::TARGET_ORDER }}">
+                                        <i class="fa-solid fa-plus"></i>
+                                        Add Order Row
+                                    </button>
+                                </div>
+                            </td>
                             <td class="p-2.5"></td>
                             <td class="p-2.5">Sub-total</td>
-                            <td class="p-2.5 text-center">AUD</td>
-                            <td class="p-2.5 text-center">5000</td>
+                            <td class="p-2.5 text-center"><span class="total-currency"></span></td>
+                            <td class="p-2.5 text-center"><span class="total-amount">0.00</span></td>
                         </tr>
                         <tr class="font-semibold text-gray-900 text-lg">
-                            <td class="p-2.5"></td>
-                            <td class="p-2.5"></td>
+                            <td colspan="2" class="pt-3">
+                                <div class="row flex flex-col gap-2 px-2.5">
+                                    <button type="button" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 hover:text-white font-medium w-fit min-w-[150px] hover:bg-blue-800 flex items-center gap-2 w-fit add_new_row" data-target="{{ InvoiceEnum::TARGET_MANUAL }}">
+                                        <i class="fa-solid fa-plus"></i>
+                                        Add Manual Row
+                                    </button>
+                                </div>
+                            </td>
                             <td class="p-2.5"></td>
                             <th scope="row" class="p-2.5 border-t border-gray-500">Total</th>
-                            <td class="p-2.5 border-t border-gray-500 text-center">AUD</td>
-                            <td class="p-2.5 border-t border-gray-500 text-center">5000</td>
+                            <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-currency"></span></td>
+                            <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-amount">0.00</span></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -200,9 +213,14 @@
     </div>
 </div>
 
+<!-- 
+    TODO:
+        DISPLAY DIFFERENT LISTS FOR DIFFERENT ITEM TYPES
+-->
+
 <script>
     // Add new row
-    const addNewRowBtn = $('#add_new_row')
+    const addNewRowBtn = $('.add_new_row')
     const addNewRowContainer = $('#add_new_row_container')    
 
     $(document).ready(function() {
@@ -215,15 +233,33 @@
 
         // Add new row button click
         addNewRowBtn.on('click', function() {
-            addNewRow();
+            addNewRow($(this).attr('data-target'));
+        })
+
+        // Set currency on invoice currency change
+        $('#unit').on('change', function() {
+            $('.total-currency').html($(this).val())
         })
     })
 
     // Add new row
-    function addNewRow()
+    function addNewRow(target)
     {
-        $.get("{{ route('admin.small-elements.invoice-row') }}", function(data) {
+        let url = "";
+        if (target == '{{ InvoiceEnum::TARGET_FULFILLMENT }}') {
+            url = "{{ route('admin.small-elements.invoice-row', ['target' => 'fulfillment']) }}";
+        } else if (target == '{{ InvoiceEnum::TARGET_ORDER }}') {
+            url = "{{ route('admin.small-elements.invoice-row', ['target' => 'order']) }}";
+        } else {
+            url = "{{ route('admin.small-elements.invoice-row', ['target' => 'manual']) }}";
+        }
+
+        $.get(url, function(data) {
             addNewRowContainer.append(data)
+        }).done(function() {
+            // Set number of rows count
+            let numberOfRows = $('.invoice-row').length;
+            $('#total-item-count').html(numberOfRows);
         })
     }
 

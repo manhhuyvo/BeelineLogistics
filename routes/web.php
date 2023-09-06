@@ -114,7 +114,7 @@ Route::prefix('admin')->group(function () {
     Route::group(['middleware' => 'staff.permission:all'], function () {
         /** [SMALL ELEMENTS LOADER] */
         Route::get('/small-elements/product-row', [SmallElementsLoader::class, 'getNewProductRow'])->name('admin.small-elements.product-row');
-        Route::get('/small-elements/invoice-row', [SmallElementsLoader::class, 'getNewInvoiceRow'])->name('admin.small-elements.invoice-row');
+        Route::get('/small-elements/invoice-row/{target}', [SmallElementsLoader::class, 'getNewInvoiceRow'])->name('admin.small-elements.invoice-row');
 
         /** [DASHBOARD ADMIN ROUTES] */
         Route::get('/dashboard', function() {

@@ -22,6 +22,7 @@ class Invoice extends Model
         'total_amount',
         'outstanding_amount',
         'due_date',
+        'unit',
         'status',
         'payment_status',
         'note',

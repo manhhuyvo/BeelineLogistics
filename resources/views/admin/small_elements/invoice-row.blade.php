@@ -11,7 +11,7 @@
             <p class="font-semibold">{{ Str::upper($target) }}</p>
         </div>
         <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
-                <select name="target_id[]" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5 searchableDropdowns target_id_dropdowns">
+                <select name="target_id[]" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5 searchableDropdowns target_id_dropdowns" required>
                     <option selected disabled>Choose {{ $target }} from list</option>                  
                 @foreach($targetsList as $key => $value)
                     <option value="{{ $key }}">{{ $value }}</option>
@@ -30,16 +30,16 @@
         @endif
     </td>
     <td scope="row" class="px-2 py-2 font-normal text-gray-900 whitespace-nowrap">
-        <textarea type="text" name="description[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-1.5 resize-none min-h-[100px]"></textarea>
+        <textarea type="text" name="description[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-1.5 resize-none min-h-[100px]" required></textarea>
     </td>
     <td scope="row" class="px-2 py-2 font-normal">
-        <input type="number" min="0" step="0.01" name="price[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px] priceInput"/>
+        <input type="number" min="0" step="0.01" name="price[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px] priceInput" required/>
     </td>
     <td scope="row" class="px-2 py-2 font-normal">
-        <input type="number" min="0" step="0.01" name="quantity[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px] quantityInput">
+        <input type="number" min="0" step="0.01" name="quantity[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px] quantityInput" required>
     </td>
     <td scope="row" class="px-2 py-2 font-normal">
-        <input type="number" readonly min="0" step="0.01" name="amount[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px] amountInput">
+        <input type="number" readonly min="0" step="0.01" name="amount[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px] amountInput" required>
     </td>
 </tr>
 

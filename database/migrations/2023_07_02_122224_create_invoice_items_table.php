@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('invoice_id')->index();
             $table->unsignedBigInteger('order_id')->index();
             $table->unsignedBigInteger('fulfillment_id')->index();
+            $table->unsignedFloat('price');
+            $table->unsignedFloat('quantity');
             $table->unsignedFloat('amount');
             $table->string('unit', 10);
             $table->longText('description');

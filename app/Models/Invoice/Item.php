@@ -20,6 +20,9 @@ class Item extends Model
         'order_id',
         'fulfillment_id',
         'description',
+        'price',
+        'unit',
+        'quantity',
         'amount',
         'note',
     ];

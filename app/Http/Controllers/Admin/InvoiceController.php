@@ -9,6 +9,7 @@ use App\Models\Invoice\Item as InvoiceItem;
 use App\Models\Fulfillment;
 use App\Models\Invoice;
 use App\Models\Customer;
+use App\Models\Order;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -124,7 +125,6 @@ class InvoiceController extends Controller
     /** Handle request for creating new invoice */
     public function store(Request $request)
     {
-        return $request->all();
         // Validate the request coming
         $validation = $this->validateRequest($request);                
         if ($validation->fails()) {
@@ -141,7 +141,7 @@ class InvoiceController extends Controller
 
         // Although this case would probably never happen, we should just check if it's empty for some reasons, then we throw an error
         if (empty($data) || empty($data['success']) || empty($data['data'])) {
-            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
 
             return redirect()->back()->with([
                 'response' => $responseData,
@@ -151,7 +151,7 @@ class InvoiceController extends Controller
 
         // If the $data after sanitizing is empty or has an error occurred, then we return error
         if (!empty($data['error'])) {
-            $responseData = viewResponseFormat()->error()->data($validation->messages())->message($data['message'] ?? ResponseMessageEnum::UNKNOWN_ERROR)->send();
+            $responseData = viewResponseFormat()->error()->message($data['message'] ?? ResponseMessageEnum::UNKNOWN_ERROR)->send();
 
             return redirect()->back()->with([
                 'response' => $responseData,
@@ -160,11 +160,15 @@ class InvoiceController extends Controller
         }
 
         // If all the data was generated successfully, then we start creating records into the database
-        $invoiceGenerationResponse = $this->handleAutoGeneration($data['success'], $data['data']);     
+        if (in_array($data['success'], InvoiceEnum::AUTO_TARGETS)) {
+            $invoiceGenerationResponse = $this->handleAutoGeneration($data['success'], $data['data']);
+        } else {
+            $invoiceGenerationResponse = $this->handleManualGeneration($data['data']);
+        }
 
         // If some errors occurred during the database actions, then we display that error to the FE
         if (!empty($invoiceGenerationResponse['error']) || empty($invoiceGenerationResponse['success'])) {
-            $responseData = viewResponseFormat()->error()->data($validation->messages())->message($data['message'] ?? ResponseMessageEnum::UNKNOWN_ERROR)->send();
+            $responseData = viewResponseFormat()->error()->message($data['message'] ?? ResponseMessageEnum::UNKNOWN_ERROR)->send();
 
             return redirect()->back()->with([
                 'response' => $responseData,
@@ -502,6 +506,144 @@ class InvoiceController extends Controller
         ];
     }
 
+    /** Handle request for generating invoice from manual action */
+    private function handleManualGeneration(array $records)
+    {
+        // If some random errors occurred from somewhere, we just prevent it breaking the page by returning UNKNOWN error
+        if (empty($records)) {
+            return [
+                'error' => InvoiceEnum::TARGET_MANUAL,
+                'message' => ResponseMessageEnum::UNKNOWN_ERROR,
+            ];
+        }
+
+        try {
+            // Start transaction
+            DB::beginTransaction();
+
+            // Get the invoice reference first
+            $invoiceItems = $records['invoice_items'] ?? [];
+
+            // Create Invoice
+            $invoice = new Invoice([
+                'customer_id' => $records['customer_id'] ?? 0,
+                'staff_id' => $records['staff_id'] ?? 0,
+                'reference' => htmlspecialchars($records['reference'] ?? ''),
+                'total_amount' => 0, // Set the amount is 0, we can update it later
+                'outstanding_amount' => 0, // Set the amount is 0, we can update it later
+                'unit' => $records['unit'] ?? CurrencyAndCountryEnum::CURRENCY_USD,
+                'due_date' => $records['due_date'],
+                'status' => $records['status'],
+                'payment_status' => InvoiceEnum::STATUS_UNPAID, // Default payment status is as UNPAID
+                'note' => $records['note'], // Default note is as empty string
+            ]);
+
+            // If some errors occurred during creating the invoice, then we rollback and return error
+            if(!$invoice->save()) {
+                // Rollback
+                DB::rollBack();
+
+                // Return error
+                return [
+                    'error' => InvoiceEnum::TARGET_MANUAL,
+                    'message' => ResponseMessageEnum::FAILED_ADD_NEW_RECORD,
+                ];
+            }
+
+            /** If the invoice was created successfully, we loop through the list of invoice items and add them to the invoice */
+            $invoiceTotalAmount = 0;
+            foreach ($invoiceItems as $item) {
+                // Assign this new invoice item into the invoice that we jsut created
+                $item['invoice_id'] = $invoice->id ?? '';
+
+                // Assign the target id to the right place
+                if ($item['item_type'] == InvoiceEnum::TARGET_FULFILLMENT) {
+                    $item['fulfillment_id'] = $item['target_id'] ?? 0;
+                    $item['order_id'] = 0;
+
+                    // Get Fulfillment to get the currency
+                    $thisItemFulfillment = Fulfillment::find($item['fulfillment_id']);
+                    $item['unit'] = $thisItemFulfillment->unit ?? $invoice->unit;
+                } else if ($item['item_type'] == InvoiceEnum::TARGET_ORDER) {
+                    $item['fulfillment_id'] = 0;
+                    $item['order_id'] = $item['target_id'] ?? 0;
+
+                    // Get Order to get the currency
+                    $thisItemOrder = Order::find($item['order_id']);
+                    $item['unit'] = $thisItemOrder->unit ?? $invoice->unit;
+                } else {
+                    $item['fulfillment_id'] = 0;
+                    $item['order_id'] = 0;
+                    $item['unit'] = $invoice->unit;
+                }
+
+                // Add the amount of every invoice item into the total invoice amount so we can update it later
+                $invoiceTotalAmount += $item['amount'] ?? 0;
+
+                // Sanitize and only take the required fields for invoice item
+                $item = collect($item)->only([
+                    'invoice_id',
+                    'order_id',
+                    'fulfillment_id',
+                    'price',
+                    'quantity',
+                    'amount',
+                    'unit',
+                    'description',
+                    'note',
+                ])->toArray();
+
+                // Create this new invoice item
+                $newInvoiceItem = new InvoiceItem($item);
+
+                // if some error occurred during saving item to database, we rollback and display error
+                if(!$newInvoiceItem->save()) {
+                    // Rollback
+                    DB::rollBack();
+
+                    // Return error
+                    return [
+                        'error' => InvoiceEnum::TARGET_MANUAL,
+                        'message' => ResponseMessageEnum::FAILED_ADD_NEW_RECORD,
+                    ];
+                }
+            }
+
+            // If there was no errors occurred during looping and creating invoice items, then we update details for $invoice
+            $invoice->total_amount = $invoiceTotalAmount;
+            $invoice->outstanding_amount = $invoiceTotalAmount;           
+            // If some errors occurred during creating the invoice, then we rollback and return error
+            if(!$invoice->save()) {
+                // Rollback
+                DB::rollBack();
+
+                // Return error
+                return [
+                    'error' => InvoiceEnum::TARGET_MANUAL,
+                    'message' => ResponseMessageEnum::FAILED_ADD_NEW_RECORD,
+                ];
+            }
+        } catch (Exception $e) {
+            // If an exception was cautch, then we rollBack and display error
+            // Rollback
+            DB::rollBack();
+
+            // Return error
+            return [
+                'error' => InvoiceEnum::TARGET_MANUAL,
+                'message' => ResponseMessageEnum::UNKNOWN_ERROR,
+            ];
+        }
+
+        // If we have came to this part, that mean we should commit the changes and display success message
+        DB::commit();
+
+        return [
+            'success' => InvoiceEnum::TARGET_MANUAL,
+            'message' => ResponseMessageEnum::SUCCESS_ADD_NEW_RECORD,
+        ];
+    }
+
     /** Validate the request for creating or updating */
     public function validateRequest(Request $request)
     {
@@ -532,11 +674,62 @@ class InvoiceController extends Controller
         }
 
         // Otherwise if we are creating from manual process, then we have to validate a bunch of other things
+        if ($data['create_invoice_from'] == InvoiceEnum::TARGET_MANUAL) {
+            $rules = array_merge($rules, [
+                'staff_id' => ['required', 'exists:staffs,id'],
+                'customer_id' => ['required', 'exists:customers,id'],
+                'due_date' => ['required', 'date'],
+                'unit' => ['required', Rule::in(array_values(CurrencyAndCountryEnum::MAP_CURRENCIES))],
+                'status' => ['required', Rule::in(array_keys(InvoiceEnum::MAP_INVOICE_STATUSES))],
+                'item_type' => ['required', 'array'],
+            ]);
+            
+            $customMessage = array_merge($customMessage, [
+                'staff_id' => 'Cannot find the staff for this action',
+                'customer_id' => 'Please provide a customer for this invoice',
+                'due_date' => 'Please provide a valid due date for this invoice',
+                'unit' => 'Please provide a valid currency for this invoice',
+                'status' => 'Please provide a valid status for this invoice',
+                'item_type' => 'Please provide an item for this invoice',
+            ]);
+        }
 
         //  Make the validator
         $validator = Validator::make($data, $rules, $customMessage);
 
         return $validator;
+    }
+
+    /** Validate the request of invoice items */
+    public function validateInvoiceItemsListRequest(Request $request)
+    {        
+        // Assign needed request keys to variables
+        $invoiceItemArray = [
+            'item_type' => $request->all()['item_type'] ?? [],
+            'target_id' => $request->all()['target_id'] ?? [],
+            'description' => $request->all()['description'] ?? [],
+            'price' => $request->all()['price'] ?? [],
+            'quantity' => $request->all()['quantity'] ?? [],
+            'amount' => $request->all()['amount'] ?? [],
+        ];
+
+        // Restructure the invoice items into list
+        $invoiceItems = [];
+        foreach ($invoiceItemArray as $field => $values) {
+            // If user didn't add any invoice items at all, then return false
+            if (empty($values)) {
+                return false;
+            }
+
+            foreach ($values as $index => $row) {
+                if (empty($row)) {
+                    $row = $field == 'description' ? '' : 0;
+                }
+                $invoiceItems[$index][$field] = $row;
+            }
+        }
+
+        return $invoiceItems;
     }
 
     /** Validate request for bulk actions */
@@ -677,10 +870,34 @@ class InvoiceController extends Controller
                     'message' => ResponseMessageEnum::FAILED_ADD_NEW_RECORD,
                 ];
             }
-        }
+        }        
 
         // Otherwise if this invoice is created manually, then we pick other fields
-        return [];
+        // Format and list invoice items from the request if this is created from manual
+        $invoiceItems = $this->validateInvoiceItemsListRequest($request);
+        if (!$invoiceItems) {
+            return [
+                'error' => $type,
+                'message' => ResponseMessageEnum::FAILED_VALIDATE_INPUT,
+            ];
+        }
+
+        // Get the required keys and assign the invoice items to it
+        $invoiceDetails = collect($data)->only([            
+            'staff_id',
+            'reference',
+            'customer_id',
+            'due_date',
+            'unit',
+            'status',
+            'note',
+        ])->toArray();
+        $invoiceDetails['invoice_items'] = $invoiceItems;
+
+        return [
+            'success' => $type,
+            'data' => $invoiceDetails,
+        ];
     }
 
     /** Update any overdue invoice in database status */

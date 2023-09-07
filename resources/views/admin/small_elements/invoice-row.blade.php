@@ -24,6 +24,7 @@
         @else
         <div class="w-full flex items-center text-gray-900 text-sm relative">
             <input type="hidden" name="item_type[]" value="{{ $target }}"/>
+            <input type="hidden" name="target_id[]" value=""/>
             <p class="font-semibold">{{ Str::upper($target) }} DATA</p>
         </div>
         @endif

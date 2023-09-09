@@ -157,9 +157,9 @@ Breadcrumbs::for('admin.invoice.create.form', function (BreadcrumbTrail $trail):
 });
 Breadcrumbs::for('admin.invoice.show', function (BreadcrumbTrail $trail, $invoice): void {
     $trail->parent('admin.invoice.list');
-    $trail->push("Invoice #{$invoice->id} ({$invoice->name})", route('admin.invoice.show', ['invoice' => $invoice->id]));
+    $trail->push("Invoice #{$invoice->id}", route('admin.invoice.show', ['invoice' => $invoice->id]));
 });
 Breadcrumbs::for('admin.invoice.edit.form', function (BreadcrumbTrail $trail, $invoice): void {
     $trail->parent('admin.invoice.list');
-    $trail->push("Edit Invoice #{$invoice->id} ({$invoice->name})", route('admin.invoice.edit.form', ['invoice' => $invoice->id]));
+    $trail->push("Edit Invoice #{$invoice->id}", route('admin.invoice.edit.form', ['invoice' => $invoice->id]));
 });

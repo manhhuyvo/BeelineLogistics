@@ -121,6 +121,53 @@ class InvoiceController extends Controller
             'createInvoiceFrom' => InvoiceEnum::MAP_TARGETS,
         ]);
     }
+
+    public function show(Request $request, Invoice $invoice)
+    {
+        // Get staff model
+        $staff = collect($invoice->staff)->toArray();
+
+        // Get customer model
+        $customer = collect($invoice->customer)->toArray();
+
+        // Configure the invoice items
+        $invoiceItems = collect($invoice->items)->map(function($item) {
+            // If this item is for fulfillment
+            if ($item->fulfillment) {
+                $item->item_type = InvoiceEnum::TARGET_FULFILLMENT;
+                $item->target_id = $item->fulfillment_id;
+
+                return collect($item)->toArray();
+            }
+
+            // If this item is for order
+            if ($item->order) {
+                $item->item_type = InvoiceEnum::TARGET_ORDER;
+                $item->target_id = $item->order_id;
+
+                return collect($item)->toArray();           
+            }
+
+            // If this item is for manual
+            $item->item_type = InvoiceEnum::TARGET_MANUAL;
+
+            return collect($item)->toArray();
+        })->toArray();
+
+        // Turn the invoice and its relationships into an array
+        $invoice = collect($invoice)->toArray();   
+
+        // Return the view
+        return view('admin.invoice.show', [
+            'invoice' => $invoice,
+            'staff' => $staff,
+            'customer' => $customer,
+            'invoiceStatusColors' => InvoiceEnum::MAP_INVOICE_STATUS_COLORS,
+            'invoiceStatuses' => InvoiceEnum::MAP_INVOICE_STATUSES,
+            'paymentStatuses' => InvoiceEnum::MAP_PAYMENT_STATUSES,
+            'paymentStatusColors' => InvoiceEnum::MAP_PAYMENT_STATUS_COLORS,
+        ]);
+    }
     
     /** Handle request for creating new invoice */
     public function store(Request $request)
@@ -837,10 +884,12 @@ class InvoiceController extends Controller
                             'fulfillment_id' => $recordId,
                             // Total amount of invoice created from fulfillment is the sum of postage and labour cost
                             'amount' => $fulfillmentPostage + $fulfillmentLabour,
+                            'price' => $fulfillmentPostage + $fulfillmentLabour,
+                            'quantity' => 1,
                             // Invoice's unit is prioritily the unit of labour, otherwise it's the postage unit or even worst, we default it as USD
                             'unit' => $fulfillment->labour_unit ?? ($fulfillment->postage_unit ?? CurrencyAndCountryEnum::CURRENCY_USD),
                             // Invoice item description is the fulfillment receiver details
-                            'description' => InvoiceEnum::MAP_DESCRIPTION_TARGET[$type] . " Details of Fulfillment:</br>- Fulfillment ID: #{$recordId}</br>- Receiver Name: {$fulfillmentName}</br>- Receiver Phone: {$fulfillmentPhone}</br>- Receiver Address: {$fulfillmentAddress}</br>- Product Amount: {$fulfillmentProductDetails}</br>- Labour Amount: {$fulfillmentLabourDetails}</br>- Postage: {$fulfillmentPostageDetails}",
+                            'description' => InvoiceEnum::MAP_DESCRIPTION_TARGET[$type] . " Details of Fulfillment:\n- Fulfillment ID: #{$recordId}\n- Receiver Name: {$fulfillmentName}\n- Receiver Phone: {$fulfillmentPhone}\n- Receiver Address: {$fulfillmentAddress}\n- Product Amount: {$fulfillmentProductDetails}\n- Labour Amount: {$fulfillmentLabourDetails}\n- Postage: {$fulfillmentPostageDetails}",
                             // Just default the note as empty string
                             'note' => '',
                         ];

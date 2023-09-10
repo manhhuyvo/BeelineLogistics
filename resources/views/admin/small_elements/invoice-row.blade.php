@@ -1,4 +1,5 @@
 <tr class="bg-white border-b hover:bg-gray-50 invoice-row">
+    <input type="hidden" name="item_id[]" value="" />
     <td class="px-2 py-2">
         <button type="button" title="Remove row" class="font-medium text-red-600 hover:underline confirm-modal-initiate-btn" onclick="removeRow($(this))">
             <i class="fa-solid fa-trash-can text-lg"></i>

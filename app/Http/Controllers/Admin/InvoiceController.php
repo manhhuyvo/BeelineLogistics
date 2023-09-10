@@ -124,10 +124,8 @@ class InvoiceController extends Controller
 
     public function show(Request $request, Invoice $invoice)
     {
-        // Get staff model
+        // Get all needed lists
         $staff = collect($invoice->staff)->toArray();
-
-        // Get customer model
         $customer = collect($invoice->customer)->toArray();
 
         // Configure the invoice items
@@ -155,7 +153,7 @@ class InvoiceController extends Controller
         })->toArray();
 
         // Turn the invoice and its relationships into an array
-        $invoice = collect($invoice)->toArray();   
+        $invoice = collect($invoice)->toArray();
 
         // Return the view
         return view('admin.invoice.show', [
@@ -167,6 +165,119 @@ class InvoiceController extends Controller
             'paymentStatuses' => InvoiceEnum::MAP_PAYMENT_STATUSES,
             'paymentStatusColors' => InvoiceEnum::MAP_PAYMENT_STATUS_COLORS,
         ]);
+    }
+
+    public function edit(Request $request, Invoice $invoice)
+    {
+        // Get current logged-in user
+        $user = Auth::user();
+        // Get staff model
+        $staff = collect($invoice->staff)->toArray();
+        $customer = collect($invoice->customer)->toArray();
+        $customersList = $this->formatCustomersList();
+        $fulfillmentsList = $this->formatFulfillmentsList();
+        $ordersList = $this->formatOrdersList();
+
+        // Configure the invoice items
+        $invoiceItems = collect($invoice->items)->map(function($item) {
+            // If this item is for fulfillment
+            if ($item->fulfillment) {
+                $item->item_type = InvoiceEnum::TARGET_FULFILLMENT;
+                $item->target_id = $item->fulfillment_id;
+
+                return collect($item)->toArray();
+            }
+
+            // If this item is for order
+            if ($item->order) {
+                $item->item_type = InvoiceEnum::TARGET_ORDER;
+                $item->target_id = $item->order_id;
+
+                return collect($item)->toArray();           
+            }
+
+            // If this item is for manual
+            $item->item_type = InvoiceEnum::TARGET_MANUAL;
+
+            return collect($item)->toArray();
+        })->toArray();
+
+        // Turn the invoice and its relationships into an array
+        $invoice = collect($invoice)->toArray();
+
+        // Return the view
+        return view('admin.invoice.edit', [
+            'user' => $user,
+            'invoice' => $invoice,
+            'staff' => $staff,
+            'customer' => $customer,
+            'customersList' => $customersList,
+            'fulfillmentsList' => $fulfillmentsList,
+            'ordersList' => $ordersList,
+            'invoiceStatusColors' => InvoiceEnum::MAP_INVOICE_STATUS_COLORS,
+            'invoiceStatuses' => InvoiceEnum::MAP_INVOICE_STATUSES,
+            'paymentStatuses' => InvoiceEnum::MAP_PAYMENT_STATUSES,
+            'paymentStatusColors' => InvoiceEnum::MAP_PAYMENT_STATUS_COLORS,
+            'currencies' => CurrencyAndCountryEnum::MAP_CURRENCIES,
+            'createInvoiceFrom' => InvoiceEnum::MAP_TARGETS,
+        ]);
+    }
+
+    public function update(Request $request, Invoice $invoice)
+    {
+        // Validate the request coming
+        $validation = $this->validateRequest($request);                
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // We only want to take necessary fields
+        $data = $this->formatRequestData($request);
+
+        // Although this case would probably never happen, we should just check if it's empty for some reasons, then we throw an error
+        if (empty($data) || empty($data['success']) || empty($data['data'])) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::UNKNOWN_ERROR)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If the $data after sanitizing is empty or has an error occurred, then we return error
+        if (!empty($data['error'])) {
+            $responseData = viewResponseFormat()->error()->message($data['message'] ?? ResponseMessageEnum::UNKNOWN_ERROR)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If all the data was generated successfully, then we start creating records into the database
+        if ($data['success'] == InvoiceEnum::TARGET_MANUAL) {
+            $invoiceUpdateResponse = $this->handleManualUpdateInvoice($data['data'], $invoice);
+        }
+
+        // If some errors occurred during the database actions, then we display that error to the FE
+        if (!empty($invoiceUpdateResponse['error']) || empty($invoiceUpdateResponse['success'])) {
+            $responseData = viewResponseFormat()->error()->message($data['message'] ?? ResponseMessageEnum::UNKNOWN_ERROR)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Eventually if there was no error returned during the whole process, then we return error message
+        $responseData = viewResponseFormat()->success()->message($data['message'] ?? ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->route('admin.invoice.list')->with(['response' => $responseData]);
     }
     
     /** Handle request for creating new invoice */
@@ -691,6 +802,153 @@ class InvoiceController extends Controller
         ];
     }
 
+    /** Handle request for updating invoice */
+    private function handleManualUpdateInvoice(array $records, Invoice $invoice)
+    {// If some random errors occurred from somewhere, we just prevent it breaking the page by returning UNKNOWN error
+        if (empty($records)) {
+            return [
+                'error' => InvoiceEnum::TARGET_MANUAL,
+                'message' => ResponseMessageEnum::UNKNOWN_ERROR,
+            ];
+        }
+
+        try {
+            // Start transaction
+            DB::beginTransaction();
+
+            // Get the invoice reference first
+            $invoiceItems = $records['invoice_items'] ?? [];
+
+            /** If the invoice was created successfully, we loop through the list of invoice items and add them to the invoice */
+            $invoiceTotalAmount = 0;
+            foreach ($invoiceItems as $item) {
+                // Assign this new invoice item into the invoice that we jsut created
+                $item['invoice_id'] = $invoice->id ?? '';
+
+                // Assign the target id to the right place
+                if ($item['item_type'] == InvoiceEnum::TARGET_FULFILLMENT) {
+                    $item['fulfillment_id'] = $item['target_id'] ?? 0;
+                    $item['order_id'] = 0;
+
+                    // Get Fulfillment to get the currency
+                    $thisItemFulfillment = Fulfillment::find($item['fulfillment_id']);
+                    $item['unit'] = $thisItemFulfillment->unit ?? $invoice->unit;
+                } else if ($item['item_type'] == InvoiceEnum::TARGET_ORDER) {
+                    $item['fulfillment_id'] = 0;
+                    $item['order_id'] = $item['target_id'] ?? 0;
+
+                    // Get Order to get the currency
+                    $thisItemOrder = Order::find($item['order_id']);
+                    $item['unit'] = $thisItemOrder->unit ?? $invoice->unit;
+                } else {
+                    $item['fulfillment_id'] = 0;
+                    $item['order_id'] = 0;
+                    $item['unit'] = $invoice->unit;
+                }
+
+                // Add the amount of every invoice item into the total invoice amount so we can update it later
+                $invoiceTotalAmount += $item['amount'] ?? 0;
+
+                // Sanitize and only take the required fields for invoice item
+                $item = collect($item)->only([
+                    'item_id',
+                    'invoice_id',
+                    'order_id',
+                    'fulfillment_id',
+                    'price',
+                    'quantity',
+                    'amount',
+                    'unit',
+                    'description',
+                    'note',
+                ])->toArray();
+
+                // If this item has the id, that means user modified the existing record, we just update it
+                if (!empty($item['item_id']) && $item['item_id'] != 0) {
+                    $thisItem = InvoiceItem::find($item['item_id']);
+
+                    if (!$thisItem) {                        
+                        // Rollback
+                        DB::rollBack();
+
+                        // Return error
+                        return [
+                            'error' => InvoiceEnum::TARGET_MANUAL,
+                            'message' => ResponseMessageEnum::FAILED_UPDATE_RECORD,
+                        ];
+                    }
+
+                    if(!$thisItem->update(collect($item)->except('item_id')->toArray())) {
+                        // Rollback
+                        DB::rollBack();
+
+                        // Return error
+                        return [
+                            'error' => InvoiceEnum::TARGET_MANUAL,
+                            'message' => ResponseMessageEnum::FAILED_UPDATE_RECORD,
+                        ];
+                    }
+                } else {
+                    // Create this new invoice item
+                    $newInvoiceItem = new InvoiceItem($item);
+    
+                    // if some error occurred during saving item to database, we rollback and display error
+                    if(!$newInvoiceItem->save()) {
+                        // Rollback
+                        DB::rollBack();
+    
+                        // Return error
+                        return [
+                            'error' => InvoiceEnum::TARGET_MANUAL,
+                            'message' => ResponseMessageEnum::FAILED_UPDATE_RECORD,
+                        ];
+                    }
+                }
+            }
+            $invoiceUpdateData = [
+                'customer_id' => $records['customer_id'] ?? 0,
+                'reference' => htmlspecialchars($records['reference'] ?? ''),
+                'total_amount' => $invoiceTotalAmount,
+                'outstanding_amount' => $invoice->outstanding_amount + ($invoiceTotalAmount - $invoice->total_amount),
+                'unit' => $records['unit'] ?? CurrencyAndCountryEnum::CURRENCY_USD,
+                'due_date' => $records['due_date'],
+                'status' => $records['status'],
+                'payment_status' => $records['payment_status'] ?? $invoice->payment_status, // Default payment status is as UNPAID
+                'note' => $records['note'], // Default note is as empty string
+            ];
+
+            // If some errors occurred during creating the invoice, then we rollback and return error
+            if(!$invoice->update($invoiceUpdateData)) {
+                // Rollback
+                DB::rollBack();
+
+                // Return error
+                return [
+                    'error' => InvoiceEnum::TARGET_MANUAL,
+                    'message' => ResponseMessageEnum::FAILED_UPDATE_RECORD,
+                ];
+            }
+        } catch (Exception $e) {
+            // If an exception was cautch, then we rollBack and display error
+            // Rollback
+            DB::rollBack();
+
+            // Return error
+            return [
+                'error' => InvoiceEnum::TARGET_MANUAL,
+                'message' => ResponseMessageEnum::UNKNOWN_ERROR,
+            ];
+        }
+
+        // If we have came to this part, that mean we should commit the changes and display success message
+        DB::commit();
+
+        return [
+            'success' => InvoiceEnum::TARGET_MANUAL,
+            'message' => ResponseMessageEnum::SUCCESS_UPDATE_RECORD,
+        ];
+    }
+
     /** Validate the request for creating or updating */
     public function validateRequest(Request $request)
     {
@@ -752,6 +1010,7 @@ class InvoiceController extends Controller
     {        
         // Assign needed request keys to variables
         $invoiceItemArray = [
+            'item_id' => $request->all()['item_id'] ?? [],
             'item_type' => $request->all()['item_type'] ?? [],
             'target_id' => $request->all()['target_id'] ?? [],
             'description' => $request->all()['description'] ?? [],
@@ -764,7 +1023,7 @@ class InvoiceController extends Controller
         $invoiceItems = [];
         foreach ($invoiceItemArray as $field => $values) {
             // If user didn't add any invoice items at all, then return false
-            if (empty($values)) {
+            if (empty($values) && $field != 'item_id') {
                 return false;
             }
 
@@ -1015,6 +1274,34 @@ class InvoiceController extends Controller
         foreach ($allStaffs as $staff) {
             $position = strtoupper(Staff::MAP_POSITIONS[$staff['position']]) ?? "Position Not Found";
             $data[$staff['id']] = "{$staff['full_name']} ({$position})";
+        }
+
+        return $data;
+    }
+
+    /** Format the array for fulfillments list */
+    private function formatFulfillmentsList(string $listType = '')
+    {
+        $allFulfillments = Fulfillment::with('customer')
+                    ->get();
+        
+        $data = [];
+        foreach ($allFulfillments as $fulfillment) {
+            $data[$fulfillment['id']] = "Fulfillment #{$fulfillment['id']} ({$fulfillment['customer']['customer_id']})";
+        }
+
+        return $data;
+    }
+
+    /** Format the array for fulfillments list */
+    private function formatOrdersList(string $listType = '')
+    {
+        $allOrders = Order::with('customer')
+                    ->get();
+        
+        $data = [];
+        foreach ($allOrders as $order) {
+            $data[$order['id']] = "Order #{$order['id']} ({$order['customer']['customer_id']})";
         }
 
         return $data;

@@ -183,7 +183,7 @@
                             <td class="p-2.5"></td>
                             <td class="p-2.5">Items</td>
                             <td class="p-2.5 text-center">x</td>
-                            <td class="p-2.5 text-center" id="total-item-count">0</td>
+                            <td class="p-2.5 text-center" id="total-item-count">{{ count($invoice['items']) }}</td>
                         </tr>
                         <tr class="font-normal text-gray-900">
                             <td colspan="2" class="pt-3">
@@ -196,8 +196,8 @@
                             </td>
                             <td class="p-2.5"></td>
                             <td class="p-2.5">Sub-total</td>
-                            <td class="p-2.5 text-center"><span class="total-currency"></span></td>
-                            <td class="p-2.5 text-center"><span class="total-amount">0.00</span></td>
+                            <td class="p-2.5 text-center"><span class="total-currency">{{ $invoice['unit'] }}</span></td>
+                            <td class="p-2.5 text-center"><span class="total-amount">{{ $invoice['total_amount'] }}</span></td>
                         </tr>
                         <tr class="font-semibold text-gray-900 text-lg">
                             <td colspan="2" class="pt-3">
@@ -210,8 +210,8 @@
                             </td>
                             <td class="p-2.5"></td>
                             <th scope="row" class="p-2.5 border-t border-gray-500">Total</th>
-                            <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-currency"></span></td>
-                            <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-amount">0.00</span></td>
+                            <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-currency">{{ $invoice['unit'] }}</span></td>
+                            <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-amount">{{ $invoice['outstanding_amount'] }}</span></td>
                         </tr>
                     </tfoot>
                 </table>

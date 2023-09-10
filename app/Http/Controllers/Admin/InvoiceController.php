@@ -819,6 +819,25 @@ class InvoiceController extends Controller
             // Get the invoice reference first
             $invoiceItems = $records['invoice_items'] ?? [];
 
+            // Get the list of invoice item IDs which has been passed though
+            $itemIds = collect($invoiceItems)->pluck(['item_id'])->toArray();
+            // get list of existing invoice items
+            $existingItemIds = collect($invoice->items)->pluck(['id'])->toArray();
+            foreach ($existingItemIds as $existingItemId) {
+                if (in_array($existingItemId, $itemIds)) {
+                    continue;
+                }
+
+                // If not in the new list, then remove it
+                $existingItem = InvoiceItem::find($existingItemId);
+                if (!$existingItem->delete()) {
+                    return [
+                        'error' => InvoiceEnum::TARGET_MANUAL,
+                        'message' => ResponseMessageEnum::FAILED_DELETE_RECORD,
+                    ];
+                }
+            }
+
             /** If the invoice was created successfully, we loop through the list of invoice items and add them to the invoice */
             $invoiceTotalAmount = 0;
             foreach ($invoiceItems as $item) {

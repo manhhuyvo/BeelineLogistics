@@ -99,7 +99,7 @@
               </ul>
            </li>
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <a href="{{ route('customer.invoice.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   <i class="fa-solid fa-money-bill flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
                  <span class="flex-1 ml-3 whitespace-nowrap">Invoices</span>
               </a>

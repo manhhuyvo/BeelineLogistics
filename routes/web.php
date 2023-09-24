@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 // ADMIN INCLUDES
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\AuthController;
@@ -15,9 +16,11 @@ use App\Http\Controllers\Admin\AjaxController;
 use App\Http\Controllers\Admin\SmallElementsLoader;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Models\Staff;
+
 // CUSTOMER INCLUDES
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
+use App\Http\Controllers\Customer\InvoiceController as CustomerInvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -170,6 +173,12 @@ Route::prefix('customer')->group(function () {
         Route::get('/profile', [CustomerProfileController::class, 'index'])->name('customer.user.profile.form');
         Route::post('/profile', [CustomerProfileController::class, 'update'])->name('customer.user.profile.update');
         Route::post('/profile/change-password', [CustomerProfileController::class, 'changePassword'])->name('customer.user.profile.change-password');
+
+        /** [CUSTOMER INVOICE ROUTES] */        
+        Route::get('/invoice', [CustomerInvoiceController::class, 'index'])->name('customer.invoice.list');
+        Route::get('/invoice/{invoice}', [CustomerInvoiceController::class, 'show'])->name('customer.invoice.show');
+        Route::post('/invoice/bulk', [CustomerInvoiceController::class, 'bulk'])->name('customer.invoice.bulk');
+        Route::post('/invoice/export', [CustomerInvoiceController::class, 'export'])->name('customer.invoice.export');
     }); 
 
     Route::group(['middleware' => ['customer.login.redirect']], function() {

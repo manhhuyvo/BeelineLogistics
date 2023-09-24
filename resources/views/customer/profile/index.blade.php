@@ -19,6 +19,10 @@
                     <label for="phone" class="mb-2 text-sm font-medium text-gray-900">Phone</label>
                     <input id="phone" type="text" name="phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Phone" value="{{ $customer['phone'] ?? '' }}">
                 </div>
+                <div class="flex flex-col flex-1">
+                    <label for="company" class="mb-2 text-sm font-medium text-gray-900">Company</label>
+                    <input id="company" type="text" name="company" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Company" value="{{ $customer['company'] ?? '' }}">
+                </div>
             </div>
             <div class="row flex md:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-2">

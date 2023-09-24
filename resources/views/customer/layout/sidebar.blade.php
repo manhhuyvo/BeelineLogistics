@@ -1,5 +1,9 @@
 @php
    $userLoggedIn = Auth::user();
+   
+   $customer = $user->customer;
+   $staff = $user->staff;
+   $supplier = $user->supplier;
 @endphp
 <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
@@ -29,8 +33,14 @@
                   <p class="text-sm text-gray-900" role="none">
                     {{ $userLoggedIn->username }}
                   </p>
-                  <p class="text-sm font-medium text-gray-900 truncate" role="none">
-                    neil.sims@flowbite.com
+                  <p class="text-sm font-medium text-gray-900 truncate mt-2" role="none">
+                     @if (!empty($customer))
+                        {{ $customer->full_name }}
+                     @elseif (!empty($staff))
+                     {{ $staff->full_name }}
+                     @elseif (!empty($supplier))
+                     {{ $supplier->full_name }}
+                     @endif
                   </p>
                 </div>
                 <ul role="none">

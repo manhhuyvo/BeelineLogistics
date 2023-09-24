@@ -38,7 +38,7 @@
                     <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex items-center" role="menuitem"><i class="fa-sharp fa-solid fa-house text-[12px] mr-2"></i>Dashboard</a>
                   </li>
                   <li>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex items-center" role="menuitem"><i class="fa-solid fa-user text-[12px] mr-2"></i>Profile</a>
+                    <a href="{{ route('customer.user.profile.form') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 flex items-center" role="menuitem"><i class="fa-solid fa-user text-[12px] mr-2"></i>Profile</a>
                   </li>
                   <li>
                     <a href="{{ route('customer.logout') }}" class="block px-4 py-2 font-medium text-sm text-red-500 hover:text-white hover:bg-red-500 flex items-center" role="menuitem"><i class="fa-solid fa-arrow-right-from-bracket text-[12.5px] mr-2"></i>Sign out</a>

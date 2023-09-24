@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\InvoiceController;
 use App\Models\Staff;
 // CUSTOMER INCLUDES
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
+use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -163,7 +164,12 @@ Route::prefix('customer')->group(function () {
         Route::get('/dashboard', function() {
             
             return view('customer.welcome');
-        })->name('customer.dashboard');
+        })->name('customer.dashboard');        
+
+        /** [USER PROFILE ROUTES] */
+        Route::get('/profile', [CustomerProfileController::class, 'index'])->name('customer.user.profile.form');
+        Route::post('/profile', [CustomerProfileController::class, 'update'])->name('customer.user.profile.update');
+        Route::post('/profile/change-password', [CustomerProfileController::class, 'changePassword'])->name('customer.user.profile.change-password');
     }); 
 
     Route::group(['middleware' => ['customer.login.redirect']], function() {

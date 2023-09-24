@@ -23,9 +23,12 @@ use Illuminate\Support\Facades\DB;
 use App\Enums\GeneralEnum;
 use App\Enums\ResponseStatusEnum;
 use Illuminate\Support\Carbon;
+use App\Traits\Upload;
 
 class InvoiceController extends Controller
 {
+    use Upload;
+
     /** Displaying view for list of invoices */
     public function index(Request $request)
     {
@@ -124,6 +127,9 @@ class InvoiceController extends Controller
 
     public function show(Request $request, Invoice $invoice)
     {
+        // Get current logged-in user
+        $user = Auth::user();
+
         // Get all needed lists
         $staff = collect($invoice->staff)->toArray();
         $customer = collect($invoice->customer)->toArray();
@@ -160,6 +166,7 @@ class InvoiceController extends Controller
             'invoice' => $invoice,
             'staff' => $staff,
             'customer' => $customer,
+            'user' => $user,
             'invoiceStatusColors' => InvoiceEnum::MAP_INVOICE_STATUS_COLORS,
             'invoiceStatuses' => InvoiceEnum::MAP_INVOICE_STATUSES,
             'paymentStatuses' => InvoiceEnum::MAP_PAYMENT_STATUSES,
@@ -221,6 +228,14 @@ class InvoiceController extends Controller
             'currencies' => CurrencyAndCountryEnum::MAP_CURRENCIES,
             'createInvoiceFrom' => InvoiceEnum::MAP_TARGETS,
         ]);
+    }
+
+    public function addPayment(Request $request, Invoice $invoice)
+    {
+        if ($request->hasFile('payment_receipt')) {
+            $path = $this->UploadFile($request->file('payment_receipt'), 'PaymentReceipts');
+        }
+        dd($request);
     }
 
     public function update(Request $request, Invoice $invoice)
@@ -338,8 +353,7 @@ class InvoiceController extends Controller
         $responseData = viewResponseFormat()->success()->message($data['message'] ?? ResponseMessageEnum::SUCCESS_ADD_NEW_RECORD)->send();
 
         return redirect()->route('admin.invoice.list')->with(['response' => $responseData]);
-    }
-    
+    }    
 
     /** Handle request for deleting invoice */
     public function destroy(Request $request, Invoice $invoice)

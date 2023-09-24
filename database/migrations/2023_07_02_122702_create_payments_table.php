@@ -15,12 +15,9 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->string('type', 255);
-            $table->string('target', 255);
-            $table->unsignedBigInteger('target_id')->index();
+            $table->unsignedBigInteger('invoice_id')->index();
             $table->unsignedFloat('amount');
             $table->string('description', 255);
-            $table->string('note', 255);
             $table->unsignedInteger('payment_method');
             $table->date('payment_date');
             $table->timestamps();

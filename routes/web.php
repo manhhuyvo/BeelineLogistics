@@ -102,6 +102,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice.list');
         Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('admin.invoice.create.form');
+        Route::post('/invoice/{invoice}/add-payment', [InvoiceController::class, 'addPayment'])->name('admin.invoice.add-payment');
         Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
         Route::post('/invoice/bulk', [InvoiceController::class, 'bulk'])->name('admin.invoice.bulk');
         Route::post('/invoice/export', [InvoiceController::class, 'export'])->name('admin.invoice.export');
@@ -151,4 +152,15 @@ Route::prefix('admin')->group(function () {
         Route::delete('/fulfillment/{fulfillment}', [FulfillmentController::class, 'destroy'])->name('admin.fulfillment.delete');
     });
 
+});
+
+Route::prefix('customer')->group(function () {    
+    Route::group(['middleware' => ['customer.login.redirect']], function() {
+        /* [ADMIN AUTHENTICATION] */
+        Route::get('/', [AuthController::class,'index'])->name('customer.index');
+
+        /* [ADMIN LOGIN ROUTES] */
+        Route::get('/login', [AuthController::class, 'loginView'])->name('customer.login.form');
+        Route::post('/login', [AuthController::class, 'login'])->name('customer.login');
+    });
 });

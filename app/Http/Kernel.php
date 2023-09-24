@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\Customer\CustomerLoginRedirect;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -65,5 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'staff.permission' => \App\Http\Middleware\Admin\StaffPermission::class,
         'staff.login.redirect' => \App\Http\Middleware\Admin\StaffLoginRedirect::class,
+        'customer.login.redirect' => \App\Http\Middleware\Customer\CustomerLoginRedirect::class,
+        'optimizeImages' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class,
     ];
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+// ADMIN INCLUDES
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -14,6 +15,8 @@ use App\Http\Controllers\Admin\AjaxController;
 use App\Http\Controllers\Admin\SmallElementsLoader;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Models\Staff;
+// CUSTOMER INCLUDES
+use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -154,13 +157,24 @@ Route::prefix('admin')->group(function () {
 
 });
 
-Route::prefix('customer')->group(function () {    
-    Route::group(['middleware' => ['customer.login.redirect']], function() {
-        /* [ADMIN AUTHENTICATION] */
-        Route::get('/', [AuthController::class,'index'])->name('customer.index');
+Route::prefix('customer')->group(function () {
+    Route::group(['middleware' => 'customer.permission:all'], function () {
+        /** [DASHBOARD CUSTOMER ROUTES] */
+        Route::get('/dashboard', function() {
+            
+            return view('customer.welcome');
+        })->name('customer.dashboard');
+    }); 
 
-        /* [ADMIN LOGIN ROUTES] */
-        Route::get('/login', [AuthController::class, 'loginView'])->name('customer.login.form');
-        Route::post('/login', [AuthController::class, 'login'])->name('customer.login');
+    Route::group(['middleware' => ['customer.login.redirect']], function() {
+        /* [CUSTOMER AUTHENTICATION] */
+        Route::get('/', [CustomerAuthController::class,'index'])->name('customer.index');
+
+        /* [CUSTOMER LOGIN ROUTES] */
+        Route::get('/login', [CustomerAuthController::class, 'loginView'])->name('customer.login.form');
+        Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login');
     });
+
+    /* [CUSTOMER LOGOUT ROUTE] */
+    Route::get('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
 });

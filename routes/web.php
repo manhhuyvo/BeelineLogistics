@@ -164,6 +164,9 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('customer')->group(function () {
     Route::group(['middleware' => 'customer.permission:all'], function () {
+        /** [SMALL ELEMENTS LOADER] */
+        Route::get('/small-elements/product-row', [SmallElementsLoader::class, 'getNewProductRow'])->name('customer.small-elements.product-row');
+
         /** [DASHBOARD CUSTOMER ROUTES] */
         Route::get('/dashboard', function() {
             
@@ -186,10 +189,10 @@ Route::prefix('customer')->group(function () {
         Route::post('/fulfillment/bulk', [CustomerFulfillmentController::class, 'bulk'])->name('customer.fulfillment.bulk');
         Route::post('/fulfillment/export', [CustomerFulfillmentController::class, 'export'])->name('customer.fulfillment.export');
         Route::get('/fulfillment/{fulfillment}', [CustomerFulfillmentController::class, 'show'])->name('customer.fulfillment.show');
-        Route::get('/fulfillment/create', [FulfillmentController::class, 'create'])->name('customer.fulfillment.create.form');
-        Route::post('/fulfillment', [FulfillmentController::class, 'store'])->name('customer.fulfillment.store');
-        Route::get('/fulfillment/{fulfillment}/edit', [CustomerController::class, 'edit'])->name('customer.fulfillment.edit.form');
-        Route::post('/fulfillment/{fulfillment}', [CustomerController::class, 'update'])->name('customer.fulfillment.update');
+        Route::get('/fulfillment/create', [CustomerFulfillmentController::class, 'create'])->name('customer.fulfillment.create.form');
+        Route::post('/fulfillment', [CustomerFulfillmentController::class, 'store'])->name('customer.fulfillment.store');
+        Route::get('/fulfillment/{fulfillment}/edit', [CustomerFulfillmentController::class, 'edit'])->name('customer.fulfillment.edit.form');
+        Route::post('/fulfillment/{fulfillment}', [CustomerFulfillmentController::class, 'update'])->name('customer.fulfillment.update');
     }); 
 
     Route::group(['middleware' => ['customer.login.redirect']], function() {

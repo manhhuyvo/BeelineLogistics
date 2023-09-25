@@ -271,9 +271,23 @@ class FulfillmentController extends Controller
     /** Display the page for edit fulfillment */
     public function edit(Request $request, Fulfillment $fulfillment)
     {
+        // Get current logged-in user
+        $user = Auth::user();
+        // Get customer model
+        $customer = collect($fulfillment->customer)->toArray();
+        
+        // If this fulfillment doesn't belong to the customer viewing, then return to previous page
+        if ($user->customer->id != $customer['id']) {
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Get all needed objects lists
-        $staffsList = $this->formatStaffsList();
-        $customersList = $this->formatCustomersList();
         $productsList = $this->formatProductsList();
 
         // Turn the fulfillment into an array
@@ -290,10 +304,8 @@ class FulfillmentController extends Controller
         })->toArray();
 
         // Return the view
-        return view('admin.fulfillment.edit', [
+        return view('customer.fulfillment.edit', [
             'fulfillment' => $fulfillment,
-            'staffsList' => $staffsList,
-            'customersList' => $customersList,
             'productsList' => $productsList,
             'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
             'fulfillmentStatusColors' => FulfillmentEnum::MAP_STATUS_COLORS,
@@ -306,12 +318,28 @@ class FulfillmentController extends Controller
     /** Handle request for updating fulfillment */
     public function update(Request $request, Fulfillment $fulfillment)
     {
+        // Get current logged-in user
+        $user = Auth::user();
+        // Get customer model
+        $customer = collect($fulfillment->customer)->toArray();
+        
+        // If this fulfillment doesn't belong to the customer viewing, then return to previous page
+        if ($user->customer->id != $customer['id']) {
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Validate the request coming
         $validation = $this->validateRequest($request);                
         if ($validation->fails()) {
             $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
 
-            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+            return redirect()->route('customer.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -322,7 +350,7 @@ class FulfillmentController extends Controller
         if (!$productList) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_PRODUCTS_PROVIDED)->send();
 
-            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+            return redirect()->route('customer.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -330,6 +358,7 @@ class FulfillmentController extends Controller
 
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
+        $data = collect($data)->except(['customer_id', 'staff_id', 'postage', 'labour_payment_status'])->toArray();
 
         // TODO: WE HAVE TO CONSIDER ON STOCK CONTROL AND INVOICE, BILLING STUFFS LATER ON
 
@@ -339,7 +368,7 @@ class FulfillmentController extends Controller
         if (!$totalProductCost) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_PRODUCT_PRICING_RETRIEVE)->send();
 
-            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+            return redirect()->route('customer.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -351,7 +380,7 @@ class FulfillmentController extends Controller
         if (empty($customerModel->price_configs) || empty(unserialize($customerModel->price_configs)['fulfillment_pricing'])) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_CUSTOMER_PRICING_RETRIEVE)->send();
 
-            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+            return redirect()->route('customer.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -382,7 +411,7 @@ class FulfillmentController extends Controller
         if (!$fulfillment->update($data)) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
 
-            return redirect()->route('admin.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+            return redirect()->route('customer.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -390,7 +419,7 @@ class FulfillmentController extends Controller
 
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
 
-        return redirect()->route('admin.fulfillment.show', ['fulfillment' => $fulfillment->id])->with(['response' => $responseData]);
+        return redirect()->route('customer.fulfillment.show', ['fulfillment' => $fulfillment->id])->with(['response' => $responseData]);
     }
 
     /** Handle request for export action */

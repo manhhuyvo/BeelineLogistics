@@ -101,8 +101,18 @@ class InvoiceController extends Controller
         $user = Auth::user();
 
         // Get all needed lists
-        $staff = collect($invoice->staff)->toArray();
         $customer = collect($invoice->customer)->toArray();
+        
+        // If this invoice doesn't belong to the customer viewing, then return to previous page
+        if ($user->customer->id != $customer['id']) {
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
 
         // Configure the invoice items
         $invoiceItems = collect($invoice->items)->map(function($item) {
@@ -132,9 +142,8 @@ class InvoiceController extends Controller
         $invoice = collect($invoice)->toArray();
 
         // Return the view
-        return view('admin.invoice.show', [
+        return view('customer.invoice.show', [
             'invoice' => $invoice,
-            'staff' => $staff,
             'customer' => $customer,
             'user' => $user,
             'invoiceStatusColors' => InvoiceEnum::MAP_INVOICE_STATUS_COLORS,

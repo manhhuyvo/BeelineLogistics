@@ -6,10 +6,7 @@
     @include('admin.layout.confirm-window')
     @include('admin.layout.response')
     <h2 class="text-2xl font-medium mt-2 mb-3">All fulfillments</h2>
-    <div class="w-full flex justify-between mb-3 items-center">
-        <div class="sm:w-[40%]">
-            <input type="text" name="fulfillment-search" placeholder="Search for fulfillment ID" class="text-sm py-2 px-2 rounded-[5px] border-solid border-[1px] border-gray-200 bg-gray-100 text-gray-600 w-full focus:ring-blue-500 focus:border-blue-500">
-        </div>
+    <div class="w-full flex justify-end mb-3 items-center">
         <a href="{{ route('admin.fulfillment.create.form') }}" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium hover:shadow-lg hover:bg-blue-500 flex items-center gap-3">
             <i class="fa-solid fa-plus"></i>
             Add fulfillment
@@ -38,10 +35,7 @@
                     </th>
                     <th scope="col" class="px-4 sm:py-3 py-2">
                         <div class="flex items-center">
-                            <a href="#" class="flex items-center hover:underline">
-                                Current_Stage
-                                <i class="fa-solid fa-sort w-3 h-3 ml-1.5"></i>
-                            </a>
+                            Current_Stage
                         </div>
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2">

@@ -188,8 +188,8 @@ Route::prefix('customer')->group(function () {
         Route::get('/fulfillment', [CustomerFulfillmentController::class, 'index'])->name('customer.fulfillment.list');
         Route::post('/fulfillment/bulk', [CustomerFulfillmentController::class, 'bulk'])->name('customer.fulfillment.bulk');
         Route::post('/fulfillment/export', [CustomerFulfillmentController::class, 'export'])->name('customer.fulfillment.export');
-        Route::get('/fulfillment/{fulfillment}', [CustomerFulfillmentController::class, 'show'])->name('customer.fulfillment.show');
         Route::get('/fulfillment/create', [CustomerFulfillmentController::class, 'create'])->name('customer.fulfillment.create.form');
+        Route::get('/fulfillment/{fulfillment}', [CustomerFulfillmentController::class, 'show'])->name('customer.fulfillment.show');
         Route::post('/fulfillment', [CustomerFulfillmentController::class, 'store'])->name('customer.fulfillment.store');
         Route::get('/fulfillment/{fulfillment}/edit', [CustomerFulfillmentController::class, 'edit'])->name('customer.fulfillment.edit.form');
         Route::post('/fulfillment/{fulfillment}', [CustomerFulfillmentController::class, 'update'])->name('customer.fulfillment.update');

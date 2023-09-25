@@ -109,15 +109,13 @@ class FulfillmentController extends Controller
     /** Display the page for create new fulfillment */
     public function create(Request $request)
     {
+        $user = Auth::user();
         // Get all needed objects lists
-        $staffsList = $this->formatStaffsList();
-        $customersList = $this->formatCustomersList();
         $productsList = $this->formatProductsList();
 
         // Return the view
-        return view('admin.fulfillment.create', [
-            'staffsList' => $staffsList,
-            'customersList' => $customersList,
+        return view('customer.fulfillment.create', [
+            'user' => $user,
             'productsList' => $productsList,
             'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
             'fulfillmentStatusColors' => FulfillmentEnum::MAP_STATUS_COLORS,
@@ -130,12 +128,13 @@ class FulfillmentController extends Controller
     /** Handle request for storing new fulfillment */
     public function store(Request $request)
     {
+        $user = Auth::user();
         // Validate the request coming
         $validation = $this->validateRequest($request);                
         if ($validation->fails()) {
             $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
 
-            return redirect()->route('admin.fulfillment.create.form')->with([
+            return redirect()->route('customer.fulfillment.create.form')->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -146,7 +145,7 @@ class FulfillmentController extends Controller
         if (!$productList) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_PRODUCTS_PROVIDED)->send();
 
-            return redirect()->route('admin.fulfillment.create.form')->with([
+            return redirect()->route('customer.fulfillment.create.form')->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -154,6 +153,11 @@ class FulfillmentController extends Controller
 
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
+
+        // Assign the default details for this fulfillment created by customer
+        $data['customer_id'] = $user->customer->id;
+        $data['staff_id'] = $user->customer->staff_id;
+        $data['labour_payment_status'] = FulfillmentEnum::PAYMENT_STATUS_UNPAID;
 
         // TODO: WE HAVE TO CONSIDER ON STOCK CONTROL AND INVOICE, BILLING STUFFS LATER ON
 
@@ -163,7 +167,7 @@ class FulfillmentController extends Controller
         if (!$totalProductCost) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_PRODUCT_PRICING_RETRIEVE)->send();
 
-            return redirect()->route('admin.fulfillment.create.form')->with([
+            return redirect()->route('customer.fulfillment.create.form')->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -175,7 +179,7 @@ class FulfillmentController extends Controller
         if (!$customerModel) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_CUSTOMER_RETRIEVE)->send();
 
-            return redirect()->route('admin.fulfillment.create.form')->with([
+            return redirect()->route('customer.fulfillment.create.form')->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -184,7 +188,7 @@ class FulfillmentController extends Controller
         if (empty($customerModel->price_configs) || empty(unserialize($customerModel->price_configs)['fulfillment_pricing'])) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_CUSTOMER_PRICING_RETRIEVE)->send();
 
-            return redirect()->route('admin.fulfillment.create.form')->with([
+            return redirect()->route('customer.fulfillment.create.form')->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -216,7 +220,7 @@ class FulfillmentController extends Controller
         if (!$newFulfillment->save()) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_ADD_NEW_RECORD)->send();
 
-            return redirect()->route('admin.fulfillment.create.form')->with([
+            return redirect()->route('customer.fulfillment.create.form')->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -224,7 +228,7 @@ class FulfillmentController extends Controller
 
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_ADD_NEW_RECORD)->send();
 
-        return redirect()->route('admin.fulfillment.create.form')->with(['response' => $responseData]);
+        return redirect()->route('customer.fulfillment.create.form')->with(['response' => $responseData]);
     }
 
     /** Display the page for viewing fulfillment */
@@ -358,7 +362,6 @@ class FulfillmentController extends Controller
 
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
-        $data = collect($data)->except(['customer_id', 'staff_id', 'postage', 'labour_payment_status'])->toArray();
 
         // TODO: WE HAVE TO CONSIDER ON STOCK CONTROL AND INVOICE, BILLING STUFFS LATER ON
 
@@ -630,8 +633,6 @@ class FulfillmentController extends Controller
     {
         $validator = Validator::make($request->all(), [
             // Customer Details
-            "staff_id" => ["required", "integer"],
-            "customer_id" => ["required", "integer"],
             "name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
             "phone" => ["required", "regex:/^[0-9\s]+$/"],
             "address" => ["required"],
@@ -641,10 +642,8 @@ class FulfillmentController extends Controller
             "country" => ["required", Rule::in(array_keys(CurrencyAndCountryEnum::MAP_COUNTRIES))],
             "fulfillment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_FULFILLMENT_STATUSES))],
             "product_payment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_PAYMENT_STATUSES))],
-            "labour_payment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_PAYMENT_STATUSES))],
             "shipping_type" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_SHIPPING))],
             'shipping_status' => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_SHIPPING_STATUSES))],
-            "postage" => ["nullable", "numeric", "between:0, 9999.99"],
             "tracking_number" => ["nullable", "alpha_num"],
         ]);
 
@@ -715,8 +714,6 @@ class FulfillmentController extends Controller
         $data['postage_unit'] = CurrencyAndCountryEnum::MAP_CURRENCIES[$data['country']] ?? '';
 
         return collect($data)->only([
-            'staff_id',
-            'customer_id',
             'name',
             'phone',
             'address',
@@ -727,13 +724,10 @@ class FulfillmentController extends Controller
             'country',
             'fulfillment_status',
             'product_payment_status',
-            'labour_payment_status',
             'note',
             'shipping_status',
             'shipping_type',
             'tracking_number',
-            'postage',
-            'postage_unit',
         ])->toArray();
     }
 

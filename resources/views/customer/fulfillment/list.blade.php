@@ -2,8 +2,8 @@
 @section('content')
 
 <div class="relative sm:rounded-lg">
-    @include('customer.fulfillment.filter')
-    
+    @include('customer.layout.response')
+    @include('customer.fulfillment.filter')    
     @if (empty($fulfillments['data']))
         <p class="w-full text-center text-red-600 font-semibold text-lg">Unable to find any records.</p>
     @else

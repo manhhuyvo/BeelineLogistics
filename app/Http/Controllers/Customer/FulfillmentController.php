@@ -230,11 +230,22 @@ class FulfillmentController extends Controller
     /** Display the page for viewing fulfillment */
     public function show(Request $request, Fulfillment $fulfillment)
     {
-        // Get staff model
-        $staff = collect($fulfillment->staff)->toArray();
+        // Get current logged-in user
+        $user = Auth::user();
 
         // Get customer model
         $customer = collect($fulfillment->customer)->toArray();
+        
+        // If this fulfillment doesn't belong to the customer viewing, then return to previous page
+        if ($user->customer->id != $customer['id']) {
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
 
         // Turn the fulfillment into an array
         $fulfillment = collect($fulfillment)->toArray();
@@ -251,9 +262,8 @@ class FulfillmentController extends Controller
         })->toArray();
 
         // Return the view
-        return view('admin.fulfillment.show', [
+        return view('customer.fulfillment.show', [
             'fulfillment' => $fulfillment,
-            'staff' => $staff,
             'customer' => $customer,
         ]);
     }

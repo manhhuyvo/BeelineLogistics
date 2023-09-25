@@ -68,7 +68,7 @@
                         {{ $index + 1 }}
                     </th>
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        <a href="{{ route('customer.invoice.show', ['invoice' => $invoice['id']]) }}">{{ $invoice['id'] }}</a>
+                        <a href="{{ route('customer.invoice.show', ['invoice' => $invoice['id']]) }}" class="text-blue-500 hover:underline hover:text-blue-700" title="View Invoice">#{{ $invoice['id'] }}</a>
                     </th>
                     <td class="px-6 py-4">
                         {{ $invoice['reference'] ?? '' }}

@@ -105,7 +105,6 @@
     let filterForm = $('#filter-form');
     let toggleFilterBtn = $('#toggle-filter');
 
-    filterForm.hide();
     $(document).ready(function () {
         toggleFilterBtn.on('click', function() {
             if (filterForm.is(':visible')) {

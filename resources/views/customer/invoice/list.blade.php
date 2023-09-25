@@ -12,8 +12,6 @@
     @else
     {{-- @include('customer.layout.pagination') --}}
     <div class="w-full overflow-x-auto mb-2" id="main-page-form">
-        <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
-        <input type="hidden" id="bulk_action" name="bulk_action" value=""/>
         <table class="w-full text-sm text-left text-gray-500 shadow-lg rounded-lg min-width">
             <thead class="text-xs text-white font-semibold bg-indigo-950"  style="text-align: center !important;">
                 <tr>

@@ -175,4 +175,31 @@ class FulfillmentEnum
         'note',
         'date_created',
     ];
+
+    const CUSTOMER_EXPORT_COLUMNS = [
+        'id',
+        'products',
+        'total_product_amount',
+        'product_unit',
+        'fulfillment_status',
+        'shipping_status',
+        'name',
+        'phone',
+        'address',
+        'address2',
+        'suburb',
+        'state',
+        'postcode',
+        'country',
+        'shipping_type',
+        'tracking_number',
+        'postage',
+        'postage_unit',
+        'total_labour_amount',
+        'labour_unit',
+        'product_payment_status',
+        'labour_payment_status',
+        'note',
+        'date_created',
+    ];
 }

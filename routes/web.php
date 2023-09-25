@@ -21,6 +21,7 @@ use App\Models\Staff;
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 use App\Http\Controllers\Customer\InvoiceController as CustomerInvoiceController;
+use App\Http\Controllers\Customer\FulfillmentController as CustomerFulfillmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -179,6 +180,16 @@ Route::prefix('customer')->group(function () {
         Route::get('/invoice/{invoice}', [CustomerInvoiceController::class, 'show'])->name('customer.invoice.show');
         Route::post('/invoice/bulk', [CustomerInvoiceController::class, 'bulk'])->name('customer.invoice.bulk');
         Route::post('/invoice/export', [CustomerInvoiceController::class, 'export'])->name('customer.invoice.export');
+
+        /** [FULFILLMENT ROUTES] */
+        Route::get('/fulfillment', [CustomerFulfillmentController::class, 'index'])->name('customer.fulfillment.list');
+        Route::post('/fulfillment/bulk', [CustomerFulfillmentController::class, 'bulk'])->name('customer.fulfillment.bulk');
+        Route::post('/fulfillment/export', [CustomerFulfillmentController::class, 'export'])->name('customer.fulfillment.export');
+        Route::get('/fulfillment/{fulfillment}', [CustomerFulfillmentController::class, 'show'])->name('customer.fulfillment.show');
+        Route::get('/fulfillment/create', [FulfillmentController::class, 'create'])->name('customer.fulfillment.create.form');
+        Route::post('/fulfillment', [FulfillmentController::class, 'store'])->name('customer.fulfillment.store');
+        Route::get('/fulfillment/{fulfillment}/edit', [CustomerController::class, 'edit'])->name('customer.fulfillment.edit.form');
+        Route::post('/fulfillment/{fulfillment}', [CustomerController::class, 'update'])->name('customer.fulfillment.update');
     }); 
 
     Route::group(['middleware' => ['customer.login.redirect']], function() {

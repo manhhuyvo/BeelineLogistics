@@ -94,7 +94,7 @@
                        <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Checkout Orders</a>
                     </li>
                     <li>
-                       <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Fulfillment Orders</a>
+                       <a href="{{ route('customer.fulfillment.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Fulfillment Orders</a>
                     </li>
               </ul>
            </li>

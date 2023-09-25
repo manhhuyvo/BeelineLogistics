@@ -45,8 +45,11 @@
     let generateInvoiceForm = $('#generate-invoice-form');
     
     let bulkActionField = $('#bulk_action');
+    let bulkActionDropdown = $('#bulk_action_dropdown');
 
     $(document).ready(function () {
+        bulkActionDropdown.select2();
+        setUpSearchableDropdowns();
         // Event for select all rows checkbox
         selectAllRowsCheckbox.on('change', function() {
             // If select_all checkbox is checked
@@ -76,6 +79,12 @@
 
                 }
             }
+        });
+
+        // event for selecting bulk action
+        bulkActionDropdown.on('change', function() {
+            // Assign the selected action for the hidden field in the main form
+            bulkActionField.val(bulkActionDropdown.val());
         });
     })
 

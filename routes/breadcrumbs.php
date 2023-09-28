@@ -163,3 +163,42 @@ Breadcrumbs::for('admin.invoice.edit.form', function (BreadcrumbTrail $trail, $i
     $trail->parent('admin.invoice.list');
     $trail->push("Edit Invoice #{$invoice->id}", route('admin.invoice.edit.form', ['invoice' => $invoice->id]));
 });
+
+/**
+ * 
+ * CUSTOMER BREADCRUMBS
+ * 
+ */
+
+ /** CUSTOMER DASHBOARD */
+Breadcrumbs::for('customer.dashboard', function (BreadcrumbTrail $trail): void {
+    $trail->push('Home', route('customer.dashboard'));
+});
+
+/** CUSTOMER FULFILLMENTS */
+Breadcrumbs::for('customer.fulfillment.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('customer.dashboard');
+    $trail->push('Fulfillment', route('customer.fulfillment.list'));
+});
+Breadcrumbs::for('customer.fulfillment.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('customer.fulfillment.list');
+    $trail->push('Add New Fulfillment', route('customer.fulfillment.create.form'));
+});
+Breadcrumbs::for('customer.fulfillment.show', function (BreadcrumbTrail $trail, $fulfillment): void {
+    $trail->parent('customer.fulfillment.list');
+    $trail->push("Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('customer.fulfillment.show', ['fulfillment' => $fulfillment->id]));
+});
+Breadcrumbs::for('customer.fulfillment.edit.form', function (BreadcrumbTrail $trail, $fulfillment): void {
+    $trail->parent('customer.fulfillment.list');
+    $trail->push("Edit Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('customer.fulfillment.edit.form', ['fulfillment' => $fulfillment->id]));
+});
+
+/** CUSTOMER INVOICE */
+Breadcrumbs::for('customer.invoice.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('customer.dashboard');
+    $trail->push('Invoice', route('customer.invoice.list'));
+});
+Breadcrumbs::for('customer.invoice.show', function (BreadcrumbTrail $trail, $invoice): void {
+    $trail->parent('customer.invoice.list');
+    $trail->push("Invoice #{$invoice->id}", route('customer.invoice.show', ['invoice' => $invoice->id]));
+});

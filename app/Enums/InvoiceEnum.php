@@ -26,6 +26,11 @@ class InvoiceEnum
         self::STATUS_OVERDUE => 'red',
     ];
 
+    public const NO_OUTSTANDING_STATUSES = [
+        self::STATUS_CANCELLED,
+        self::STATUS_WAIVED,
+    ];
+
     /** Invoice Payment Statuses */
     public const STATUS_PAID = 1;
     public const STATUS_UNPAID = 2;

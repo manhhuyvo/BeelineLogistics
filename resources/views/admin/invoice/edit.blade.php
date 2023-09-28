@@ -211,7 +211,18 @@
                             <td class="p-2.5"></td>
                             <th scope="row" class="p-2.5 border-t border-gray-500">Total</th>
                             <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-currency">{{ $invoice['unit'] }}</span></td>
-                            <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-amount">{{ $invoice['outstanding_amount'] }}</span></td>
+                            <td class="p-2.5 border-t border-gray-500 text-center"><span class="total-amount">{{ $invoice['total_amount'] }}</span></td>
+                        </tr>
+                        @if ($invoice['outstanding_amount'] == 0)
+                        <tr class="font-semibold text-green-500 text-lg">
+                        @else
+                        <tr class="font-semibold text-red-500 text-lg">
+                        @endif
+                            <td colspan="2" class="p-2.5"></td>
+                            <td class="p-2.5"></td>
+                            <th scope="row" class="p-2.5">Outstanding</th>
+                            <td class="p-2.5 text-center"><span class="total-currency">{{ $invoice['unit'] }}</span></td>
+                            <td class="p-2.5 text-center"><span class="total-amount">{{ $invoice['outstanding_amount'] }}</span></td>
                         </tr>
                     </tfoot>
                 </table>

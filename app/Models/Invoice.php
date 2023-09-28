@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Customer;
 use App\Models\Invoice\Item as InvoiceItem;
+use App\Enums\InvoiceEnum;
 
 class Invoice extends Model
 {
@@ -52,5 +53,24 @@ class Invoice extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class, 'invoice_id', 'id');
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::updating(function($item) {
+            // If status is cancel or waived, we set outstanding amount to 0
+            if (in_array($item->status, InvoiceEnum::NO_OUTSTANDING_STATUSES)) {
+                $item->outstanding_amount = 0.00;
+            }
+
+            // If also the status payment is paid, we set outstanding amount to 0
+            if ($item->status == InvoiceEnum::STATUS_PAID) {
+                $item->outstanding_amount = 0.00;
+            }
+
+            // Later on if these statuses get changed to other statuses, we get the real outstanding_amount by minusing the total payments received with the invoice total amount
+        });
     }
 }

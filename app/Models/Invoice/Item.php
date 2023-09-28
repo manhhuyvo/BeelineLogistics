@@ -41,4 +41,27 @@ class Item extends Model
     {
         return $this->belongsTo(Fulfillment::class, 'fulfillment_id', 'id');
     }
+
+    public static function boot()
+    {        
+        parent::boot();
+
+        static::updating(function($item) {
+            $invoiceItemBeforeUpdate = Item::find($item->id);
+            // If either price or quantity is updated, then we calculate the amount again
+            if ($invoiceItemBeforeUpdate->price != $item->price || $invoiceItemBeforeUpdate->quantity != $item->quantity) {
+                // Save the new amount
+                $newAmount = (float) $item->price * $item->quantity;
+                $item->amount = (float) $newAmount;
+
+                // Get the current amount of this invoice item
+                $currentInvoiceItemAmount = (float) $invoiceItemBeforeUpdate->amount;
+                // Update total amount of the invoice that this invoice item belongs to
+                $invoice = $item->invoice;
+                $invoice->total_amount = $invoice->total_amount - $currentInvoiceItemAmount + $item->amount;
+                $invoice->outstanding_amount = $invoice->outstanding_amount - $currentInvoiceItemAmount + $item->amount;
+                $invoice->save();
+            }
+        });
+    }
 }

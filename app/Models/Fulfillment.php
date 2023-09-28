@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Staff;
 use App\Models\Customer;
-use App\Models\Helpers\Serialize;
+use App\Models\Invoice\Item as InvoiceItem;
 use App\Models\Product;
+use App\Enums\CurrencyAndCountryEnum;
+use App\Enums\InvoiceEnum;
 use Exception;
-use Illuminate\Support\Facades\DB;
 
 class Fulfillment extends Model
 {
@@ -63,18 +64,25 @@ class Fulfillment extends Model
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
-    public static function  boot()
+    public function invoiceItems(): HasMany
+    {
+        return $this->hasMany(InvoiceItem::class, 'fulfillment_id', 'id');
+    }
+
+    public static function boot()
     {
         parent::boot();
 
         static::created(function($item) {
             try {
-                $productConfigs = $item->getProductsModelAndQuantities();
-    
-                // Update product current' stock
-                foreach ($productConfigs as $quantity => $product) {
-                    $product->stock = $product->stock - (int) $quantity;
-                    $product->save();
+                if (!in_array($item->fulfillment_status, FulfillmentEnum::FULFILLMENT_INACTIVE_STATUSES)) {
+                    $productConfigs = $item->getProductsModelAndQuantities();
+
+                    // Update product current' stock
+                    foreach ($productConfigs as $quantity => $product) {
+                        $product->stock = $product->stock - (int) $quantity;
+                        $product->save();
+                    }
                 }
             } catch (Exception $e) {
                 // Add some log here
@@ -123,6 +131,16 @@ class Fulfillment extends Model
                     // Add some log here
                     dd($e->getMessage());
                 }
+            }
+
+            // Always update the invoice item every time the fulfillment is updated because we may have changed some details in the description
+            $invoiceItemsList = $item->invoiceItems;
+            $newDescription = $item->getInvoiceItemDescriptionFromFulfillmentDetails();
+            foreach ($invoiceItemsList as $invoiceItem) {
+                // Update invoice item amount with the new labour amount
+                $invoiceItem->price = (float) $item->total_labour_amount;
+                $invoiceItem->description = $newDescription;
+                $invoiceItem->save();
             }
         });
     }
@@ -229,5 +247,22 @@ class Fulfillment extends Model
             // Add some log here
             dd($e->getMessage());
         }
+    }
+
+    // Get the invoice item description with the new fulfillment details
+    private function getInvoiceItemDescriptionFromFulfillmentDetails()
+    {        
+        // Fulfillment's receiver details
+        $fulfillmentId = $this->id;
+        $fulfillmentName = $this->name ?? "Not Provided";
+        $fulfillmentPhone = $this->phone ?? "Not Provided";
+        $fulfillmentAddress2 = !empty($this->address2) ? " {$this->address2}," : "";
+        $fulfillmentCountry = CurrencyAndCountryEnum::MAP_COUNTRIES[$this->country ?? ''] ?? '';
+        $fulfillmentAddress = "{$this->address},{$fulfillmentAddress2} {$this->suburb} {$this->state} {$this->postcode} {$fulfillmentCountry}";
+        $fulfillmentProductDetails = !empty($this->total_product_amount) ? "{$this->total_product_amount} {$this->product_unit}" : "Not Provided";
+        $fulfillmentPostageDetails = !empty($this->postage) ? "{$this->postage} {$this->postage_unit}" : "Not Provided";
+        $fulfillmentLabourDetails = !empty($this->total_labour_amount) ? "{$this->total_labour_amount} {$this->labour_unit}" : "Not Provided";
+
+        return InvoiceEnum::MAP_DESCRIPTION_TARGET[InvoiceEnum::TARGET_FULFILLMENT] . " Details of Fulfillment:\n- Fulfillment ID: #{$fulfillmentId}\n- Receiver Name: {$fulfillmentName}\n- Receiver Phone: {$fulfillmentPhone}\n- Receiver Address: {$fulfillmentAddress}\n- Product Amount: {$fulfillmentProductDetails}\n- Labour Amount: {$fulfillmentLabourDetails}\n- Postage: {$fulfillmentPostageDetails}";
     }
 }

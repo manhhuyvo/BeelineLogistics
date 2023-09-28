@@ -17,6 +17,11 @@ class FulfillmentEnum
         self::FULFILLMENT_STATUS_DELETE,
     ];
 
+    const FULFILLMENT_INACTIVE_STATUSES = [
+        self::FULFILLMENT_STATUS_CANCEL,
+        self::FULFILLMENT_STATUS_DELETE,
+    ];
+
     const MAP_FULFILLMENT_STATUSES = [
         self::FULFILLMENT_STATUS_ACTIVE => 'Active',
         self::FULFILLMENT_STATUS_CANCEL => 'Cancel',

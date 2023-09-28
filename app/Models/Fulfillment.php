@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FulfillmentEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,8 @@ use App\Models\Staff;
 use App\Models\Customer;
 use App\Models\Helpers\Serialize;
 use App\Models\Product;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class Fulfillment extends Model
 {
@@ -58,5 +61,173 @@ class Fulfillment extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
+
+    public static function  boot()
+    {
+        parent::boot();
+
+        static::created(function($item) {
+            try {
+                $productConfigs = $item->getProductsModelAndQuantities();
+    
+                // Update product current' stock
+                foreach ($productConfigs as $quantity => $product) {
+                    $product->stock = $product->stock - (int) $quantity;
+                    $product->save();
+                }
+            } catch (Exception $e) {
+                // Add some log here
+                dd($e->getMessage());
+            }
+        });
+
+        static::updating(function($item) {
+            $fulfillmentBeforeUpdate = Fulfillment::find($item->id);
+            $productStockUpdated = false;
+
+            // If the status was updated to a different value, then we check if we need to return stock or take stock
+            if ($fulfillmentBeforeUpdate->fulfillment_status != $item->fulfillment_status) {
+                // If old status is active and new status is inactive, then we return stock by the quantity of the old details
+                if (!in_array($fulfillmentBeforeUpdate->fulfillment_status, FulfillmentEnum::FULFILLMENT_INACTIVE_STATUSES) && in_array($item->fulfillment_status, FulfillmentEnum::FULFILLMENT_INACTIVE_STATUSES)) {
+                    $fulfillmentBeforeUpdate->returnProductStock();
+                    $productStockUpdated = true;
+                }
+                
+                // Otherwise if old status is inactive and new status is active, then we take stock by the quantity of new details
+                if (in_array($fulfillmentBeforeUpdate->fulfillment_status, FulfillmentEnum::FULFILLMENT_INACTIVE_STATUSES) && !in_array($item->fulfillment_status, FulfillmentEnum::FULFILLMENT_INACTIVE_STATUSES)) {
+                    $item->takeProductStock();
+                    $productStockUpdated = true;
+                }
+            }
+
+            // If the product wasn't updated from the above actions, that mean we need to check if any products or quantities are different, then we update the product stock accordingly
+            if (!$productStockUpdated && !in_array($item->fulfillment_status, FulfillmentEnum::FULFILLMENT_INACTIVE_STATUSES)) {
+                try {
+                    $productWithDifferentQuantities = $fulfillmentBeforeUpdate->getProductConfigsBeforeAndAfter($item);
+                    // If the diff list is not empty, then we loop through each product and update the stock accordingly
+                    if (!empty($productWithDifferentQuantities)) {
+                        foreach ($productWithDifferentQuantities as $productId => $quantityDetails) {
+                            $product = Product::find($productId);
+                            // If for some reasons we cannot find the product
+                            if (!$product) {
+                                continue;
+                            }
+    
+                            // Handle logic for updating product's stock as: stock = stock + old - new
+                            $product->stock = (int) $product->stock + (int) $quantityDetails['old'] - (int) $quantityDetails['new'];
+                            $product->save();
+                        }
+                    }
+                } catch (Exception $e) {
+                    // Add some log here
+                    dd($e->getMessage());
+                }
+            }
+        });
+    }
+
+    // Get quantity and product as model
+    private function getProductsModelAndQuantities()
+    {
+        $returnData = [];
+        try {
+            $productConfigs = unserialize($this->product_configs);
+    
+            foreach ($productConfigs as $productId => $details) {
+                $product = Product::find($productId);
+                $details['model'] = $product;
+                $returnData[$productId] = $details;
+            }
+        } catch (Exception $e) {
+            // Add some log here
+            dd($e->getMessage());
+        }
+
+        return $returnData;
+    }
+
+    // Get the products configs of fulfillment before and after changes and format them
+    private function getProductConfigsBeforeAndAfter(Fulfillment $after)
+    {
+        $finalData = [];
+        try {
+            $productConfigsBefore = unserialize($this->product_configs);
+            $productConfigsAfter = unserialize($after->product_configs);
+
+            foreach ($productConfigsBefore as $productId => $details) {
+                // If this product has been removed in the new list
+                if (empty($productConfigsAfter[$productId])) {
+                    $finalData[$productId] = [
+                        'old' => $details['quantity'],
+                        'new' => 0,
+                    ];
+
+                    continue;
+                }
+
+                // Otherwise if this product is still in the new list, then we check if the quantities are different. If not different, then we dont need to add to the list as we won't make any changes on that product
+                if ($details['quantity'] == $productConfigsAfter[$productId]['quantity']) {
+                    continue;
+                }
+
+                $finalData[$productId] = [
+                    'old' => $details['quantity'],
+                    'new' => $productConfigsAfter[$productId]['quantity'],
+                ];
+            }
+
+            foreach ($productConfigsAfter as $productId => $details) {
+                // If this product in new list also exist in the previous list, then just ignore it as we already put it to the final list
+                if (!empty($productConfigsBefore[$productId])) {
+                    continue;
+                }
+
+                // Otherwise if this product doesn't exist in the previous list, we add it to the final list
+                $finalData[$productId] = [
+                    'old' => 0,
+                    'new' => $productConfigsAfter[$productId]['quantity'],
+                ];
+            }
+        } catch (Exception $e) {
+            // Add some log here
+            dd($e->getMessage());
+        }
+
+        return $finalData;
+    }
+
+    // Put the quantity back to product stock on fulfillment active to inactive
+    private function returnProductStock()
+    {
+        try {
+            $productConfigs = $this->getProductsModelAndQuantities();
+
+            foreach ($productConfigs as $productId => $product) {
+                $product['model']->stock = (int) $product['model']->stock + (int) $product['quantity'];
+                $product['model']->save();
+            }
+        } catch (Exception $e) {
+            // Add some log here
+            dd($e->getMessage());
+        }
+    }
+
+    // Take the quantity out of product stock on fulfillment inactive to active
+    private function takeProductStock()
+    {
+        try {
+            $productConfigs = $this->getProductsModelAndQuantities();
+
+            // Update product current's stock
+
+            foreach ($productConfigs as $productId => $product) {
+                $product['model']->stock = (int) $product['model']->stock - (int) $product['quantity'];
+                $product['model']->save();
+            }
+        } catch (Exception $e) {
+            // Add some log here
+            dd($e->getMessage());
+        }
     }
 }

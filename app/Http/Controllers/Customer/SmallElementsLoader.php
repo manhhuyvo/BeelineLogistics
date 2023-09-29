@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 
 class SmallElementsLoader extends Controller
 {
@@ -20,7 +21,10 @@ class SmallElementsLoader extends Controller
     private function formatProductsList()
     {
         // Load all products with their groups
-        $allProducts = Product::with('productGroup')->get();
+        $user = Auth::user();
+        $customer = $user->customer;
+        $allProducts = $customer->products;
+        
         // Get group name and filter the un-used keys
         $allProducts = collect($allProducts)->mapWithKeys(function(Product $product, int $index) {
             $product['group_name'] = $product->productGroup->name ?? '';

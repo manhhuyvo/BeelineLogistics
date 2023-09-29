@@ -79,9 +79,9 @@ class Fulfillment extends Model
                     $productConfigs = $item->getProductsModelAndQuantities();
 
                     // Update product current' stock
-                    foreach ($productConfigs as $quantity => $product) {
-                        $product->stock = $product->stock - (int) $quantity;
-                        $product->save();
+                    foreach ($productConfigs as $productId => $quantityDetails) {
+                        $quantityDetails['model']->stock = $quantityDetails['model']->stock - (int) $quantityDetails['quantity'];
+                        $quantityDetails['model']->save();
                     }
                 }
             } catch (Exception $e) {

@@ -22,6 +22,7 @@ use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 use App\Http\Controllers\Customer\InvoiceController as CustomerInvoiceController;
 use App\Http\Controllers\Customer\FulfillmentController as CustomerFulfillmentController;
+use App\Http\Controllers\Customer\SmallElementsLoader as CustomerSmallElementsLoader;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,7 +166,7 @@ Route::prefix('admin')->group(function () {
 Route::prefix('customer')->group(function () {
     Route::group(['middleware' => 'customer.permission:all'], function () {
         /** [SMALL ELEMENTS LOADER] */
-        Route::get('/small-elements/product-row', [SmallElementsLoader::class, 'getNewProductRow'])->name('customer.small-elements.product-row');
+        Route::get('/small-elements/product-row', [CustomerSmallElementsLoader::class, 'getNewProductRow'])->name('customer.small-elements.product-row');
 
         /** [DASHBOARD CUSTOMER ROUTES] */
         Route::get('/dashboard', function() {

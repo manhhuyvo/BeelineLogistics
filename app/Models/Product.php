@@ -19,6 +19,7 @@ class Product extends Model
         'description',
         'stock',
         'group_id',
+        'customer_id',
         'status',
         'note',
         'price_configs',
@@ -63,6 +64,11 @@ class Product extends Model
     public function productGroup(): BelongsTo
     {
         return $this->belongsTo(ProductGroup::class, 'group_id', 'id');
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
     public function orders(): HasMany

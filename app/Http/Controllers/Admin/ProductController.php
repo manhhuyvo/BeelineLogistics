@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Product\Group as ProductGroup;
 
@@ -18,7 +18,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         // Retrieve list of all first
-        $allProducts = Product::with('productGroup');
+        $allProducts = Product::with(['productGroup', 'customer']);
 
         // Validate the filter request
         $data = $request->all();
@@ -65,11 +65,15 @@ class ProductController extends Controller
             return [$group['id'] => $group['name']];
         });
 
+        // Format the customers list for searchable dropdowns
+        $customersList = $this->formatCustomersList();
+
         return view('admin.product.list', [
             'products' => $returnData,
             'pagination' => $paginationData,   
             'productGroups' => $allProductGroups,
             'productStatuses' => Product::MAP_STATUSES,
+            'customersList' => $customersList,
             'units' => Product::UNITS,
             'productStatusColors' => Product::MAP_STATUSES_COLOR,
             'request' => $data,
@@ -82,6 +86,9 @@ class ProductController extends Controller
         // Get all the current product groups
         $allProductGroups = $this->getAllProductGroups();
 
+        // Format the customers list for searchable dropdowns
+        $customersList = $this->formatCustomersList();
+
         // Format the product groups so we can map them in view
         $allProductGroups = collect($allProductGroups)->mapWithKeys(function($group, int $index) {
             return [$group['id'] => $group['name']];
@@ -90,6 +97,7 @@ class ProductController extends Controller
         return view('admin.product.create', [
             'productGroups' => $allProductGroups,
             'productStatuses' => Product::MAP_STATUSES,
+            'customersList' => $customersList,
             'units' => Product::UNITS,
         ]);
     }
@@ -98,7 +106,8 @@ class ProductController extends Controller
     public function show(Request $request, Product $product)
     {       
         // Turn the product into array and unserialize the price configs
-        $product = $product->toArray();
+        $customer = $product->customer;
+        $product = collect($product)->toArray();
         $product['price_configs'] = !empty($product['price_configs']) ? unserialize($product['price_configs']) : [];
 
         // Get all the current product groups
@@ -122,8 +131,12 @@ class ProductController extends Controller
     public function edit(Request $request, Product $product)
     {
         // Turn the product into array and unserialize the price configs
+        $customer = $product->customer;
         $product = $product->toArray();
         $product['price_configs'] = !empty($product['price_configs']) ? unserialize($product['price_configs']) : [];
+
+        // Format the customers list for searchable dropdowns
+        $customersList = $this->formatCustomersList();
 
         // Get all the current product groups
         $allProductGroups = $this->getAllProductGroups();
@@ -135,6 +148,7 @@ class ProductController extends Controller
 
         return view('admin.product.edit', [
             'product' => $product,
+            'customersList' => $customersList,
             'productGroups' => $allProductGroups,
             'productStatuses' => Product::MAP_STATUSES,
             'units' => Product::UNITS,
@@ -227,6 +241,7 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "group_id" => ["required", "integer", "exists:App\Models\Product\Group,id"],
+            "customer_id" => ["required", "integer", "exists:App\Models\Customer,id"],
             "name" => ["required"],
             "price" => ["required", "numeric"],
             "stock" => ["required", "integer"],
@@ -258,6 +273,7 @@ class ProductController extends Controller
 
         return collect($data)->only([
             'group_id',
+            'customer_id',
             'name',
             'description',
             'stock',
@@ -275,5 +291,25 @@ class ProductController extends Controller
         return !empty($allProductGroups)
             ? collect($allProductGroups)->except(['created_at', 'updated_at'])->toArray()
             : [];
+    }
+    
+    /** Format the array for customers list */
+    private function formatCustomersList(string $listType = '')
+    {
+        $filterStatuses = (!empty($listType) && $listType  == "all") ? Customer::CUSTOMER_STATUSES : [
+            Customer::STATUS_ACTIVE,
+            Customer::STATUS_PENDING,
+        ];
+
+        $allCustomers = Customer::whereIn('status', $filterStatuses)
+                    ->select('id', 'full_name', 'customer_id')
+                    ->get();
+        
+        $data = [];
+        foreach ($allCustomers as $customer) {
+            $data[$customer['id']] = "{$customer['full_name']} ({$customer['customer_id']})";
+        }
+
+        return $data;
     }
 }

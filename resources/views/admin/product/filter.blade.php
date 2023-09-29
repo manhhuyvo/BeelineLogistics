@@ -26,6 +26,28 @@
         </div>
         <div class="row flex gap-2">
             <div class="flex flex-col flex-1">
+                <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer</label>
+                <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
+                    <select id="customer_id" name="customer_id" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5 searchableDropdowns">
+                        @if (empty($request['customer_id']))
+                        <option selected disabled>Choose a customer</option>
+                        @else
+                        <option disabled>Choose a customer</option>
+                        @endif
+                    @foreach($customersList as $key => $value)
+                        @if (!empty($request['customer_id']) && $request['customer_id'] == $key)
+                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        @else
+                        <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                    <div class="text-sm h-full font-medium text-sm focus:ring-1 flex-1 p-2.5 bg-gray-200 border-none pl-3 rounded-r-lg">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col flex-1">
                 <label for="stock" class="mb-2 text-sm font-medium text-gray-900">Current Stock</label>
                 <input id="stock" type="number" name="stock" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Current Stock" value="{{ $request['stock'] ?? '' }}">
             </div>
@@ -57,3 +79,25 @@
         </div>
     </form>
 </div>
+
+<script>
+    $(document).ready(function() {
+        // Set up searchable dropdowns
+        $('.searchableDropdowns').select2();
+        setUpSearchableDropdowns();
+        // Don't round the border for this dropdown
+        $('#customer_id').parent().find('.select2-container').removeClass('rounded-r-lg');
+    })
+
+    // Override default style for Select2 dropdowns
+    function setUpSearchableDropdowns()
+    {
+        // Set outter container's styling
+        $('#customer_id').parent().find('.select2-container').addClass("bg-gray-50 text-gray-600 text-sm rounded-r-lg rounded-l-lg focus:ring-blue-500 focus:border-blue-500 w-full h-fit p-1.5 rounded-lg");
+        $('.select2-container').attr('style', '');
+        // Set inner div for dropdown
+        $('.select2-selection').addClass("bg-transparent border-0");
+        // Hide the default ugly arrow
+        $('.select2-selection__arrow').addClass("hidden");
+    }
+</script>

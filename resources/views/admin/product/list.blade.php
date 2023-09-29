@@ -31,6 +31,9 @@
                     Product Name
                 </th>
                 <th scope="col" class="px-6 sm:py-3 py-2">
+                    Customer Name
+                </th>
+                <th scope="col" class="px-6 sm:py-3 py-2">
                     Product Group
                 </th>
                 <th scope="col" class="px-6 sm:py-3 py-2">
@@ -49,7 +52,7 @@
                     Note
                 </th>
                 <th scope="col" class="px-6 sm:py-3 py-2">
-                    Date Created
+                    Date_Created
                 </th>
                 <th scope="col" class="px-6 sm:py-3 py-2">
                     Action
@@ -65,13 +68,16 @@
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     {{ $product['name'] ?? 'Not Provided' }}
                 </th>
-                <td class="px-6 py-4">
+                <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                    {{ $product['customer']['customer_id'] }} {{ $product['customer']['full_name'] }}
+                </th>
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $product['product_group']['name'] ?? 'Not Provided' }}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $product['description'] ?? 'Not Provided' }}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     @if (!empty($product['price_configs']['price']))
                         {{ $product['price_configs']['price'] ?? '' }} {{ $product['price_configs']['unit'] ?? '' }}
                     @else
@@ -87,7 +93,7 @@
                 <td class="px-6 py-4">
                     {{ $product['note'] ?? '' }}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $product['created_at'] }}
                 </td>
                 <td class="px-6 py-4">

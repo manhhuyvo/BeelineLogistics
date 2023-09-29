@@ -213,11 +213,6 @@
     </div>
 </div>
 
-<!-- 
-    TODO:
-        DISPLAY DIFFERENT LISTS FOR DIFFERENT ITEM TYPES
--->
-
 <script>
     // Add new row
     const addNewRowBtn = $('.add_new_row')

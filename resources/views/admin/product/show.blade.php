@@ -25,6 +25,10 @@
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
+                    <label for="description" class="mb-2 text-sm font-medium text-gray-900">Customer</label>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $product['customer']['customer_id'] }} {{ $product['customer']['full_name'] }}</div>
+                </div>
+                <div class="flex flex-col flex-1">
                     <label for="description" class="mb-2 text-sm font-medium text-gray-900">Description</label>
                     <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $product['description'] ?? 'Not provided' }}</div>
                 </div>

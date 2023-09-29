@@ -202,7 +202,7 @@ class UserController extends Controller
             "target" => ["required", Rule::in(User::USER_TARGETS)],
             "status" => ["required", "integer", Rule::in(User::USER_STATUSES)],
             "level" => ["required", "integer", Rule::in(User::USER_LEVELS)],
-            "password" => empty($action) && $action == 'update' ? ["required"] : "",
+            "password" => ["required"],
             "confirm_password" => empty($action) && $action == 'update' ? ["required", "same:password"] : "",
         ]);        
 
@@ -252,9 +252,7 @@ class UserController extends Controller
             $data[$key] = "";
         }
 
-        if (empty($action) && $action == 'update') {
-            $data['password'] = Hash::make($data['password']);
-        }
+        $data['password'] = Hash::make($data['password']);
 
         return collect($data)->only([
             'username',

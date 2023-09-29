@@ -22,7 +22,7 @@
     @include('admin.layout.pagination')
     <div class="w-full overflow-x-auto">
     <table class="w-full text-sm text-left text-gray-500 shadow-lg rounded-lg">
-        <thead class="text-xs text-white font-semibold uppercase bg-indigo-950">
+        <thead class="text-xs text-white font-semibold uppercase bg-indigo-950 text-center">
             <tr>
                 <th scope="col" class="pl-4 sm:py-3 py-2">
                     Index

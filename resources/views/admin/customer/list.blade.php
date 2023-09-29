@@ -28,7 +28,7 @@
                     Index
                 </th>
                 <th scope="col" class="px-6 sm:py-3 py-2">
-                    Customer_ID
+                    Customer ID
                 </th>
                 <th scope="col" class="px-6 sm:py-3 py-2">
                     Full Name
@@ -68,16 +68,16 @@
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     {{ $customer['customer_id'] }}
                 </th>
-                <th scope="row" class="px-6 py-4">
+                <th scope="row" class="px-6 py-4 whitespace-nowrap">
                     {{ $customer['full_name'] }}
                 </th>
                 <td class="px-6 py-4">
                     {{ $customer['phone'] }}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $customer['address'] }}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $staffsList[$customer['staff_id']] }}
                 </td>
                 <td class="px-6 py-4">
@@ -89,7 +89,7 @@
                 <td class="px-6 py-4">
                     <span class="font-semibold text-{{ $customerStatusColors[$customer['status']] ?? 'red' }}-500">{{ $customerStatuses[$customer['status']] }}</span>
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $customer['created_at'] }}
                 </td>
                 <td class="px-6 py-4">

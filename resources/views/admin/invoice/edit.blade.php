@@ -12,7 +12,7 @@
         <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.invoice.update', ['invoice' => $invoice['id']]) }}" method="POST">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <input name="create_invoice_from" type="hidden" value="{{ InvoiceEnum::TARGET_MANUAL }}" />
-            <input name="staff_id" type="hidden" value="{{ $user->id }}" />
+            <input name="staff_id" type="hidden" value="{{ $user->staff->id }}" />
             <!-- INVOICE DETAILS -->
             <p class="text-lg font-medium text-blue-600 mt-1">
                 Invoice Details
@@ -81,8 +81,8 @@
                     </select>
                 </div>
                 <div class="flex flex-col flex-1">
-                    <label for="status" class="mb-2 text-sm font-medium text-gray-900">Payment Status</label>
-                    <select id="status" name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                    <label for="payment_status" class="mb-2 text-sm font-medium text-gray-900">Payment Status</label>
+                    <select id="payment_status" name="payment_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
                         @if (empty($invoice['payment_status']))
                         <option selected disabled>Choose a status</option>
                         @endif

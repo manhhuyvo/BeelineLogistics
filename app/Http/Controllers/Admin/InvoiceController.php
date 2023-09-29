@@ -593,7 +593,7 @@ class InvoiceController extends Controller
                 // Create Invoice
                 $invoice = new Invoice([
                     'customer_id' => $customerId,
-                    'staff_id' => $user->id ?? 0,
+                    'staff_id' => $user->staff->id ?? 0,
                     'reference' => htmlspecialchars($invoiceReference ?? ''),
                     'total_amount' => 0, // Set the amount is 0, we can update it later
                     'outstanding_amount' => 0, // Set the amount is 0, we can update it later
@@ -1019,6 +1019,7 @@ class InvoiceController extends Controller
                 'due_date' => ['required', 'date'],
                 'unit' => ['required', Rule::in(array_values(CurrencyAndCountryEnum::MAP_CURRENCIES))],
                 'status' => ['required', Rule::in(array_keys(InvoiceEnum::MAP_INVOICE_STATUSES))],
+                'payment_status' => ['required', Rule::in(array_keys(InvoiceEnum::MAP_PAYMENT_STATUSES))],
                 'item_type' => ['required', 'array'],
             ]);
             
@@ -1028,6 +1029,7 @@ class InvoiceController extends Controller
                 'due_date' => 'Please provide a valid due date for this invoice',
                 'unit' => 'Please provide a valid currency for this invoice',
                 'status' => 'Please provide a valid status for this invoice',
+                'payment_status' => 'Please provide a valid payment status for this invoice',
                 'item_type' => 'Please provide an item for this invoice',
             ]);
         }
@@ -1231,6 +1233,7 @@ class InvoiceController extends Controller
             'due_date',
             'unit',
             'status',
+            'payment_status',
             'note',
         ])->toArray();
         $invoiceDetails['invoice_items'] = $invoiceItems;
@@ -1252,6 +1255,11 @@ class InvoiceController extends Controller
         // Final data holder
         $finalData = [];
         foreach ($invoices as $invoice) {
+            if (in_array($invoice->status, [InvoiceEnum::STATUS_PENDING, InvoiceEnum::STATUS_CANCELLED, InvoiceEnum::STATUS_WAIVED])) {
+                $finalData['data'][] = collect($invoice)->toArray();
+                continue;
+            }
+
             $dueDate = Carbon::parse($invoice['due_date']);
             
             // Check if this due date is still not yet, then we don't do anything, add it back to the lsit

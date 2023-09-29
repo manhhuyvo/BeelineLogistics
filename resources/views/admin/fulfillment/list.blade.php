@@ -109,16 +109,16 @@
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {{ $fulfillment['id'] }}
                     </th>
-                    <th scope="row" class="px-6 py-4">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['customer']['customer_id'] }} {{ $fulfillment['customer']['full_name'] }}
                     </th>
-                    <td scope="row" class="px-6 py-4">
+                    <td scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['name'] ?? '' }}
                     </td>
                     <td scope="row" class="px-6 py-4">
                         {{ $fulfillment['phone'] ?? '' }}
                     </td>
-                    <td scope="row" class="px-6 py-4">
+                    <td scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['address'] }},
                         @if (!empty($fulfillment['address2']))
                         {{ $fulfillment['address2'] }},
@@ -128,13 +128,13 @@
                         {{ $fulfillment['postcode'] }},
                         {{ $countries[$fulfillment['country']] ?? '' }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['staff']['full_name'] }} ({{ Str::upper(Staff::MAP_POSITIONS[$fulfillment['staff']['position']]) }})
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         {{ $shippingTypes[$fulfillment['shipping_type']] ?? '' }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['tracking_number'] ?? '' }}
                     </td>
                     <td class="px-6 py-4">

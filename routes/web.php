@@ -45,16 +45,10 @@ Route::prefix('admin')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
     });
 
-    /* [ADMIN LOGOUT ROUTE] */
-    Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
-
     Route::group(['middleware' => 'staff.permission:'. Staff::POSITION_DIRECTOR], function () {
         /* [TEMPORARY ADMIN REGISTER ROUTE] */
         Route::get('/register', [AuthController::class, 'registerView'])->name('admin.register.form');
         Route::post('/register', [AuthController::class, 'register'])->name('admin.register');
-
-        /** [DASHBOARD ADMIN ROUTES] */
-        Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
         /* [STAFF ROUTES] */
         Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.list');
@@ -75,8 +69,7 @@ Route::prefix('admin')->group(function () {
         Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('admin.supplier.delete');
     });
 
-    // Only allow Director, Sales, Accountant to access user model
-    Route::group(['middleware' => 'staff.permission:'. Staff::POSITION_DIRECTOR . '|' . Staff::POSITION_SALES . '|' . Staff::POSITION_ACCOUNTANT], function () {
+    Route::group(['middleware' => 'staff.permission:' . Staff::POSITION_DIRECTOR . '|' . Staff::POSITION_ACCOUNTANT], function () {
         /* [USER MANAGEMENT] */
         Route::get('/user', [UserController::class, 'index'])->name('admin.user.list');
         Route::get('/user/create', [UserController::class, 'create'])->name('admin.user.create.form');
@@ -85,9 +78,24 @@ Route::prefix('admin')->group(function () {
         Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit.form');
         Route::post('/user/{user}', [UserController::class, 'update'])->name('admin.user.update');
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('admin.user.delete');
+
         /* [AJAX USER OWNER SEARCH] */
         Route::post('/ajax/search-user-owner', [AjaxController::class, 'searchUserOwner'])->name('admin.ajax.search-user-owner');
         Route::post('/ajax/search-customer', [AjaxController::class, 'searchCustomer'])->name('admin.ajax.search-customer');
+
+        /** [INVOICE ROUTES] */
+        Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
+        Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice.list');
+        Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('admin.invoice.create.form');
+        Route::post('/invoice/{invoice}/add-payment', [InvoiceController::class, 'addPayment'])->name('admin.invoice.add-payment');
+        Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
+        Route::post('/invoice/bulk', [InvoiceController::class, 'bulk'])->name('admin.invoice.bulk');
+        Route::post('/invoice/export', [InvoiceController::class, 'export'])->name('admin.invoice.export');
+        Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('admin.invoice.show');
+        Route::get('/invoice/{invoice}/edit', [InvoiceController::class, 'edit'])->name('admin.invoice.edit.form');
+        Route::post('/invoice/{invoice}', [InvoiceController::class, 'update'])->name('admin.invoice.update');
+        Route::delete('/invoice/{invoice}', [InvoiceController::class, 'destroy'])->name('admin.invoice.delete');
+        Route::get('/small-elements/invoice-row/{target}', [SmallElementsLoader::class, 'getNewInvoiceRow'])->name('admin.small-elements.invoice-row');
 
         /** [PRODUCT GROUP ROUTES] */
         Route::get('/product-group', [ProductGroupController::class, 'index'])->name('admin.product-group.list');
@@ -106,25 +114,14 @@ Route::prefix('admin')->group(function () {
         Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit.form');
         Route::post('/product/{product}', [ProductController::class, 'update'])->name('admin.product.update');
         Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('admin.product.delete');
-
-        /** [INVOICE ROUTES] */
-        Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
-        Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice.list');
-        Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('admin.invoice.create.form');
-        Route::post('/invoice/{invoice}/add-payment', [InvoiceController::class, 'addPayment'])->name('admin.invoice.add-payment');
-        Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
-        Route::post('/invoice/bulk', [InvoiceController::class, 'bulk'])->name('admin.invoice.bulk');
-        Route::post('/invoice/export', [InvoiceController::class, 'export'])->name('admin.invoice.export');
-        Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('admin.invoice.show');
-        Route::get('/invoice/{invoice}/edit', [InvoiceController::class, 'edit'])->name('admin.invoice.edit.form');
-        Route::post('/invoice/{invoice}', [InvoiceController::class, 'update'])->name('admin.invoice.update');
-        Route::delete('/invoice/{invoice}', [InvoiceController::class, 'destroy'])->name('admin.invoice.delete');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {
+        /* [ADMIN LOGOUT ROUTE] */
+        Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
+
         /** [SMALL ELEMENTS LOADER] */
         Route::get('/small-elements/product-row', [SmallElementsLoader::class, 'getNewProductRow'])->name('admin.small-elements.product-row');
-        Route::get('/small-elements/invoice-row/{target}', [SmallElementsLoader::class, 'getNewInvoiceRow'])->name('admin.small-elements.invoice-row');
 
         /** [DASHBOARD ADMIN ROUTES] */
         Route::get('/dashboard', function() {

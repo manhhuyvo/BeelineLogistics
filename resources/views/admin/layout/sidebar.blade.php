@@ -63,7 +63,7 @@
                  <span class="ml-3">Dashboard</span>
               </a>
            </li>
-           @if ( in_array($user->level, [StaffModel::POSITION_DIRECTOR, StaffModel::POSITION_ACCOUNTANT]))
+           @if ( in_array($user->level, [StaffModel::POSITION_DIRECTOR]))
            <li>
               <a href="{{ route('admin.staff.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   <i class="fa-solid fa-user-secret flex-shrink-0 text-[19px] ml-[2px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
@@ -137,6 +137,7 @@
                     </li>
               </ul>
            </li>
+           @if ( in_array($user->level, [StaffModel::POSITION_DIRECTOR, StaffModel::POSITION_ACCOUNTANT]))
            <li>
               <a href="{{ route('admin.invoice.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   <i class="fa-solid fa-money-bill flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
@@ -175,6 +176,7 @@
                   </li>
               </ul>
            </li>
+           @endif
            <li>
               <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   <i class="fa-solid fa-clock-rotate-left flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>

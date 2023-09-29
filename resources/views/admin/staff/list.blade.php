@@ -68,16 +68,16 @@
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     {{ $staff['full_name'] }}
                 </th>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $staff['phone'] }}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $staff['address'] }}
                 </td>
                 <td class="px-6 py-4">
                     {{ $staff['dob'] }}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     {{ $staffTypes[$staff['type']] }}
                 </td>
                 <td class="px-6 py-4">

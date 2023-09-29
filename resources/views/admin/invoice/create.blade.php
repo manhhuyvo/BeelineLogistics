@@ -12,7 +12,7 @@
         <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.invoice.store') }}" method="POST">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <input name="create_invoice_from" type="hidden" value="{{ InvoiceEnum::TARGET_MANUAL }}" />
-            <input name="staff_id" type="hidden" value="{{ $user->id }}" />
+            <input name="staff_id" type="hidden" value="{{ $user->staff->id }}" />
             <!-- INVOICE DETAILS -->
             <p class="text-lg font-medium text-blue-600 mt-1">
                 Invoice Details

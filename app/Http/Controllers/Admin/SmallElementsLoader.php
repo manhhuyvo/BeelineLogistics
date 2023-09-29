@@ -53,11 +53,24 @@ class SmallElementsLoader extends Controller
         $allProducts = Product::with('productGroup')->get();
         // Get group name and filter the un-used keys
         $allProducts = collect($allProducts)->mapWithKeys(function(Product $product, int $index) {
-            $product['group_name'] = $product->productGroup->name ?? '';
+            $displayMessage = "{$product['name']}";
+
+            if ($product->productGroup) {
+                $product['group_name'] = $product->productGroup->name ?? '';
+                $displayMessage .= " - Group: {$product['group_name']}";
+            }
+
+            if ($product->customer) {
+                $product['customer_name'] = "{$product->customer->customer_id} {$product->customer->full_name}";
+                $displayMessage .= " - Customer: {$product['customer_name']}";
+            }
+
             $product = collect($product)->only(['id', 'group_id', 'group_name', 'name', 'stock', 'status'])->toArray();
             $formattedStatus = Product::MAP_STATUSES[$product['status']];
 
-            return [$product['id'] => "{$product['name']} - Group: {$product['group_name']} - Stock: {$product['stock']} ({$formattedStatus})"];
+            $displayMessage .= " - Stock: {$product['stock']} ($formattedStatus)";
+
+            return [$product['id'] => $displayMessage];
         })->toArray();
 
         return $allProducts;

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Staff;
-use App\Models\Order;
 use App\Models\Product;
 use App\Models\Fulfillment;
 use App\Enums\FulfillmentEnum;
@@ -771,6 +770,9 @@ class FulfillmentController extends Controller
         $selectedProducts = $request->all()['selected_products'] ?? [];
         $selectedQuantities = $request->all()['selected_quantities'] ?? [];
 
+        // Get the customer ID selected from the list
+        $customerId = $request->all()['customer_id'];
+
         // If user didn't add any product rows at all, then return false
         if (empty($selectedProducts) || empty($selectedQuantities)) {
             return false;
@@ -781,6 +783,17 @@ class FulfillmentController extends Controller
         foreach ($selectedProducts as $index => $productId) {
             if (empty($productId) || empty($selectedQuantities[$index])) {
                 continue;
+            }
+
+            // We should already have a valid $product as we already validate that product if it's valid
+            $product = Product::find($productId);
+            // But still if it is empty, then we don't add it to the list
+            if (!$product) {
+                continue;
+            }
+            // If that product has the customer id different from the selected customer id for the fulfillment, then this request is not valid, return false
+            if ($product->customer_id != $customerId) {
+                return false;
             }
 
             // If there are some duplicated products, then we add total quantities of them together
@@ -854,14 +867,27 @@ class FulfillmentController extends Controller
     private function formatProductsList()
     {
         // Load all products with their groups
-        $allProducts = Product::with('productGroup')->get();
+        $allProducts = Product::with(['productGroup', 'customer'])->get();
         // Get group name and filter the un-used keys
         $allProducts = collect($allProducts)->mapWithKeys(function(Product $product, int $index) {
-            $product['group_name'] = $product->productGroup->name ?? '';
+            $displayMessage = "{$product['name']}";
+
+            if ($product->productGroup) {
+                $product['group_name'] = $product->productGroup->name ?? '';
+                $displayMessage .= " - Group: {$product['group_name']}";
+            }
+
+            if ($product->customer) {
+                $product['customer_name'] = "{$product->customer->customer_id} {$product->customer->full_name}";
+                $displayMessage .= " - Customer: {$product['customer_name']}";
+            }
+
             $product = collect($product)->only(['id', 'group_id', 'group_name', 'name', 'stock', 'status'])->toArray();
             $formattedStatus = Product::MAP_STATUSES[$product['status']];
 
-            return [$product['id'] => "{$product['name']} - Group: {$product['group_name']} - Stock: {$product['stock']} ({$formattedStatus})"];
+            $displayMessage .= " - Stock: {$product['stock']} ($formattedStatus)";
+
+            return [$product['id'] => $displayMessage];
         })->toArray();
 
         return $allProducts;

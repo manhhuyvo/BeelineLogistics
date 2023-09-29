@@ -118,7 +118,6 @@
 </div>
 
 <script>
-
     $(document).ready(function() {
         // Set up searchable dropdowns
         $('.searchableDropdowns').select2();

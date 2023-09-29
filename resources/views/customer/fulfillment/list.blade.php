@@ -14,7 +14,7 @@
     @if (empty($fulfillments['data']))
         <p class="w-full text-center text-red-600 font-semibold text-lg">Unable to find any records.</p>
     @else
-    {{-- @include('customer.layout.pagination') --}}
+    @include('customer.layout.pagination')
     <div class="w-full overflow-x-auto mb-2" id="main-page-form">
         <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
         <input type="hidden" id="bulk_action" name="bulk_action" value=""/>

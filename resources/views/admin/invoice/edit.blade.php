@@ -44,12 +44,12 @@
                     <label for="due_date" class="mb-2 text-sm font-medium text-gray-900">Due Date</label>
                     <input type="date" name="due_date" class="bg-white border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" value="{{ Carbon::createFromFormat('d/m/Y', $invoice['due_date'])->format('Y-m-d') }}">
                 </div>
-            </div>
-            <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="reference" class="mb-2 text-sm font-medium text-gray-900">Reference</label>
                     <input id="reference" type="text" name="reference" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Invoice Reference" value="{{ $invoice['reference'] ?? '' }}">
                 </div>
+            </div>
+            <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="unit" class="mb-2 text-sm font-medium text-gray-900">Invoice Currency</label>
                     <select id="unit" name="unit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
@@ -73,6 +73,21 @@
                         @endif
                     @foreach($invoiceStatuses as $key => $value)
                         @if (!empty($invoice['status']) && $invoice['status'] == $key)
+                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        @else
+                        <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <label for="status" class="mb-2 text-sm font-medium text-gray-900">Payment Status</label>
+                    <select id="status" name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
+                        @if (empty($invoice['payment_status']))
+                        <option selected disabled>Choose a status</option>
+                        @endif
+                    @foreach($paymentStatuses as $key => $value)
+                        @if (!empty($invoice['payment_status']) && $invoice['payment_status'] == $key)
                         <option selected value="{{ $key }}">{{ $value }}</option>
                         @else
                         <option value="{{ $key }}">{{ $value }}</option>

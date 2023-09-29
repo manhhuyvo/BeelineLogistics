@@ -10,7 +10,7 @@
     @if (empty($invoices['data']))
         <p class="w-full text-center text-red-600 font-semibold text-lg">Unable to find any records.</p>
     @else
-    {{-- @include('customer.layout.pagination') --}}
+    @include('customer.layout.pagination')
     <div class="w-full overflow-x-auto mb-2" id="main-page-form">
         <table class="w-full text-sm text-left text-gray-500 shadow-lg rounded-lg min-width">
             <thead class="text-xs text-white font-semibold bg-indigo-950"  style="text-align: center !important;">

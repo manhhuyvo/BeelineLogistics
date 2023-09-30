@@ -4,6 +4,7 @@ use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\FulfillmentEnum;
 use App\Enums\GeneralEnum;
 use App\Enums\InvoiceEnum;
+use App\Enums\ProductPaymentEnum;
 use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Staff;
@@ -11,6 +12,7 @@ use App\Models\Customer;
 use App\Models\Fulfillment;
 use App\Models\Product\Group;
 use App\Models\Product;
+use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
@@ -244,11 +246,13 @@ return [
         'ProductGroup' => Group::class,
         'Product' => Product::class,
         'Fulfillment' => Fulfillment::class,
+        'FulfillmentProductPayment' => FulfillmentProductPayment::class,
         // Enums
         'FulfillmentEnum' => FulfillmentEnum::class,
         'InvoiceEnum' => InvoiceEnum::class,
         'CurrencyAndCountryEnum' => CurrencyAndCountryEnum::class,
         'GeneralEnum' => GeneralEnum::class,
+        'ProductPaymentEnum' => ProductPaymentEnum::class,
     ])->toArray(),
 
 ];

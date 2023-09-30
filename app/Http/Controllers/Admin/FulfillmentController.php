@@ -18,10 +18,13 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Enums\GeneralEnum;
 use App\Enums\ResponseStatusEnum;
+use App\Traits\Upload;
 use Illuminate\Support\Carbon;
 
 class FulfillmentController extends Controller
 {
+    use Upload;
+    
     /** Display the page for list of all customers */
     public function index(Request $request)
     {
@@ -403,6 +406,15 @@ class FulfillmentController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
 
         return redirect()->route('admin.fulfillment.list')->with(['response' => $responseData]);
+    }
+
+    /** Handle request for upload payment receipt */
+    public function addPayment(Request $request, Fulfillment $fulfillment)
+    {
+        if ($request->hasFile('payment_receipt')) {
+            $path = $this->UploadFile($request->file('payment_receipt'), 'PaymentReceipts');
+        }
+        dd($request);
     }
 
     /** Handle request for bulk actions */

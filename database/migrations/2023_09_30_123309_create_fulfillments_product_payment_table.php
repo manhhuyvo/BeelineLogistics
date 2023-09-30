@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('confirmed_by');
             $table->unsignedFloat('amount');
             $table->string('description', 255);
-            $table->longText('path'); // Path where payment receipt image is stored
+            $table->longText('payment_receipt'); // Path where payment receipt image is stored
             $table->unsignedInteger('payment_method');
             $table->string('status', 20);
             $table->date('payment_date')->useCurrent();

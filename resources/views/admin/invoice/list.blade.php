@@ -133,7 +133,7 @@
                         <div class="h-full flex gap-4">
                         <a href="{{ route('admin.invoice.show', ['invoice' => $invoice['id']]) }}" class="font-medium text-blue-600 hover:underline">View</a>
                         <a href="{{ route('admin.invoice.edit.form', ['invoice' => $invoice['id']]) }}" class="font-medium text-yellow-600 hover:underline">Edit</a>
-                        <button type="button" class="font-medium text-red-600 hover:underline confirm-modal-initiate-btn" data-row-id="{{ $invoice['id'] }}" data-row-route="{{ route('admin.invoice.delete', ['invoice' => $invoice['id']]) }}" data-modal-toggle="deleteModal" >Delete</button>
+                        {{-- <button type="button" class="font-medium text-red-600 hover:underline confirm-modal-initiate-btn" data-row-id="{{ $invoice['id'] }}" data-row-route="{{ route('admin.invoice.delete', ['invoice' => $invoice['id']]) }}" data-modal-toggle="deleteModal" >Delete</button> --}}
                         </div>
                     </td>
                 </tr>

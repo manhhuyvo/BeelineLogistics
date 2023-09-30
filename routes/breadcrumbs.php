@@ -175,6 +175,14 @@ Breadcrumbs::for('customer.dashboard', function (BreadcrumbTrail $trail): void {
     $trail->push('Home', route('customer.dashboard'));
 });
 
+/** Breadcrumbs for USER PROFILE */
+Breadcrumbs::for('customer.user.profile.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('customer.dashboard');
+    $trail->push('Profile', route('customer.user.profile.form'));
+    $user = Auth::user();
+    $trail->push("{$user->username}", route('customer.user.profile.form'));
+});
+
 /** CUSTOMER FULFILLMENTS */
 Breadcrumbs::for('customer.fulfillment.list', function (BreadcrumbTrail $trail): void {
     $trail->parent('customer.dashboard');

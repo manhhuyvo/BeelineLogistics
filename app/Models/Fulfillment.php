@@ -11,6 +11,7 @@ use App\Models\Staff;
 use App\Models\Customer;
 use App\Models\Invoice\Item as InvoiceItem;
 use App\Models\Product;
+use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
 use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\InvoiceEnum;
 use Exception;
@@ -67,6 +68,11 @@ class Fulfillment extends Model
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class, 'fulfillment_id', 'id');
+    }
+
+    public function productPayments(): HasMany
+    {
+        return $this->hasMany(FulfillmentProductPayment::class, 'fulfillment_id', 'id');
     }
 
     public static function boot()

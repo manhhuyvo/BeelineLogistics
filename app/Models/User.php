@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Staff;
 use App\Models\Customer;
 use App\Models\Supplier;
+use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Model implements Authenticatable
 {
@@ -126,5 +128,10 @@ class User extends Model implements Authenticatable
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+    }
+
+    public function fulfillmentProductPayments(): HasMany
+    {
+        return $this->hasMany(FulfillmentProductPayment::class, 'user_id', 'id');
     }
 }

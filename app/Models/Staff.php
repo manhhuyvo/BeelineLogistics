@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\User;
 use App\Models\SalaryPayCheck;
 use App\Models\Order;
+use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
 use App\Enums\StaffPositionEnum;
 
 class Staff extends Model
@@ -155,5 +156,10 @@ class Staff extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'staff_id', 'id');
+    }
+
+    public function fulfillmentProductPaymentsApproved(): HasMany
+    {
+        return $this->hasMany(FulfillmentProductPayment::class, 'confirmed_by', 'id');
     }
 }

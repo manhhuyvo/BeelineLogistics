@@ -96,7 +96,7 @@
                     <div class="h-full flex gap-4">
                     <a href="{{ route('admin.staff.show', ['staff' => $staff['id']]) }}" class="font-medium text-blue-600 hover:underline">View</a>
                     <a href="{{ route('admin.staff.edit.form', ['staff' => $staff['id']]) }}" class="font-medium text-yellow-600 hover:underline">Edit</a>
-                    <button type="button" class="font-medium text-red-600 hover:underline confirm-modal-initiate-btn" data-row-id="{{ $staff['id'] }}" data-row-route="{{ route('admin.staff.delete', ['staff' => $staff['id']]) }}" data-modal-toggle="deleteModal" >Delete</button>
+                    {{-- <button type="button" class="font-medium text-red-600 hover:underline confirm-modal-initiate-btn" data-row-id="{{ $staff['id'] }}" data-row-route="{{ route('admin.staff.delete', ['staff' => $staff['id']]) }}" data-modal-toggle="deleteModal" >Delete</button> --}}
                     </div>
                 </td>
             </tr>

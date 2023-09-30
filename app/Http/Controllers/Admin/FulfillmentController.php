@@ -19,12 +19,13 @@ use Illuminate\Support\Facades\DB;
 use App\Enums\GeneralEnum;
 use App\Enums\ResponseStatusEnum;
 use App\Traits\Upload;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 
 class FulfillmentController extends Controller
 {
     use Upload;
-    
+
     /** Display the page for list of all customers */
     public function index(Request $request)
     {
@@ -240,6 +241,9 @@ class FulfillmentController extends Controller
     /** Display the page for viewing fulfillment */
     public function show(Request $request, Fulfillment $fulfillment)
     {
+        // Get logged in user
+        $user = Auth::user();
+
         // Get staff model
         $staff = collect($fulfillment->staff)->toArray();
 
@@ -264,6 +268,7 @@ class FulfillmentController extends Controller
         return view('admin.fulfillment.show', [
             'fulfillment' => $fulfillment,
             'staff' => $staff,
+            'user' => $user,
             'customer' => $customer,
         ]);
     }
@@ -406,15 +411,6 @@ class FulfillmentController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
 
         return redirect()->route('admin.fulfillment.list')->with(['response' => $responseData]);
-    }
-
-    /** Handle request for upload payment receipt */
-    public function addPayment(Request $request, Fulfillment $fulfillment)
-    {
-        if ($request->hasFile('payment_receipt')) {
-            $path = $this->UploadFile($request->file('payment_receipt'), 'PaymentReceipts');
-        }
-        dd($request);
     }
 
     /** Handle request for bulk actions */

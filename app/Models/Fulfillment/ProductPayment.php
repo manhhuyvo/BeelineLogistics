@@ -16,7 +16,7 @@ class ProductPayment extends Model
 {
     use HasFactory;
 
-    protected $table = 'payments';
+    protected $table = 'fulfillment_product_payment';
 
     protected $fillable = [
         'fulfillment_id',
@@ -37,7 +37,7 @@ class ProductPayment extends Model
 
     public function approval(): BelongsTo
     {
-        return $this->belongsTo(Staff::class, 'confirmed_by', 'id');
+        return $this->belongsTo(Staff::class, 'approved_by', 'id');
     }
 
     public function user(): BelongsTo

@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('fulfillments_product_payment', function (Blueprint $table) {
+        Schema::create('fulfillment_product_payment', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('fulfillment_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('confirmed_by');
+            $table->unsignedBigInteger('approved_by');
             $table->unsignedFloat('amount');
             $table->string('description', 255);
             $table->longText('payment_receipt'); // Path where payment receipt image is stored
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fulfillments_product_payment');
+        Schema::dropIfExists('fulfillment_product_payment');
     }
 };

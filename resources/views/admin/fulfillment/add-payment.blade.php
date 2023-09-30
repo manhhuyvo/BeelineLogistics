@@ -1,5 +1,8 @@
 <form method="POST" action={{ route('admin.fulfillment.add-payment', ['fulfillment' => $fulfillment['id']]) }} class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 flex flex-col gap-3 px-3 py-3 justify-center" enctype="multipart/form-data">
     <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
+    <input type="hidden" name="fulfillment_id" value="{{ $fulfillment['id'] }}" readonly />
+    <input type="hidden" name="user_id" value="{{ $user->id }}" readonly />
+    <input type="hidden" name="status" value="{{ ProductPaymentEnum::STATUS_PENDING }}" readonly />
     <p class="text-lg font-medium text-blue-600 mt-1">
         Add a payment
     </p>
@@ -9,13 +12,13 @@
             <select id="payment_method" name="payment_method" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
             <option selected disabled>Choose a method</option>
             @foreach(ProductPaymentEnum::MAP_PAYMENT_METHODS as $key => $value)
-                <option value="{{ $value }}">{{ $value }}</option>
+                <option value="{{ $key }}">{{ $value }}</option>
             @endforeach
             </select>
         </div>
         <div class="flex flex-col flex-1">
             <label for="amount" class="mb-2 text-sm font-medium text-gray-900">Amount Paid</label>
-            <input id="amount" type="number" step="2" name="amount_paid" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" value="">
+            <input id="amount" type="number" step="0.01" name="amount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" value="">
         </div>
         <div class="flex flex-col flex-1">
             <label for="payment_date" class="mb-2 text-sm font-medium text-gray-900">Date Paid</label>
@@ -23,7 +26,7 @@
         </div>
         <div class="flex flex-col flex-1">
             <label for="description" class="mb-2 text-sm font-medium text-gray-900">Description</label>
-            <input id="transaction_reference" type="text" name="transaction_reference" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" value="">
+            <input id="description" type="text" name="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" value="">
         </div>
     </div>
     <div class="flex flex-col flex-1">

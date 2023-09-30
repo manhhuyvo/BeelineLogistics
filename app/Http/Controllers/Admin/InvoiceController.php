@@ -818,7 +818,8 @@ class InvoiceController extends Controller
 
     /** Handle request for updating invoice */
     private function handleManualUpdateInvoice(array $records, Invoice $invoice)
-    {// If some random errors occurred from somewhere, we just prevent it breaking the page by returning UNKNOWN error
+    {
+        // If some random errors occurred from somewhere, we just prevent it breaking the page by returning UNKNOWN error
         if (empty($records)) {
             return [
                 'error' => InvoiceEnum::TARGET_MANUAL,

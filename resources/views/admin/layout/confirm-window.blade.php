@@ -11,7 +11,7 @@
             <p class="mb-4 text-gray-600 font-semibold">Are you sure you want to <span id="general-confirm-action-name"></span>?</p>
             <p class="mb-4 text-red-500 font-semibold">This action cannot be undone.</p>
             <div class="flex justify-center items-center space-x-4">                
-                <button type="button" onclick="performGeneralAction($(this))" class="py-2 px-3 text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:outline-none focus:ring-red-300" id="final-confirm-btn">
+                <button type="button" onclick="performGeneralAction($(this))" class="py-2 px-3 text-sm font-medium text-center text-white rounded-lg" id="final-confirm-btn">
                     Yes, Submit
                 </button>
                 <button data-modal-toggle="generalActionModal" type="button" class="py-2 px-3 text-sm font-medium text-white bg-gray-600 rounded-lg border border-gray-200 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 focus:z-10">
@@ -37,6 +37,8 @@
 
         // Set color for the button and icon
         let eventColor = $(this).attr('data-event-level');
+        generalFinalConfirmBtn.removeClass('bg-red-500 hover:bg-red-700 bg-blue-500 hover:bg-blue-700 bg-green-500 hover:bg-green500 bg-yellow-500 hover:bg-yellow-700');
+        generalConfirmIcon.removeClass('text-red-500 text-blue-500 text-green-500 text-yellow-500');
         generalFinalConfirmBtn.addClass(`bg-${eventColor}-500 hover:bg-${eventColor}-700`);
         generalConfirmIcon.addClass(`text-${eventColor}-500`);
 
@@ -51,7 +53,8 @@
     function performGeneralAction(src) {
         // Get that attribute again
         let eventHandlerName = src.attr('data-final-event-handler');
-
+    
+        console.log(eventHandlerName)
         // Call that event handler function for that specific action
         window[eventHandlerName].call();
     }

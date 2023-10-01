@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use App\Models\Customer;
 use App\Models\Fulfillment;
 use App\Models\Staff;
+use App\Models\User;
 use App\Models\Supplier;
 
 class ProductPayment extends Model
@@ -21,7 +22,7 @@ class ProductPayment extends Model
     protected $fillable = [
         'fulfillment_id',
         'user_id', // User who added this payment to the fulfillment
-        'approved_by', // Staff or supplier who approves this
+        'staff_id', // Staff who appoved or declined or deleted this payment
         'amount',
         'description',
         'payment_receipt', // Path where the image of payment receipt is stored
@@ -30,14 +31,20 @@ class ProductPayment extends Model
         'payment_date',
     ];
 
+    protected $casts = [
+        'created_at' => 'date:d/m/Y',        
+        'updated_at' => 'date:d/m/Y',
+        'payment_date' => 'date:d/m/Y',
+    ];
+
     public function fulfillment(): BelongsTo
     {
         return $this->belongsTo(Fulfillment::class, 'fulfillment_id', 'id');
     }
 
-    public function approval(): BelongsTo
+    public function staff(): BelongsTo
     {
-        return $this->belongsTo(Staff::class, 'approved_by', 'id');
+        return $this->belongsTo(Staff::class, 'staff_id', 'id');
     }
 
     public function user(): BelongsTo

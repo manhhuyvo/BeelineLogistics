@@ -165,5 +165,6 @@
         </a>
     </div>
     @include('admin.fulfillment.add-payment')
+    @include('admin.fulfillment.payment-records')
 </div>
 @endsection

@@ -134,4 +134,36 @@ class User extends Model implements Authenticatable
     {
         return $this->hasMany(FulfillmentProductPayment::class, 'user_id', 'id');
     }
+
+    public function getUserOwner()
+    {
+        if ($this->staff_id != 0) {
+            return $this->staff;
+        }
+
+        if ($this->customer_id != 0) {
+            return $this->customer;
+        }
+
+        if ($this->supplier != 0) {
+            return $this->supplier;
+        }
+
+        return null;
+    }
+
+    public function isStaff()
+    {
+        return $this->target == self::TARGET_STAFF;
+    }
+
+    public function isCustomer()
+    {
+        return $this->target == self::TARGET_CUSTOMER;
+    }
+
+    public function isSupplier()
+    {
+        return $this->target == self::TARGET_SUPPLIER;
+    }
 }

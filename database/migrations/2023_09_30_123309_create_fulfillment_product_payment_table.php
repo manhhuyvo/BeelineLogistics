@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('fulfillment_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('approved_by');
+            $table->unsignedBigInteger('staff_id');
             $table->unsignedFloat('amount');
             $table->string('description', 255);
             $table->longText('payment_receipt'); // Path where payment receipt image is stored

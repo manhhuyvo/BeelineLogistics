@@ -158,8 +158,13 @@ class Staff extends Model
         return $this->hasMany(Order::class, 'staff_id', 'id');
     }
 
-    public function fulfillmentProductPaymentsApproved(): HasMany
+    public function fulfillmentProductPaymentsAction(): HasMany
     {
-        return $this->hasMany(FulfillmentProductPayment::class, 'confirmed_by', 'id');
+        return $this->hasMany(FulfillmentProductPayment::class, 'staff_id', 'id');
+    }
+
+    public function isAdmin()
+    {
+        return in_array($this->position, [self::POSITION_DIRECTOR, self::POSITION_ACCOUNTANT]);
     }
 }

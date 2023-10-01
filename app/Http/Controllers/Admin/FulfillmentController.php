@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Staff;
 use App\Models\Product;
 use App\Models\Fulfillment;
+use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
 use App\Enums\FulfillmentEnum;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -17,6 +18,7 @@ use Exception;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Enums\GeneralEnum;
+use App\Enums\ProductPaymentEnum;
 use App\Enums\ResponseStatusEnum;
 use App\Traits\Upload;
 use Illuminate\Support\Facades\Auth;
@@ -250,6 +252,24 @@ class FulfillmentController extends Controller
         // Get customer model
         $customer = collect($fulfillment->customer)->toArray();
 
+        // Get the payments recorded for this fulfillment
+        $productPayments = $fulfillment->productPayments;
+        $productPayments = $productPayments
+                ? collect($productPayments)->map(function(FulfillmentProductPayment $productPayment) {
+                    $approvedBy = $productPayment->staff;
+                    $userAction = $productPayment->user;
+                    // Entity owner
+                    $entityAction = $userAction->getUserOwner();
+                    
+                    $productPayment = collect($productPayment)->toArray();
+                    $productPayment['entity'] = $entityAction->toArray();
+
+                    return $productPayment;
+                })
+                ->sortBy('status')
+                ->toArray()
+                : [];
+
         // Turn the fulfillment into an array
         $fulfillment = collect($fulfillment)->toArray();
 
@@ -270,6 +290,9 @@ class FulfillmentController extends Controller
             'staff' => $staff,
             'user' => $user,
             'customer' => $customer,
+            'productPayments' => $productPayments,
+            'productPaymentStatuses' => ProductPaymentEnum::MAP_STATUSES,
+            'productPaymentStatusColors' => ProductPaymentEnum::MAP_STATUS_COLORS,
         ]);
     }
 

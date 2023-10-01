@@ -152,12 +152,14 @@ Route::prefix('admin')->group(function () {
         Route::get('/fulfillment/create', [FulfillmentController::class, 'create'])->name('admin.fulfillment.create.form');
         Route::post('/fulfillment', [FulfillmentController::class, 'store'])->name('admin.fulfillment.store');
         Route::post('/fulfillment/{fulfillment}/add-payment', [FulfillmentProductPaymentController::class, 'addPayment'])->name('admin.fulfillment.add-payment');
+        Route::post('/fulfillment/{fulfillment}/update-payment', [FulfillmentProductPaymentController::class, 'updatePayment'])->name('admin.fulfillment.update-payment');
         Route::post('/fulfillment/bulk', [FulfillmentController::class, 'bulk'])->name('admin.fulfillment.bulk');
         Route::post('/fulfillment/export', [FulfillmentController::class, 'export'])->name('admin.fulfillment.export');
         Route::get('/fulfillment/{fulfillment}', [FulfillmentController::class, 'show'])->name('admin.fulfillment.show');
         Route::get('/fulfillment/{fulfillment}/edit', [FulfillmentController::class, 'edit'])->name('admin.fulfillment.edit.form');
         Route::post('/fulfillment/{fulfillment}', [FulfillmentController::class, 'update'])->name('admin.fulfillment.update');
         Route::delete('/fulfillment/{fulfillment}', [FulfillmentController::class, 'destroy'])->name('admin.fulfillment.delete');
+
     });
 
 });

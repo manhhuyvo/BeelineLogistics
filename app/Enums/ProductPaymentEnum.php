@@ -13,20 +13,20 @@ class ProductPaymentEnum
 
     const STATUS_APPROVED = '1';
     const STATUS_PENDING = '2';
-    const STATUS_REJECTED = '3';
+    const STATUS_DECLINED = '3';
     const STATUS_DELETED = '4';
     
     const MAP_STATUSES = [
         self::STATUS_APPROVED => 'Approved',
         self::STATUS_PENDING => 'Pending',
-        self::STATUS_REJECTED => 'Rejected',
+        self::STATUS_DECLINED => 'Declined',
         self::STATUS_DELETED => 'Deleted',
     ];
     
     const MAP_STATUS_COLORS = [
         self::STATUS_APPROVED => 'green',
         self::STATUS_PENDING => 'blue',
-        self::STATUS_REJECTED => 'red',
+        self::STATUS_DECLINED => 'red',
         self::STATUS_DELETED => 'gray',
     ];
 }

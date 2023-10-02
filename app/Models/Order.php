@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Order\Meta as OrderMeta;
 use App\Models\Staff;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Models\SupportTicket;
 
 class Order extends Model
 {
@@ -75,5 +77,10 @@ class Order extends Model
     public function meta(): HasMany
     {
         return $this->hasMany(OrderMeta::class, 'order_id', 'id');
+    }
+
+    public function orders(): BelongsToMany
+    {
+        return $this->belongsToMany(SupportTicket::class, 'ticket_order_maps', 'order_id', 'ticket_id');
     }
 }

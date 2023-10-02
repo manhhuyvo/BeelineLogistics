@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Staff;
 use App\Models\Customer;
 use App\Models\Invoice\Item as InvoiceItem;
 use App\Models\Product;
+use App\Models\SupportTicket;
 use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
 use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\InvoiceEnum;
@@ -73,6 +75,11 @@ class Fulfillment extends Model
     public function productPayments(): HasMany
     {
         return $this->hasMany(FulfillmentProductPayment::class, 'fulfillment_id', 'id');
+    }    
+
+    public function supportTickets(): BelongsToMany
+    {
+        return $this->belongsToMany(SupportTicket::class, 'ticket_fulfillment_maps', 'fulfillment_id', 'ticket_id');
     }
 
     public static function boot()

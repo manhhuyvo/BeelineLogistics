@@ -11,6 +11,8 @@ use App\Models\Staff;
 use App\Models\Customer;
 use App\Models\Supplier;
 use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
+use App\Models\SupportTicket;
+use App\Models\SupportTicket\Comment as SupportTicketComment;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Model implements Authenticatable
@@ -135,6 +137,21 @@ class User extends Model implements Authenticatable
         return $this->hasMany(FulfillmentProductPayment::class, 'user_id', 'id');
     }
 
+    public function supportTicketsCreated(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class, 'created_user_id', 'id');
+    }
+
+    public function supportTicketsSolved(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class, 'solved_user_id', 'id');
+    }
+
+    public function ticketComments(): HasMany
+    {
+        return $this->hasMany(SupportTicketComment::class, 'user_id', 'id');
+    }
+
     public function getUserOwner()
     {
         if ($this->staff_id != 0) {
@@ -154,16 +171,16 @@ class User extends Model implements Authenticatable
 
     public function isStaff()
     {
-        return $this->target == self::TARGET_STAFF;
+        return $this->target == self::TARGET_STAFF && $this->staff_id != 0;
     }
 
     public function isCustomer()
     {
-        return $this->target == self::TARGET_CUSTOMER;
+        return $this->target == self::TARGET_CUSTOMER && $this->customer_id != 0;
     }
 
     public function isSupplier()
     {
-        return $this->target == self::TARGET_SUPPLIER;
+        return $this->target == self::TARGET_SUPPLIER && $this->supplier_id != 0;
     }
 }

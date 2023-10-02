@@ -28,12 +28,14 @@
                         <div class="bg-gray-50 border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $productPayment['amount'] ?? 0.00 }}</div>
                     </div>
                     <div class="flex flex-col flex-1">
-                        <label class="mb-2 text-sm font-medium text-gray-900">Description</label>
-                        <div class="bg-gray-50 border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $productPayment['description'] ?? '' }}</div>
-                    </div>
-                    <div class="flex flex-col flex-1">
                         <label class="mb-2 text-sm font-medium text-gray-900">Date Paid</label>
                         <div class="bg-gray-50 border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $productPayment['payment_date'] ?? '' }}</div>
+                    </div>
+                </div>
+                <div class="flex md:flex-row flex-col gap-2 flex-1 justify-start px-3">
+                    <div class="flex flex-col flex-1">
+                        <label class="mb-2 text-sm font-medium text-gray-900">Description</label>
+                        <div class="bg-gray-50 border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $productPayment['description'] ?? '' }}</div>
                     </div>
                 </div>
                 <div class="flex md:flex-row flex-col md:justify-between gap-3 justify-center w-full px-3">
@@ -68,12 +70,14 @@
                         <div class="bg-gray-50 border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $productPayment['amount'] ?? 0.00 }}</div>
                     </div>
                     <div class="flex flex-col flex-1">
-                        <label class="mb-2 text-sm font-medium text-gray-900">Description</label>
-                        <div class="bg-gray-50 border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $productPayment['description'] ?? '' }}</div>
-                    </div>
-                    <div class="flex flex-col flex-1">
                         <label class="mb-2 text-sm font-medium text-gray-900">Date Paid</label>
                         <div class="bg-gray-50 border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $productPayment['payment_date'] ?? '' }}</div>
+                    </div>
+                </div>
+                <div class="flex md:flex-row flex-col gap-2 flex-1 justify-start px-3">
+                    <div class="flex flex-col flex-1">
+                        <label class="mb-2 text-sm font-medium text-gray-900">Description</label>
+                        <div class="bg-gray-50 border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $productPayment['description'] ?? '' }}</div>
                     </div>
                 </div>
                 <div class="flex md:flex-row flex-col md:justify-between gap-3 justify-center w-full px-3">

@@ -155,6 +155,6 @@
         </a>
     </div>
     @include('customer.fulfillment.add-payment')
-    {{-- @include('admin.fulfillment.payment-records') --}}
+    @include('customer.fulfillment.payment-records')
 </div>
 @endsection

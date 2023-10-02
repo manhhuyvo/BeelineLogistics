@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('created_user_id');
             $table->unsignedBigInteger('solved_user_id');
             $table->date('solved_date')->nullable();
+            $table->string('title', 255);
             $table->string('status', 20);
             $table->longText('content');
             $table->string('note', 255);

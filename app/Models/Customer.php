@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Staff;
 use App\Models\Invoice;
+use App\Models\Fulfillment;
 
 class Customer extends Model
 {
@@ -119,5 +120,10 @@ class Customer extends Model
     public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'customer_id', 'id');
+    }
+
+    public function fulfillments(): HasMany
+    {
+        return $this->hasMany(Fulfillment::class, 'customer_id', 'id');
     }
 }

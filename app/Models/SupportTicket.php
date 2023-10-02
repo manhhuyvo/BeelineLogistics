@@ -22,6 +22,7 @@ class SupportTicket extends Model
         'created_user_id',
         'solved_user_id',
         'solved_date',
+        'title',
         'content',
         'attachments',
         'status',

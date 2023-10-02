@@ -210,3 +210,21 @@ Breadcrumbs::for('customer.invoice.show', function (BreadcrumbTrail $trail, $inv
     $trail->parent('customer.invoice.list');
     $trail->push("Invoice #{$invoice->id}", route('customer.invoice.show', ['invoice' => $invoice->id]));
 });
+
+/** CUSTOMER SUPPORT TICKET */
+Breadcrumbs::for('customer.ticket.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('customer.dashboard');
+    $trail->push('Support Ticket', route('customer.ticket.list'));
+});
+Breadcrumbs::for('customer.ticket.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('customer.ticket.list');
+    $trail->push('Add New Ticket', route('customer.ticket.create.form'));
+});
+Breadcrumbs::for('customer.ticket.show', function (BreadcrumbTrail $trail, $ticket): void {
+    $trail->parent('customer.ticket.list');
+    $trail->push("Ticket #{$ticket->id}", route('customer.ticket.show', ['ticket' => $ticket->id]));
+});
+Breadcrumbs::for('customer.ticket.edit.form', function (BreadcrumbTrail $trail, $ticket): void {
+    $trail->parent('customer.ticket.list');
+    $trail->push("Edit Ticket #{$ticket->id}", route('customer.ticket.edit.form', ['ticket' => $ticket->id]));
+});

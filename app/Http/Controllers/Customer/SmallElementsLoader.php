@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Enums\SupportTicketEnum;
 use Illuminate\Support\Facades\Auth;
 
 class SmallElementsLoader extends Controller
@@ -14,6 +15,20 @@ class SmallElementsLoader extends Controller
 
         return view('customer.small_elements.product-row', [
             'productsList' => $productsList,
+        ]);
+    }
+
+    public function getNewTicketBelongsRow($target)
+    {
+        if (!empty($target) && $target == SupportTicketEnum::TARGET_FULFILLMENT) {
+            $targetsList = getFormattedFulfillmentsList();
+        } else if (!empty($target) && $target == SupportTicketEnum::TARGET_ORDER) {
+            $targetsList = getFormattedOrdersList();
+        }
+        
+        return view('customer.small_elements.ticket-belongs-row', [
+            'targetsList' => $targetsList ?? [],
+            'target' => $target,
         ]);
     }
 

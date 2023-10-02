@@ -25,6 +25,7 @@ use App\Http\Controllers\Customer\InvoiceController as CustomerInvoiceController
 use App\Http\Controllers\Customer\FulfillmentController as CustomerFulfillmentController;
 use App\Http\Controllers\Customer\SmallElementsLoader as CustomerSmallElementsLoader;
 use App\Http\Controllers\Customer\FulfillmentProductPaymentController as CustomerFulfillmentProductPaymentController;
+use App\Http\Controllers\Customer\SupportTicketController as CustomerSupportTicketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -169,6 +170,7 @@ Route::prefix('customer')->group(function () {
     Route::group(['middleware' => 'customer.permission:all'], function () {
         /** [SMALL ELEMENTS LOADER] */
         Route::get('/small-elements/product-row', [CustomerSmallElementsLoader::class, 'getNewProductRow'])->name('customer.small-elements.product-row');
+        Route::get('/small-elements/ticket-belongs-row/{target}', [CustomerSmallElementsLoader::class, 'getNewTicketBelongsRow'])->name('customer.small-elements.ticket-belongs-row');
 
         /** [DASHBOARD CUSTOMER ROUTES] */
         Route::get('/dashboard', function() {
@@ -197,6 +199,14 @@ Route::prefix('customer')->group(function () {
         Route::post('/fulfillment', [CustomerFulfillmentController::class, 'store'])->name('customer.fulfillment.store');
         Route::get('/fulfillment/{fulfillment}/edit', [CustomerFulfillmentController::class, 'edit'])->name('customer.fulfillment.edit.form');
         Route::post('/fulfillment/{fulfillment}', [CustomerFulfillmentController::class, 'update'])->name('customer.fulfillment.update');
+
+        /** [SUPPORT TICKET ROUTES] */
+        Route::get('/ticket', [CustomerSupportTicketController::class, 'index'])->name('customer.ticket.list');
+        Route::get('/ticket/create', [CustomerSupportTicketController::class, 'create'])->name('customer.ticket.create.form');
+        Route::get('/ticket/{ticket}', [CustomerSupportTicketController::class, 'show'])->name('customer.ticket.show');
+        Route::post('/ticket', [CustomerSupportTicketController::class, 'store'])->name('customer.ticket.store');
+        Route::get('/ticket/{ticket}/edit', [CustomerSupportTicketController::class, 'edit'])->name('customer.ticket.edit.form');
+        Route::post('/ticket/{ticket}', [CustomerSupportTicketController::class, 'update'])->name('customer.ticket.update');
     }); 
 
     Route::group(['middleware' => ['customer.login.redirect']], function() {

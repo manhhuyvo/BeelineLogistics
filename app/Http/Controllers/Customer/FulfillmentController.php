@@ -3,23 +3,28 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+// Models
 use App\Models\Customer;
 use App\Models\Staff;
 use App\Models\Product;
 use App\Models\Fulfillment;
+use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
+// Enums
 use App\Enums\FulfillmentEnum;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use App\Enums\ProductPaymentEnum;
 use App\Enums\ResponseMessageEnum;
 use App\Enums\CurrencyAndCountryEnum;
-use Exception;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
 use App\Enums\GeneralEnum;
 use App\Enums\ResponseStatusEnum;
+// Helpers
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class FulfillmentController extends Controller
 {
@@ -251,6 +256,24 @@ class FulfillmentController extends Controller
             ]);
         }
 
+        // Get the payments recorded for this fulfillment
+        $productPayments = $fulfillment->productPayments;
+        $productPayments = $productPayments
+                ? collect($productPayments)->map(function(FulfillmentProductPayment $productPayment) {
+                    $approvedBy = $productPayment->staff;
+                    $userAction = $productPayment->user;
+                    // Entity owner
+                    $entityAction = $userAction->getUserOwner();
+                    
+                    $productPayment = collect($productPayment)->toArray();
+                    $productPayment['entity'] = $entityAction->toArray();
+
+                    return $productPayment;
+                })
+                ->sortBy('status')
+                ->toArray()
+                : [];
+
         // Turn the fulfillment into an array
         $fulfillment = collect($fulfillment)->toArray();
 
@@ -269,6 +292,10 @@ class FulfillmentController extends Controller
         return view('customer.fulfillment.show', [
             'fulfillment' => $fulfillment,
             'customer' => $customer,
+            'user' => $user,
+            'productPayments' => $productPayments,
+            'productPaymentStatuses' => ProductPaymentEnum::MAP_STATUSES,
+            'productPaymentStatusColors' => ProductPaymentEnum::MAP_STATUS_COLORS,
         ]);
     }
 

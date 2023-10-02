@@ -154,5 +154,7 @@
             <i class="fa-solid fa-arrow-right"></i>
         </a>
     </div>
+    @include('customer.fulfillment.add-payment')
+    {{-- @include('admin.fulfillment.payment-records') --}}
 </div>
 @endsection

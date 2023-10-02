@@ -24,6 +24,7 @@ use App\Http\Controllers\Customer\ProfileController as CustomerProfileController
 use App\Http\Controllers\Customer\InvoiceController as CustomerInvoiceController;
 use App\Http\Controllers\Customer\FulfillmentController as CustomerFulfillmentController;
 use App\Http\Controllers\Customer\SmallElementsLoader as CustomerSmallElementsLoader;
+use App\Http\Controllers\Customer\FulfillmentProductPaymentController as CustomerFulfillmentProductPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -188,6 +189,7 @@ Route::prefix('customer')->group(function () {
 
         /** [FULFILLMENT ROUTES] */
         Route::get('/fulfillment', [CustomerFulfillmentController::class, 'index'])->name('customer.fulfillment.list');
+        Route::post('/fulfillment/{fulfillment}/add-payment', [CustomerFulfillmentProductPaymentController::class, 'addPayment'])->name('customer.fulfillment.add-payment');
         Route::post('/fulfillment/bulk', [CustomerFulfillmentController::class, 'bulk'])->name('customer.fulfillment.bulk');
         Route::post('/fulfillment/export', [CustomerFulfillmentController::class, 'export'])->name('customer.fulfillment.export');
         Route::get('/fulfillment/create', [CustomerFulfillmentController::class, 'create'])->name('customer.fulfillment.create.form');

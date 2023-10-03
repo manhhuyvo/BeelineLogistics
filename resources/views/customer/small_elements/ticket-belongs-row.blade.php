@@ -1,5 +1,5 @@
-<div class="flex sm:flex-row sm:items-end flex-col gap-2 flex-1 bg-gray-50 border-solid border-[1px] border-gray-500 rounded-lg py-3 m-0 sm:gap-0 gap-3">
-    <div class="flex flex-col flex-1">
+<div class="md:w-[70%] w-full flex sm:flex-row items-end flex-col gap-2 flex-1 bg-gray-50 border-solid border-[1px] border-gray-500 rounded-lg py-3 m-0 sm:gap-0 gap-3">
+    <div class="flex flex-col flex-1 md:w-auto w-full">
         <input type="hidden" name="item_type[]" value="{{ $target }}"/>
         <label class="mb-2 text-sm font-medium text-gray-900">{{ Str::upper($target ?? 'Target') }}</label>
         <select name="item_id[]" class="select_items bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">

@@ -126,4 +126,9 @@ class Customer extends Model
     {
         return $this->hasMany(Fulfillment::class, 'customer_id', 'id');
     }
+
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class, 'customer_id', 'id');
+    }
 }

@@ -19,6 +19,7 @@ class SupportTicket extends Model
     protected $table = "support_tickets";
 
     protected $fillable = [
+        'customer_id',
         'created_user_id',
         'solved_user_id',
         'solved_date',
@@ -34,6 +35,11 @@ class SupportTicket extends Model
         'created_at' => 'date:d/m/Y',
         'updated_at' => 'date:d/m/Y',
     ];
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
 
     public function userCreated(): BelongsTo
     {

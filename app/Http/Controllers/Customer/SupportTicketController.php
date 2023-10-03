@@ -45,8 +45,32 @@ class SupportTicketController extends Controller
     }
 
     public function show(Request $request, SupportTicket $ticket)
-    {
+    {        
+        $user = Auth::user();
 
+        // Check if this user is allowed to view this ticket
+        if ($ticket && $ticket->customer_id != $user->customer->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        $customer = $ticket->customer;
+        $userCreated = $ticket->userCreated ? $ticket->userCreated->getUserOwner() : null;
+        $userSolved = $ticket->userSolved ? $ticket->userSolved->getUserOwner() : null;
+        $fulfillments = $ticket->fulfillments;
+        $orders = $ticket->orders;
+
+        // Return the view
+        return view('customer.ticket.show', [
+            'user' => $user,
+            'ticket' => $ticket->toArray(),
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'supportTicketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
+        ]);
     }
 
     public function store(Request $request)
@@ -82,6 +106,7 @@ class SupportTicketController extends Controller
 
         // Create new support ticket
         $newTicket = new SupportTicket([
+            'customer_id' => $user->customer->id,
             'created_user_id' => $user->id,
             'solved_user_id' => 0,
             'title' => htmlspecialchars($rawData['title'] ?? ''),

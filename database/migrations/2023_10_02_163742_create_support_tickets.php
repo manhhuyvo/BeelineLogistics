@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('support_tickets', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('created_user_id');
             $table->unsignedBigInteger('solved_user_id');
             $table->date('solved_date')->nullable();

@@ -14,7 +14,7 @@ class SupportTicketEnum
     ];
     
     const MAP_STATUS_COLORS = [
-        self::STATUS_ACTIVE => 'yellow',
+        self::STATUS_ACTIVE => 'red',
         self::STATUS_SOLVED => 'green',
         self::STATUS_DELETED => 'gray',
     ];

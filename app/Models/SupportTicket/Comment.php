@@ -22,8 +22,8 @@ class Comment extends Model
     ];
 
     protected $casts = [
-        'created_at' => 'date:d/m/Y',
-        'updated_at' => 'date:d/m/Y',
+        'created_at' => 'date:d/m/Y H:i:s',
+        'updated_at' => 'date:d/m/Y H:i:s',
     ];
 
     public function supportTicket(): BelongsTo

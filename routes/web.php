@@ -26,6 +26,7 @@ use App\Http\Controllers\Customer\FulfillmentController as CustomerFulfillmentCo
 use App\Http\Controllers\Customer\SmallElementsLoader as CustomerSmallElementsLoader;
 use App\Http\Controllers\Customer\FulfillmentProductPaymentController as CustomerFulfillmentProductPaymentController;
 use App\Http\Controllers\Customer\SupportTicketController as CustomerSupportTicketController;
+use App\Http\Controllers\Customer\SupportTicketCommentController as CustomerSupporTicketCommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -205,8 +206,8 @@ Route::prefix('customer')->group(function () {
         Route::get('/ticket/create', [CustomerSupportTicketController::class, 'create'])->name('customer.ticket.create.form');
         Route::get('/ticket/{ticket}', [CustomerSupportTicketController::class, 'show'])->name('customer.ticket.show');
         Route::post('/ticket', [CustomerSupportTicketController::class, 'store'])->name('customer.ticket.store');
-        Route::get('/ticket/{ticket}/edit', [CustomerSupportTicketController::class, 'edit'])->name('customer.ticket.edit.form');
-        Route::post('/ticket/{ticket}', [CustomerSupportTicketController::class, 'update'])->name('customer.ticket.update');
+        /** [SUPPORT TICKET COMMENT ROUTES] */
+        Route::post('/ticket/{ticket}/comment', [CustomerSupporTicketCommentController::class, 'store'])->name('customer.ticket.comment.store');
     }); 
 
     Route::group(['middleware' => ['customer.login.redirect']], function() {

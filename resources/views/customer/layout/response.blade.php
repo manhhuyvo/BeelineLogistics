@@ -4,7 +4,7 @@
 @endphp
 @if (!empty($response))
     @if($response['status'] == 'error')
-        <div class="w-full flex gap-1" id="response-error-div">
+        <div class="w-full flex gap-1 z-100" id="response-error-div">
             <div class="mt-2 mb-2 cursor-pointer w-full px-3 py-2.5 text-sm bg-red-500 text-white font-medium flex justify-between gap-3 items-start text-center" id="response-error">
                 <div class="flex-1 text-center">{{ $response['message'] }}</div>
                 <i class="fa-solid fa-xmark text-lg"></i>
@@ -23,7 +23,7 @@
         @endif
         </div>
     @else
-        <div class="mt-2 mb-2 cursor-pointer w-full px-3 py-2.5 text-sm bg-green-600 text-white font-medium flex justify-between gap-3 items-start text-center" id="response-success">
+        <div class="mt-2 mb-2 cursor-pointer w-full px-3 py-2.5 text-sm bg-green-600 text-white font-medium flex justify-between gap-3 items-start text-center z-100" id="response-success">
             <div class="flex-1 text-center">{{ $response['message'] }}</div>
             <i class="fa-solid fa-xmark text-lg"></i>
         </div>

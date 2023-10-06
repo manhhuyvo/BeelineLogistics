@@ -4,29 +4,25 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 // Models
-use Illuminate\Http\Request;
 use App\Models\SupportTicket;
 use App\Models\SupportTicket\Comment as SupportTicketComment;
 // Enums
 use App\Enums\SupportTicketEnum;
 use App\Enums\ResponseMessageEnum;
 // Helpers
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Upload;
+use Illuminate\Support\Facades\URL;
 use Exception;
 
 class SupportTicketController extends Controller
 {
     use Upload;
-
-    public function index(Request $request)
-    {
-
-    }
 
     public function create(Request $request)
     {
@@ -37,11 +33,6 @@ class SupportTicketController extends Controller
             'user' => $user,
             'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
         ]);
-    }
-
-    public function edit(Request $request, SupportTicket $ticket)
-    {
-
     }
 
     public function show(Request $request, SupportTicket $ticket)
@@ -63,11 +54,22 @@ class SupportTicketController extends Controller
         $userSolved = $ticket->userSolved ? $ticket->userSolved->getUserOwner() : null;
         $fulfillments = $ticket->fulfillments;
         $orders = $ticket->orders;
+        $comments = $ticket->comments ?? [];
+        $comments = collect($comments)->map(function(SupportTicketComment $comment) {
+            $userComment = $comment->user;
+            $ownerComment = collect($userComment->getUserOwner())->toArray();
+            $comment = collect($comment)->toArray();
+            $comment['owner'] = $ownerComment;
+
+            return $comment;
+        })
+        ->toArray();
 
         // Return the view
         return view('customer.ticket.show', [
             'user' => $user,
             'ticket' => $ticket->toArray(),
+            'comments' => collect($comments)->toArray(),
             'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
             'supportTicketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
         ]);
@@ -156,11 +158,6 @@ class SupportTicketController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_ADD_NEW_RECORD)->send();
 
         return redirect()->back()->with(['response' => $responseData]);
-    }
-
-    public function update(Request $request, SupportTicket $ticket)
-    {
-
     }
 
     /** Validate the item list of the request */

@@ -16,6 +16,7 @@ use App\Enums\ResponseMessageEnum;
 use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\GeneralEnum;
 use App\Enums\ResponseStatusEnum;
+use App\Enums\SupportTicketEnum;
 // Helpers
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -274,6 +275,9 @@ class FulfillmentController extends Controller
                 ->toArray()
                 : [];
 
+        // Get any support ticket active for this fulfillment
+        $supportTickets = $fulfillment->supportTickets;
+
         // Turn the fulfillment into an array
         $fulfillment = collect($fulfillment)->toArray();
 
@@ -296,6 +300,8 @@ class FulfillmentController extends Controller
             'productPayments' => $productPayments,
             'productPaymentStatuses' => ProductPaymentEnum::MAP_STATUSES,
             'productPaymentStatusColors' => ProductPaymentEnum::MAP_STATUS_COLORS,
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'supportTicketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
         ]);
     }
 

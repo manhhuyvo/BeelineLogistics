@@ -14,6 +14,8 @@ use App\Models\Fulfillment;
 use App\Models\Product\Group;
 use App\Models\Product;
 use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
+use App\Models\SupportTicket;
+use App\Models\SupportTicketComment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
@@ -248,6 +250,8 @@ return [
         'Product' => Product::class,
         'Fulfillment' => Fulfillment::class,
         'FulfillmentProductPayment' => FulfillmentProductPayment::class,
+        'SupportTicket' => SupportTicket::class,
+        'SupportTicketComment' => SupportTicketComment::class,
         // Enums
         'FulfillmentEnum' => FulfillmentEnum::class,
         'InvoiceEnum' => InvoiceEnum::class,

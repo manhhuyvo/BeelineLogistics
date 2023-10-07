@@ -13,12 +13,10 @@ use App\Enums\ResponseMessageEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Upload;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\URL;
 use Exception;
 
 class SupportTicketController extends Controller

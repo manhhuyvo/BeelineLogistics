@@ -15,22 +15,28 @@
                 <input type="text" name="id" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" placeholder="Fulfillment ID" value="{{ $request['id'] ?? '' }}">
             </div>
             <div class="flex flex-col flex-1">
-                <label for="name" class="mb-2 text-sm font-medium text-gray-900">Receiver Name</label>
+                <label for="name" class="mb-2 text-sm font-medium text-gray-900">Name</label>
                 <input type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" placeholder="Receiver Name" value="{{ $request['name'] ?? '' }}">
             </div>
             <div class="flex flex-col flex-1">
-                <label for="phone" class="mb-2 text-sm font-medium text-gray-900">Receiver Phone</label>
+                <label for="phone" class="mb-2 text-sm font-medium text-gray-900">Phone</label>
                 <input type="text" name="phone" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" placeholder="Receiver Phone" value="{{ $request['phone'] ?? '' }}">
             </div>
         </div>
         <div class="row flex gap-2 sm:flex-row flex-col">
             <div class="flex flex-col flex-1">
-                <label for="address" class="mb-2 text-sm font-medium text-gray-900">Receiver Address</label>
+                <label for="address" class="mb-2 text-sm font-medium text-gray-900">Address</label>
                 <input type="text" name="address" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" placeholder="Receiver Address" value="{{ $request['address'] ?? '' }}">
             </div>
+        </div>
+        <div class="row flex gap-2 sm:flex-row flex-col">
             <div class="flex flex-col flex-1">
-                <label for="suburb" class="mb-2 text-sm font-medium text-gray-900">Receiver Suburb</label>
+                <label for="suburb" class="mb-2 text-sm font-medium text-gray-900">Suburb</label>
                 <input type="text" name="suburb" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" placeholder="Receiver Suburb" value="{{ $request['suburb'] ?? '' }}">
+            </div>
+            <div class="flex flex-col flex-1">
+                <label for="postcode" class="mb-2 text-sm font-medium text-gray-900">Postcode</label>
+                <input type="text" name="postcode" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" placeholder="Receiver Postcode" value="{{ $request['postcode'] ?? '' }}">
             </div>
             <div class="flex flex-col flex-1">
                 <label for="country" class="mb-2 text-sm font-medium text-gray-900">Country</label>                
@@ -38,7 +44,7 @@
                     @if (empty($request['country']))
                     <option selected disabled>Choose a country</option>
                     @else
-                    <option disabled>Choose a country</option>
+                    <option value = "">Choose a country</option>
                     @endif                    
                 @foreach(CurrencyAndCountryEnum::MAP_COUNTRIES as $key => $value)
                     @if (!empty($request['country']) && $request['country'] == $key)
@@ -57,7 +63,7 @@
                     @if (empty($request['customer_id']))
                     <option selected disabled>Choose a customer</option>
                     @else
-                    <option disabled>Choose a customer</option>
+                    <option value = "">Choose a customer</option>
                     @endif                    
                 @foreach($customersList as $key => $value)
                     @if (!empty($request['customer_id']) && $request['customer_id'] == $key)
@@ -74,10 +80,27 @@
                     @if (empty($request['staff_id']))
                     <option selected disabled>Choose a staff</option>
                     @else
-                    <option disabled>Choose a staff</option>
+                    <option value = "">Choose a staff</option>
                     @endif                    
                 @foreach($staffsList as $key => $value)
                     @if (!empty($request['staff_id']) && $request['staff_id'] == $key)
+                    <option selected value="{{ $key }}">{{ $value }}</option>
+                    @else
+                    <option value="{{ $key }}">{{ $value }}</option>
+                    @endif
+                @endforeach
+                </select>
+            </div>
+            <div class="flex flex-col flex-1">
+                <label for="ticket_status" class="mb-2 text-sm font-medium text-gray-900">Support Ticket</label>                
+                <select id="ticket_status" name="ticket_status" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
+                    @if (empty($request['ticket_status']))
+                    <option selected disabled>Choose a status</option>
+                    @else
+                    <option value="">Choose a status</option>
+                    @endif                    
+                @foreach($supportTicketStatuses as $key => $value)
+                    @if (!empty($request['ticket_status']) && $request['ticket_status'] == $key)
                     <option selected value="{{ $key }}">{{ $value }}</option>
                     @else
                     <option value="{{ $key }}">{{ $value }}</option>
@@ -93,7 +116,7 @@
                     @if (empty($request['shipping_type']))
                     <option selected disabled>Choose a shipping type</option>
                     @else
-                    <option disabled>Choose a shipping type</option>
+                    <option value = "">Choose a shipping type</option>
                     @endif                    
                 @foreach($shippingTypes as $key => $value)
                     @if (!empty($request['shipping_type']) && $request['shipping_type'] == $key)
@@ -115,12 +138,29 @@
         </div>
         <div class="row flex gap-2 sm:flex-row flex-col">
             <div class="flex flex-col flex-1">
+                <label for="shipping_status" class="mb-2 text-sm font-medium text-gray-900">Shipping Status</label>
+                <select id="shipping_status" name="shipping_status" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
+                    @if (empty($request['shipping_status']))
+                    <option selected disabled>Choose a status</option>
+                    @else
+                    <option value="">Choose a status</option>
+                    @endif                    
+                @foreach($shippingStatuses as $key => $value)
+                    @if (!empty($request['shipping_status']) && $request['shipping_status'] == $key)
+                    <option selected value="{{ $key }}">{{ $value }}</option>
+                    @else
+                    <option value="{{ $key }}">{{ $value }}</option>
+                    @endif
+                @endforeach
+                </select>
+            </div>
+            <div class="flex flex-col flex-1">
                 <label for="fulfillment_status" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Status</label>
                 <select id="fulfillment_status" name="fulfillment_status" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
                     @if (empty($request['fulfillment_status']))
                     <option selected disabled>Choose a status</option>
                     @else
-                    <option disabled>Choose a status</option>
+                    <option value = "">Choose a status</option>
                     @endif                    
                 @foreach($fulfillmentStatuses as $key => $value)
                     @if (!empty($request['fulfillment_status']) && $request['fulfillment_status'] == $key)
@@ -137,7 +177,7 @@
                     @if (empty($request['product_payment_status']))
                     <option selected disabled>Choose a status</option>
                     @else
-                    <option disabled>Choose a status</option>
+                    <option value = "">Choose a status</option>
                     @endif                    
                 @foreach($paymentStatuses as $key => $value)
                     @if (!empty($request['product_payment_status']) && $request['product_payment_status'] == $key)
@@ -154,7 +194,7 @@
                     @if (empty($request['labour_payment_status']))
                     <option selected disabled>Choose a status</option>
                     @else
-                    <option disabled>Choose a status</option>
+                    <option value = "">Choose a status</option>
                     @endif                    
                 @foreach($paymentStatuses as $key => $value)
                     @if (!empty($request['labour_payment_status']) && $request['labour_payment_status'] == $key)

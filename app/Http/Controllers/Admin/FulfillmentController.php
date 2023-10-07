@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use App\Enums\GeneralEnum;
 use App\Enums\ProductPaymentEnum;
 use App\Enums\ResponseStatusEnum;
+use App\Enums\SupportTicketEnum;
 use App\Traits\Upload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -32,7 +33,7 @@ class FulfillmentController extends Controller
     public function index(Request $request)
     {
         // Retrieve list of all first
-        $allFulfillments = Fulfillment::with('staff', 'customer');
+        $allFulfillments = Fulfillment::with('staff', 'customer', 'supportTickets');
 
         // Get staff and customer list
         $staffsList = $this->formatStaffsList();
@@ -43,9 +44,10 @@ class FulfillmentController extends Controller
         if (!empty($data)){
             // All other fields
             foreach($data as $key => $value) {
-                if (empty($value) || Str::contains($key, 'date_') || in_array($key, ['page', '_method', 'sort', 'direction'])) {
+                if (!in_array($key, FulfillmentEnum::STAFF_FILTERABLE_COLUMNS) || empty($value)) {
                     continue;
                 }
+
                 // Escape to prevent break
                 $key = htmlspecialchars($key);
                 $value = htmlspecialchars($value);
@@ -54,11 +56,21 @@ class FulfillmentController extends Controller
                 $allFulfillments = $allFulfillments->where($key, 'like', "%$value%");
             }
 
+            // Shipping Status
+            if (!empty($data['ticket_status'])) {
+                $allFulfillments = $allFulfillments->whereHas('supportTickets', function($query) use ($data) {
+                    $query->where('status', '=', $data['ticket_status']);
+                });
+            }
+
             // Created between date range
             if (!empty($data['date_from']) && !empty($data['date_to'])) {
                 $allFulfillments = $data['date_from'] == $data['date_to']
                                 ? $allFulfillments->whereDate('created_at', $data['date_from'])
-                                : $allFulfillments->whereBetween('created_at', [$data['date_from'], $data['date_to']]);
+                                : $allFulfillments->whereBetween('created_at', [
+                                    Carbon::parse($data['date_from'])->startOfDay()->format('Y-m-d H:i:S'),
+                                    Carbon::parse($data['date_to'])->endOfDay()->format('Y-m-d H:i:S')
+                                ]);
             }
         }
 
@@ -84,6 +96,13 @@ class FulfillmentController extends Controller
                     }
 
                     $fulfillment['product_configs'] = $productConfigsPlaceholder;
+
+                    // Only pick the support ticket with active status
+                    $fulfillment['support_tickets'] = collect($fulfillment['support_tickets'])
+                                                    ->filter(function($ticket) {
+                                                        return $ticket['status'] == SupportTicketEnum::STATUS_ACTIVE;
+                                                    })
+                                                    ->toArray();
                     
                     return $fulfillment;
                 })->toArray();
@@ -107,6 +126,8 @@ class FulfillmentController extends Controller
             'paymentStatuses' => FulfillmentEnum::MAP_PAYMENT_STATUSES,
             'paymentStatusColors' => FulfillmentEnum::MAP_PAYMENT_COLORS,
             'shippingTypes' => FulfillmentEnum::MAP_SHIPPING,
+            'shippingStatuses' => FulfillmentEnum::MAP_SHIPPING_STATUSES,
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
             'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
             'customersList' => $customersList,
             'staffsList' => $staffsList,
@@ -270,6 +291,9 @@ class FulfillmentController extends Controller
                 ->toArray()
                 : [];
 
+        // Get any support ticket active for this fulfillment
+        $supportTickets = $fulfillment->supportTickets;
+
         // Turn the fulfillment into an array
         $fulfillment = collect($fulfillment)->toArray();
 
@@ -293,6 +317,8 @@ class FulfillmentController extends Controller
             'productPayments' => $productPayments,
             'productPaymentStatuses' => ProductPaymentEnum::MAP_STATUSES,
             'productPaymentStatusColors' => ProductPaymentEnum::MAP_STATUS_COLORS,
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'supportTicketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
         ]);
     }
 

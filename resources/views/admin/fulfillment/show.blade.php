@@ -164,6 +164,7 @@
             <i class="fa-solid fa-arrow-right"></i>
         </a>
     </div>
+    @include('admin.fulfillment.support-tickets')
     @include('admin.fulfillment.add-payment')
     @include('admin.fulfillment.payment-records')
 </div>

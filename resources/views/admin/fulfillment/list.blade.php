@@ -106,8 +106,11 @@
                     <th scope="row" class=" py-4 font-medium whitespace-nowrap text-[12px]">
                         <span class="bg-{{ FulfillmentEnum::MAP_SHIPPING_COLORS[$fulfillment['shipping_status']] }}-500 py-2 px-3 rounded-lg text-white">{{ Str::upper(FulfillmentEnum::MAP_SHIPPING_STATUSES[$fulfillment['shipping_status']]) }}</span>
                     </th>
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {{ $fulfillment['id'] }}
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap relative">
+                        @if (!empty($fulfillment['support_tickets']) && count($fulfillment['support_tickets']) > 0)
+                            <span class="px-1.5 text-[10px] text-white rounded-lg bg-red-500 absolute top-25 right-0">{{ count($fulfillment['support_tickets']) }}</span>
+                        @endif
+                        <a href="{{ route('admin.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $fulfillment['id'] }}<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
                     </th>
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['customer']['customer_id'] }} {{ $fulfillment['customer']['full_name'] }}
@@ -115,7 +118,7 @@
                     <td scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['name'] ?? '' }}
                     </td>
-                    <td scope="row" class="px-6 py-4">
+                    <td scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['phone'] ?? '' }}
                     </td>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap">
@@ -137,12 +140,12 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['tracking_number'] ?? '' }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         @if (!empty($fulfillment['postage']))
                         {{ $fulfillment['postage'] ?? '' }} {{ $fulfillment['postage_unit'] }}
                         @endif 
                     </td>
-                    <td class="px-6 py-4 text-{{ $fulfillmentStatusColors[$fulfillment['fulfillment_status']] }}-500 font-semibold">
+                    <td class="px-6 py-4 text-{{ $fulfillmentStatusColors[$fulfillment['fulfillment_status']] }}-500 font-semibold whitespace-nowrap">
                         {{ $fulfillmentStatuses[$fulfillment['fulfillment_status']] }}
                     </td>
                     <td class="px-6 py-4">
@@ -150,15 +153,15 @@
                         {{ $fulfillment['total_product_amount'] ?? '' }} {{ $fulfillment['product_unit'] }}
                         @endif 
                     </td>
-                    <td class="px-6 py-4 text-{{ $paymentStatusColors[$fulfillment['product_payment_status']] }}-500 font-semibold">
+                    <td class="px-6 py-4 text-{{ $paymentStatusColors[$fulfillment['product_payment_status']] }}-500 font-semibold whitespace-nowrap">
                         {{ $paymentStatuses[$fulfillment['product_payment_status']] }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         @if (!empty($fulfillment['total_labour_amount']))
                         {{ $fulfillment['total_labour_amount'] ?? '' }} {{ $fulfillment['labour_unit'] }}
                         @endif 
                     </td>
-                    <td class="px-6 py-4 text-{{ $paymentStatusColors[$fulfillment['labour_payment_status']] }}-500 font-semibold">
+                    <td class="px-6 py-4 text-{{ $paymentStatusColors[$fulfillment['labour_payment_status']] }}-500 font-semibold whitespace-nowrap">
                         {{ $paymentStatuses[$fulfillment['labour_payment_status']] }}
                     </td>
                     <td class="px-6 py-4">

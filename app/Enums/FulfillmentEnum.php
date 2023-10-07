@@ -220,6 +220,25 @@ class FulfillmentEnum
         'tracking_number',
         'note',
         'fulfillment_status',
-        'product_payment-status',
+        'product_payment_status',
+    ];
+
+    const STAFF_FILTERABLE_COLUMNS = [
+        'id',
+        'name',
+        'phone',
+        'address',
+        'suburb',
+        'postcode',
+        'country',
+        'customer_id',
+        'staff_id',
+        'shipping_status',
+        'shipping_type',
+        'tracking_number',
+        'note',
+        'fulfillment_status',
+        'product_payment_status',
+        'labour_payment_status',
     ];
 }

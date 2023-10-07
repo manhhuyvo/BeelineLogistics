@@ -70,6 +70,7 @@ class SupportTicketController extends Controller
                                 ]);
             }
         }
+        $allTickets = $allTickets->orderBy('status', 'asc');
 
         // Then add filter into the query
         $allTickets = $allTickets->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');

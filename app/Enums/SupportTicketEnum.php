@@ -21,4 +21,9 @@ class SupportTicketEnum
 
     const TARGET_FULFILLMENT = 'fulfillment';
     const TARGET_ORDER = 'order';
+
+    const CUSTOMER_FILTERABLE_COLUMNS = [
+        'title',
+        'status',
+    ];
 }

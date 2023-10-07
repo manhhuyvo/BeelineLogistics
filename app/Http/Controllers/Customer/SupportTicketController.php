@@ -17,12 +17,86 @@ use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Upload;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use Exception;
 
 class SupportTicketController extends Controller
 {
     use Upload;
+
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+
+        // Retrieve list of all first
+        $allTickets = SupportTicket::where('customer_id', $user->customer->id)
+                        ->with(['userCreated', 'userSolved', 'comments']);
+        
+        // Validate the filter request
+        $data = $request->all();
+        if (!empty($data)){
+            // All other fields
+            foreach($data as $key => $value) {
+                if (!in_array($key, SupportTicketEnum::CUSTOMER_FILTERABLE_COLUMNS) || empty($value)) {
+                    continue;
+                }
+
+                // Escape to prevent break
+                $key = htmlspecialchars($key);
+                $value = htmlspecialchars($value);
+
+                // Add conditions
+                $allTickets = $allTickets->where($key, 'like', "%$value%");
+            }
+
+            // Solved between date range
+            if (!empty($data['solved_from']) && !empty($data['solved_to'])) {
+                $allTickets = $data['solved_from'] == $data['solved_to']
+                                ? $allTickets->whereDate('solved_date', $data['date_from'])
+                                : $allTickets->whereBetween('solved_date', [
+                                    Carbon::parse($data['solved_from'])->startOfDay()->format('Y-m-d H:i:S'),
+                                    Carbon::parse($data['solved_to'])->startOfDay()->format('Y-m-d H:i:S')
+                                ]);
+            }
+
+            // Created between date range
+            if (!empty($data['date_from']) && !empty($data['date_to'])) {
+                $allTickets = $data['date_from'] == $data['date_to']
+                                ? $allTickets->whereDate('created_at', $data['date_from'])
+                                : $allTickets->whereBetween('created_at', [
+                                    Carbon::parse($data['date_from'])->startOfDay()->format('Y-m-d H:i:S'),
+                                    Carbon::parse($data['date_to'])->endOfDay()->format('Y-m-d H:i:S')
+                                ]);
+            }
+        }
+
+        // Then add filter into the query
+        $allTickets = $allTickets->paginate($perpage = 50, $columns = ['*'], $pageName = 'page');
+        $allTickets = $allTickets->appends(request()->except('page'));
+        $returnData = collect($allTickets)->only('data')->toArray();
+        
+        // Get model for each of product in the fulfillment
+        $paginationData = collect($allTickets)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
+
+        return view('customer.ticket.list', [
+            'tickets' => $returnData,
+            'pagination' => $paginationData,   
+            'ticketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'ticketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
+            'exportRoute' => 'customer.ticket.export',
+            'request' => $data,
+        ]);
+    }
 
     public function create(Request $request)
     {

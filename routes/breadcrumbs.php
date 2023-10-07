@@ -224,7 +224,3 @@ Breadcrumbs::for('customer.ticket.show', function (BreadcrumbTrail $trail, $tick
     $trail->parent('customer.ticket.list');
     $trail->push("Ticket #{$ticket->id}", route('customer.ticket.show', ['ticket' => $ticket->id]));
 });
-Breadcrumbs::for('customer.ticket.edit.form', function (BreadcrumbTrail $trail, $ticket): void {
-    $trail->parent('customer.ticket.list');
-    $trail->push("Edit Ticket #{$ticket->id}", route('customer.ticket.edit.form', ['ticket' => $ticket->id]));
-});

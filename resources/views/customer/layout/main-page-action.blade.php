@@ -18,7 +18,7 @@
             </button>
         </div>
         @endif
-        <form class="flex flex-col items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-yellow-500 p-3 bg-yellow-50 min-h-[121px] min-w-[175px] max-w-[50%]" method="POST" action='{{ route("{$exportRoute}") }}' id="export-form">
+        <form class="flex flex-col items-center gap-2 flex-1 rounded-lg border-solid border-[2px] border-yellow-500 p-3 bg-yellow-50 min-h-[121px] min-w-[175px] md:max-w-[50%] w-full" method="POST" action='{{ route("{$exportRoute}") }}' id="export-form">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <p class="w-full text-sm font-semibold text-yellow-500 min-w-[175px]">Export selected records into a file</p> 
             <select name="export_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-[13px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full pl-3 pr-4 py-2.5">
@@ -48,8 +48,10 @@
     let bulkActionDropdown = $('#bulk_action_dropdown');
 
     $(document).ready(function () {
+        @if (!empty($bulkActions))
         bulkActionDropdown.select2();
         setUpSearchableDropdowns();
+        @endif
         // Event for select all rows checkbox
         selectAllRowsCheckbox.on('change', function() {
             // If select_all checkbox is checked

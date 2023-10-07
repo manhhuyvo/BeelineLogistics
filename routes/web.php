@@ -203,6 +203,7 @@ Route::prefix('customer')->group(function () {
 
         /** [SUPPORT TICKET ROUTES] */
         Route::get('/ticket', [CustomerSupportTicketController::class, 'index'])->name('customer.ticket.list');
+        Route::get('/ticket/export', [CustomerSupportTicketController::class, 'export'])->name('customer.ticket.export');
         Route::get('/ticket/create', [CustomerSupportTicketController::class, 'create'])->name('customer.ticket.create.form');
         Route::get('/ticket/{ticket}', [CustomerSupportTicketController::class, 'show'])->name('customer.ticket.show');
         Route::post('/ticket', [CustomerSupportTicketController::class, 'store'])->name('customer.ticket.store');

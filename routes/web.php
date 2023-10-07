@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\AjaxController;
 use App\Http\Controllers\Admin\SmallElementsLoader;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\FulfillmentProductPaymentController;
+use App\Http\Controllers\Admin\SupportTicketController;
+use App\Http\Controllers\Admin\SupportTicketCommentController;
 use App\Models\Staff;
 
 // CUSTOMER INCLUDES
@@ -163,6 +165,14 @@ Route::prefix('admin')->group(function () {
         Route::post('/fulfillment/{fulfillment}', [FulfillmentController::class, 'update'])->name('admin.fulfillment.update');
         Route::delete('/fulfillment/{fulfillment}', [FulfillmentController::class, 'destroy'])->name('admin.fulfillment.delete');
 
+        /** [SUPPORT TICKET ROUTES] */
+        Route::get('/ticket', [SupportTicketController::class, 'index'])->name('admin.ticket.list');
+        Route::get('/ticket/export', [SupportTicketController::class, 'export'])->name('admin.ticket.export');
+        Route::get('/ticket/create', [SupportTicketController::class, 'create'])->name('admin.ticket.create.form');
+        Route::get('/ticket/{ticket}', [SupportTicketController::class, 'show'])->name('admin.ticket.show');
+        Route::post('/ticket', [SupportTicketController::class, 'store'])->name('admin.ticket.store');
+        /** [SUPPORT TICKET COMMENT ROUTES] */
+        Route::post('/ticket/{ticket}/comment', [SupportTicketCommentController::class, 'store'])->name('admin.ticket.comment.store');
     });
 
 });

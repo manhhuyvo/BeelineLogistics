@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Fulfillment;
 use App\Models\Order;
+use App\Models\Staff;
+use App\Models\User;
+use App\Models\Customer;
 
 if (!function_exists('generateRandomString')) {
     function generateRandomString(int $outputLength = 5)
@@ -90,6 +93,88 @@ if (!function_exists('getFormattedOrdersList')) {
         $data = [];
         foreach ($allOrders as $order) {
             $data[$order['id']] = "Order #{$order['id']} ({$order['customer']['customer_id']})";
+        }
+
+        return $data;
+    }
+}
+
+if (!function_exists('getFormattedStaffsList')) {
+    function getFormattedStaffsList()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return null;
+        }
+
+        // Return empty list if this is not a staff
+        if (!$user->isStaff()) {
+            return [];
+        }
+
+        // Get the staffs list (only apply for staff)
+        $allStaffs = Staff::all();
+
+        $data = [];
+        foreach ($allStaffs as $staff) {
+            $data[$staff['id']] =  "{$staff['full_name']} (" . Staff::MAP_POSITIONS[$staff['position']] . ")";
+        }
+
+        return $data;
+    }
+}
+
+if (!function_exists('getFormattedUsersListOfStaff')) {
+    function getFormattedUsersListOfStaff()
+    {
+        
+        $user = Auth::user();
+        if (!$user) {
+            return null;
+        }
+
+        // Return empty list if this is not a staff
+        if (!$user->isStaff()) {
+            return [];
+        }
+
+        // Get the staffs list (only apply for staff)
+        $allUsers = User::whereHas('staff', function($query) {
+            $query->where('status', '=', Staff::STATUS_CURRENT);
+        })->get();
+
+        $data = [];
+        foreach ($allUsers as $user) {
+            $data[$user['id']] =  "{$user['staff']['full_name']} (" . Staff::MAP_POSITIONS[$user['staff']['position']] . ")";
+        }
+
+        return $data;
+    }
+}
+
+if (!function_exists('getFormattedCustomersList')) {
+    function getFormattedCustomersList(bool $active = false)
+    {        
+        $user = Auth::user();
+        if (!$user) {
+            return null;
+        }
+
+        // Return empty list if this is not a staff
+        if (!$user->isStaff()) {
+            return [];
+        }
+
+        // Get the customers list (only apply for staff)
+        if (!$active) {
+            $allCustomers = Customer::all();
+        } else {
+            $allCustomers = Customer::where('status', Customer::STATUS_ACTIVE)->get();
+        }
+
+        $data = [];
+        foreach ($allCustomers as $customer) {
+            $data[$customer['id']] =  "{$customer['customer_id']} {$customer['full_name']}";
         }
 
         return $data;

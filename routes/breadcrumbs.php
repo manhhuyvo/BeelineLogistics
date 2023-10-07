@@ -164,6 +164,20 @@ Breadcrumbs::for('admin.invoice.edit.form', function (BreadcrumbTrail $trail, $i
     $trail->push("Edit Invoice #{$invoice->id}", route('admin.invoice.edit.form', ['invoice' => $invoice->id]));
 });
 
+/** Admin Tickets */
+Breadcrumbs::for('admin.ticket.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Support Ticket', route('admin.ticket.list'));
+});
+Breadcrumbs::for('admin.ticket.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.ticket.list');
+    $trail->push('Add New Ticket', route('admin.ticket.create.form'));
+});
+Breadcrumbs::for('admin.ticket.show', function (BreadcrumbTrail $trail, $ticket): void {
+    $trail->parent('admin.ticket.list');
+    $trail->push("Ticket #{$ticket->id}", route('admin.ticket.show', ['ticket' => $ticket->id]));
+});
+
 /**
  * 
  * CUSTOMER BREADCRUMBS

@@ -96,6 +96,23 @@
                 </select>
             </div>
             <div class="flex flex-col flex-1">
+                <label for="shipping_status" class="mb-2 text-sm font-medium text-gray-900">Shipping Status</label>
+                <select id="shipping_status" name="shipping_status" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
+                    @if (empty($request['shipping_status']))
+                    <option selected disabled>Choose a status</option>
+                    @else
+                    <option value="">Choose a status</option>
+                    @endif                    
+                @foreach($shippingStatuses as $key => $value)
+                    @if (!empty($request['shipping_status']) && $request['shipping_status'] == $key)
+                    <option selected value="{{ $key }}">{{ $value }}</option>
+                    @else
+                    <option value="{{ $key }}">{{ $value }}</option>
+                    @endif
+                @endforeach
+                </select>
+            </div>
+            <div class="flex flex-col flex-1">
                 <label for="phone" class="mb-2 text-sm font-medium text-gray-900">Product Payment Status</label>
                 <select id="product_payment_status" name="product_payment_status" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
                     @if (empty($request['product_payment_status']))
@@ -113,15 +130,15 @@
                 </select>
             </div>
             <div class="flex flex-col flex-1">
-                <label for="address" class="mb-2 text-sm font-medium text-gray-900">Labour Payment Status</label>
-                <select id="labour_payment_status" name="labour_payment_status" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
-                    @if (empty($request['labour_payment_status']))
+                <label for="ticket_status" class="mb-2 text-sm font-medium text-gray-900">Support Ticket</label>                
+                <select id="ticket_status" name="ticket_status" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
+                    @if (empty($request['ticket_status']))
                     <option selected disabled>Choose a status</option>
                     @else
-                    <option disabled>Choose a status</option>
+                    <option value="">Choose a status</option>
                     @endif                    
-                @foreach($paymentStatuses as $key => $value)
-                    @if (!empty($request['labour_payment_status']) && $request['labour_payment_status'] == $key)
+                @foreach($supportTicketStatuses as $key => $value)
+                    @if (!empty($request['ticket_status']) && $request['ticket_status'] == $key)
                     <option selected value="{{ $key }}">{{ $value }}</option>
                     @else
                     <option value="{{ $key }}">{{ $value }}</option>

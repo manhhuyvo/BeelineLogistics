@@ -29,6 +29,16 @@ class SupportTicketCommentController extends Controller
         $user = Auth::user();
         $rawData = collect($request->all())->except(['attachment'])->toArray();
 
+        // Check if this user is allowed to view this ticket
+        if ($ticket && $ticket->customer_id != $user->customer->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->route('customer.dashboard')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Validate the request coming
         $validation = $this->validateRequest($rawData);                
         if ($validation->fails()) {

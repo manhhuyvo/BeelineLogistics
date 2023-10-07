@@ -207,4 +207,19 @@ class FulfillmentEnum
         'note',
         'date_created',
     ];
+
+    const CUSTOMER_FILTERABLE_COLUMNS = [
+        'id',
+        'name',
+        'phone',
+        'address',
+        'suburb',
+        'country',
+        'shipping_status',
+        'shipping_type',
+        'tracking_number',
+        'note',
+        'fulfillment_status',
+        'product_payment-status',
+    ];
 }

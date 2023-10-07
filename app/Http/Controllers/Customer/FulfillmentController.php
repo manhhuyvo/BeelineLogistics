@@ -34,22 +34,32 @@ class FulfillmentController extends Controller
     {
         $user = Auth::user();
         // Retrieve list of all first
-        $allFulfillments = Fulfillment::where('customer_id', $user->customer->id);
+        $allFulfillments = Fulfillment::where('customer_id', $user->customer->id)
+                        ->with('supportTickets');
 
         // Validate the filter request
         $data = $request->all();
         if (!empty($data)){
             // All other fields
             foreach($data as $key => $value) {
-                if (empty($value) || Str::contains($key, 'date_') || in_array($key, ['page', '_method', 'sort', 'direction'])) {
+                if (!in_array($key, FulfillmentEnum::CUSTOMER_FILTERABLE_COLUMNS) || empty($value)) {
                     continue;
                 }
+
                 // Escape to prevent break
                 $key = htmlspecialchars($key);
                 $value = htmlspecialchars($value);
 
                 // Add conditions
                 $allFulfillments = $allFulfillments->where($key, 'like', "%$value%");
+            }
+
+            // Shipping Status
+            if (!empty($data['ticket_status'])) {
+                $allFulfillments = $allFulfillments->whereHas('supportTickets', function($query) use ($data, $user) {
+                    $query->where('status', '=', $data['ticket_status'])
+                        ->where('customer_id', '=', $user->customer->id);
+                });
             }
 
             // Created between date range
@@ -66,7 +76,7 @@ class FulfillmentController extends Controller
         $returnData = collect($allFulfillments)->only('data')->toArray();
         // Getting the products models
         $returnData['data'] = collect($returnData['data'])
-                ->map(function ($fulfillment) {
+                ->map(function ($fulfillment) use ($user){
                     $fulfillment['product_configs'] = unserialize($fulfillment['product_configs']);
 
                     // Get product's model and its group model
@@ -82,9 +92,17 @@ class FulfillmentController extends Controller
                     }
 
                     $fulfillment['product_configs'] = $productConfigsPlaceholder;
+
+                    // Only pick the support ticket with active status
+                    $fulfillment['support_tickets'] = collect($fulfillment['support_tickets'])
+                                                    ->filter(function($ticket) use ($user) {
+                                                        return $ticket['status'] == SupportTicketEnum::STATUS_ACTIVE && $ticket['customer_id'] == $user->customer->id;
+                                                    })
+                                                    ->toArray();
                     
                     return $fulfillment;
-                })->toArray();
+                })
+                ->toArray();
         // Get model for each of product in the fulfillment
         $paginationData = collect($allFulfillments)->except(['data'])->toArray();
 
@@ -104,6 +122,8 @@ class FulfillmentController extends Controller
             'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
             'paymentStatuses' => FulfillmentEnum::MAP_PAYMENT_STATUSES,
             'paymentStatusColors' => FulfillmentEnum::MAP_PAYMENT_COLORS,
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'shippingStatuses' => FulfillmentEnum::MAP_SHIPPING_STATUSES,
             'shippingTypes' => FulfillmentEnum::MAP_SHIPPING,
             'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
             'bulkActions' => FulfillmentEnum::MAP_BULK_ACTIONS,

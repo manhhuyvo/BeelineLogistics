@@ -23,6 +23,7 @@ class SupportTicketEnum
     const TARGET_ORDER = 'order';
 
     const CUSTOMER_FILTERABLE_COLUMNS = [
+        'id',
         'title',
         'status',
     ];

@@ -44,14 +44,20 @@ class InvoiceController extends Controller
             if (!empty($data['created_date_from']) && !empty($data['created_date_to'])) {
                 $allInvoices = $data['created_date_from'] == $data['created_date_to']
                             ? $allInvoices->whereDate('created_at', $data['created_date_from'])
-                            : $allInvoices->whereBetween('created_at', [$data['created_date_from'], $data['created_date_to']]);
+                            : $allInvoices->whereBetween('created_at', [
+                                Carbon::parse($data['created_date_from'])->startOfDay()->format('Y-m-d H:i:S'),
+                                Carbon::parse($data['created_date_to'])->endOfDay()->format('Y-m-d H:i:S'),
+                            ]);
             }
 
             // Due date between date range
             if (!empty($data['due_date_from']) && !empty($data['due_date_to'])) {
                 $allInvoices = $data['due_date_from'] == $data['due_date_to']
                             ? $allInvoices->whereDate('due_date', $data['due_date_from'])
-                            : $allInvoices->whereBetween('due_date', [$data['due_date_from'], $data['due_date_to']]);
+                            : $allInvoices->whereBetween('due_date', [
+                                Carbon::parse($data['due_date_from'])->startOfDay()->format('Y-m-d H:i:S'),
+                                Carbon::parse($data['due_date_to'])->endOfDay()->format('Y-m-d H:i:S'),
+                            ]);
             }
 
             // Total amount between range

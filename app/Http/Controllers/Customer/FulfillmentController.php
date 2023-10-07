@@ -66,7 +66,10 @@ class FulfillmentController extends Controller
             if (!empty($data['date_from']) && !empty($data['date_to'])) {
                 $allFulfillments = $data['date_from'] == $data['date_to']
                                 ? $allFulfillments->whereDate('created_at', $data['date_from'])
-                                : $allFulfillments->whereBetween('created_at', [$data['date_from'], $data['date_to']]);
+                                : $allFulfillments->whereBetween('created_at', [
+                                    Carbon::parse($data['date_from'])->startOfDay()->format('Y-m-d H:i:S'),
+                                    Carbon::parse($data['date_to'])->endOfDay()->format('Y-m-d H:i:S')
+                                ]);
             }
         }
 

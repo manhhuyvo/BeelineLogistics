@@ -20,12 +20,6 @@
         <table class="w-full text-sm text-left text-gray-500 shadow-lg rounded-lg min-width">
             <thead class="text-xs text-white font-semibold bg-indigo-950"  style="text-align: center !important;">
                 <tr>
-                    <th scope="col" class="p-4">
-                        <div class="flex items-center">
-                            <input id="select_all_rows" name="select_all_rows" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-50 border-gray-300 rounded">
-                            <label for="select_all_rows" class="sr-only">checkbox</label>
-                        </div>
-                    </th>
                     <th scope="col" class="pl-4 sm:py-3 py-2">
                         Index
                     </th>
@@ -60,12 +54,6 @@
             <tbody style="text-align: center !important;">
                 @foreach($tickets['data'] as $index => $ticket)
                 <tr class="bg-white border-b hover:bg-gray-50">
-                    <td class="w-4 p-4">
-                        <div class="flex items-center">
-                            <input name="selected_rows[]" type="checkbox" class="selected_rows w-4 h-4 text-blue-600 bg-gray-50 border-gray-300 rounded" value="{{ $ticket['id'] }}">
-                            <label class="sr-only">checkbox</label>
-                        </div>
-                    </td>
                     <th scope="col" class="pl-4 py-3">
                         {{ $index + 1 }}
                     </th>
@@ -100,7 +88,6 @@
             </tbody>
         </table>
     </div>
-    @include('customer.layout.main-page-action')
     @endif
 </div>
 @endsection

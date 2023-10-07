@@ -56,7 +56,7 @@ class SupportTicketController extends Controller
                                 ? $allTickets->whereDate('solved_date', $data['date_from'])
                                 : $allTickets->whereBetween('solved_date', [
                                     Carbon::parse($data['solved_from'])->startOfDay()->format('Y-m-d H:i:S'),
-                                    Carbon::parse($data['solved_to'])->startOfDay()->format('Y-m-d H:i:S')
+                                    Carbon::parse($data['solved_to'])->endOfDay()->format('Y-m-d H:i:S')
                                 ]);
             }
 

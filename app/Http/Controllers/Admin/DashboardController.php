@@ -20,6 +20,7 @@ use App\Enums\ProductPaymentEnum;
 use App\Enums\InvoiceEnum;
 use App\Enums\ResponseMessageEnum;
 use App\Enums\GeneralEnum;
+use App\Models\Invoice;
 // Helpers
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,17 +43,21 @@ class DashboardController extends Controller
 
         // Get the details for fulfillments
         $fulfillmentsDetails = $this->getFulfillmentRecords($user, $startOfWeek, $endOfWeek);
-        // get the details for fulfillment product payments
+        // Get the details for fulfillment product payments
         $fulfillmentProductPayments = $this->getFulfillmentProductPaymentsRecords($user, $startOfWeek, $endOfWeek);
+        // Get the details for invoices
+        $invoicesDetails = $this->getInvoicesRecords($user, $startOfWeek, $endOfWeek);
 
         return view('admin.dashboard.index', [
             'startOfWeek' => $startOfWeek->format('D d M Y'),
             'endOfWeek' => $endOfWeek->format('D d M Y'),
             'fulfillmentsDetails' => $fulfillmentsDetails,
             'fulfillmentProductPayments' => $fulfillmentProductPayments,
+            'invoicesDetails' => $invoicesDetails,
         ]);
     }
 
+    /** Get fulfillments */
     private function getFulfillmentRecords(User $user, string $startOfWeek, string $endOfWeek)
     {
         $createdThisWeek = Fulfillment::whereBetween('created_at', [$startOfWeek, $endOfWeek])
@@ -84,6 +89,7 @@ class DashboardController extends Controller
         ];
     }
 
+    /** Get fulfillment product payments */
     private function getFulfillmentProductPaymentsRecords(User $user, string $startOfWeek, string $endOfWeek)
     {        
         $allFulfillmentPayments = FulfillmentProductPayment::whereBetween('created_at', [$startOfWeek, $endOfWeek])
@@ -107,6 +113,32 @@ class DashboardController extends Controller
             'pending' => $pendingPayments->count(),
             'approved' => $approvedPayments->count(),
             'declined' => $declinedPayments->count(),
+        ];
+    }
+
+    /** Get invoices */
+    private function getInvoicesRecords(User $user, string $startOfWeek, $endOfWeek)
+    {
+        $created = Invoice::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+                        ->get();
+                        
+        $pending = Invoice::where('status', InvoiceEnum::STATUS_PENDING)
+                        ->where('payment_status', InvoiceEnum::STATUS_UNPAID)
+                        ->get();
+
+        $unpaid = Invoice::whereNotIn('status', [InvoiceEnum::STATUS_CANCELLED, InvoiceEnum::STATUS_WAIVED])
+                        ->where('payment_status', InvoiceEnum::STATUS_UNPAID)
+                        ->get();
+                        
+        $overdue = Invoice::where('status', InvoiceEnum::STATUS_OVERDUE)
+                        ->where('payment_status', InvoiceEnum::STATUS_UNPAID)
+                        ->get();
+
+        return [
+            'created' => $created->count(),
+            'pending' => $pending->count(),
+            'unpaid' => $unpaid->count(),
+            'overdue' => $overdue->count(),
         ];
     }
 }

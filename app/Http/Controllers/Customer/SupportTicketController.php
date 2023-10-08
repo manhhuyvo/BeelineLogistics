@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 // Models
 use App\Models\SupportTicket;
 use App\Models\SupportTicket\Comment as SupportTicketComment;
+use App\Models\Fulfillment;
+use App\Models\Order;
 // Enums
 use App\Enums\SupportTicketEnum;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\GeneralEnum;
 // Helpers
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -203,7 +206,7 @@ class SupportTicketController extends Controller
         }
 
         // Validate and format the items list provided
-        $itemsList = $this->validateItemsList($rawData);
+        $itemsList = $this->validateItemsList($rawData, $user->customer->id);
         // If the items list is empty, then we don't do anything else, just end it here
         if (empty($itemsList)) {
             DB::commit();
@@ -234,7 +237,7 @@ class SupportTicketController extends Controller
     }
 
     /** Validate the item list of the request */
-    private function validateItemsList(array $itemsList)
+    private function validateItemsList(array $itemsList, int $customerId)
     {
         $itemTypes = $itemsList['item_type'] ?? [];
         $itemIds = $itemsList['item_id'] ?? [];
@@ -243,6 +246,31 @@ class SupportTicketController extends Controller
         foreach ($itemTypes as $index => $type) {
             if (empty($type) || empty($itemIds[$index])) {
                 continue;
+            }
+
+            $itemId = $itemIds[$index];
+            // Check if this item ID is actually exists and belong to the selected customer
+            if ($type == GeneralEnum::TARGET_FULFILLMENT) {
+                $item = Fulfillment::find($itemId);
+                if (!$item) {
+                    continue;
+                }
+
+                if ($item->customer_id != $customerId) {
+                    continue;
+                }
+            }
+
+            // Check if this item ID is actually exists and belong to the selected customer
+            if ($type == GeneralEnum::TARGET_ORDER) {
+                $item = Order::find($itemId);
+                if (!$item) {
+                    continue;
+                }
+
+                if ($item->customer_id != $customerId) {
+                    continue;
+                }
             }
 
             $items[$type][] = $itemIds[$index];

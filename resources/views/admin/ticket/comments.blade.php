@@ -54,7 +54,7 @@
                                 $commentAttachment = $comment['attachment'];
                                 $noImage = url('assets/images/unavailable.png');
                             @endphp
-                            <a href="{{ url("ticket_attachments/$ticketAttachment") }}" target="_blank" class="flex flex-row items-center p-0 w-fit gap-2 text-sm text-blue-500 font-semibold hover:underline">View Attachment<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
+                            <a href="{{ url("ticket_comments_attachments/$commentAttachment") }}" target="_blank" class="flex flex-row items-center p-0 w-fit gap-2 text-sm text-blue-500 font-semibold hover:underline">View Attachment<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
                         </div>
                     @endif
                 </div>

@@ -128,6 +128,7 @@ Route::prefix('admin')->group(function () {
 
         /** [SMALL ELEMENTS LOADER] */
         Route::get('/small-elements/product-row', [SmallElementsLoader::class, 'getNewProductRow'])->name('admin.small-elements.product-row');
+        Route::get('/small-elements/ticket-belongs-row/{target}', [SmallElementsLoader::class, 'getNewTicketBelongsRow'])->name('admin.small-elements.ticket-belongs-row');
 
         /** [DASHBOARD ADMIN ROUTES] */
         Route::get('/dashboard', function() {

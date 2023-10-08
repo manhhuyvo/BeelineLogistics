@@ -120,6 +120,21 @@ class SupportTicketController extends Controller
         ]);
     }
 
+    public function create(Request $request)
+    {
+        
+        $user = Auth::user();
+
+        $allCustomers = getFormattedCustomersList();
+
+        // Return the view
+        return view('admin.ticket.create', [
+            'user' => $user,
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'allCustomers' => $allCustomers,
+        ]);
+    }
+
     public function show(Request $request, SupportTicket $ticket)
     {
         $user = Auth::user();

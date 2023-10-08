@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Enums\InvoiceEnum;
+use App\Enums\SupportTicketEnum;
 use App\Models\Fulfillment;
 use Illuminate\Http\Request;
 
@@ -43,6 +44,20 @@ class SmallElementsLoader extends Controller
             'targetsList' => $targetsList,
             'target' => $target,
             'createInvoiceFrom' => InvoiceEnum::MAP_TARGETS,
+        ]);
+    }
+
+    public function getNewTicketBelongsRow($target)
+    {
+        if (!empty($target) && $target == SupportTicketEnum::TARGET_FULFILLMENT) {
+            $targetsList = getFormattedFulfillmentsList();
+        } else if (!empty($target) && $target == SupportTicketEnum::TARGET_ORDER) {
+            $targetsList = getFormattedOrdersList();
+        }
+        
+        return view('admin.small_elements.ticket-belongs-row', [
+            'targetsList' => $targetsList ?? [],
+            'target' => $target,
         ]);
     }
 

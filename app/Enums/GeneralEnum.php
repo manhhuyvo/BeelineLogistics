@@ -26,4 +26,7 @@ class GeneralEnum
             "Expires"             => "0"
         ],
     ];
+
+    const TARGET_FULFILLMENT = 'fulfillment';
+    const TARGET_ORDER = 'order';
 }

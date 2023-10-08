@@ -4,9 +4,12 @@
 <section class="bg-gray-50">
     @include('customer.layout.response')
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900">
-            <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
-            Beeline Logisitcs    
+        <a href="#" class="flex flex-col mb-6 text-2xl font-semibold text-gray-900">
+            <div class="flex items-center">
+                <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
+                Beeline Logisitcs
+            </div>  
+            <span class="text-[14px] italic text-right font-medium text-gray-500">CUSTOMER PORTAL</span>
         </a>
         <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">

@@ -24,7 +24,7 @@
             @include('customer.dashboard.fulfillments-report')
         </div>
     </div>
-    <div class="w-full gap-2 flex md:flex-row flex-col p-0 my-4">
+    <div class="w-full gap-3 flex md:flex-row flex-col p-0 my-4">
         <div class="rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-2 px-3 flex flex-col gap-2 flex-1 md:max-w-[50%]">            
             <p class="text-lg font-medium text-blue-600 mt-1">
                 INVOICES

@@ -8,6 +8,7 @@
                })
                ->count();
 @endphp
+<div class="w-full min-h-screen m-0 p-0 min-w-[350px]">
 <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
       <div class="flex items-center justify-between">

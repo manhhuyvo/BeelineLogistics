@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 // Models
 use App\Models\SupportTicket;
 use App\Models\SupportTicket\Comment as SupportTicketComment;
+use App\Models\User;
 // Enums
 use App\Enums\SupportTicketEnum;
 use App\Enums\ResponseMessageEnum;
@@ -117,5 +118,138 @@ class SupportTicketController extends Controller
             'exportRoute' => 'admin.ticket.export',
             'request' => $data,
         ]);
+    }
+
+    public function show(Request $request, SupportTicket $ticket)
+    {
+        $user = Auth::user();
+        $customer = $ticket->customer;
+        $userCreatedOwner = $ticket->userCreated ? $ticket->userCreated->getUserOwner() : null;
+        $userSolvedOwner = $ticket->userSolved ? $ticket->userSolved->getUserOwner() : null;
+        $fulfillments = $ticket->fulfillments;
+        $orders = $ticket->orders;
+        $comments = $ticket->comments ?? [];
+        $comments = collect($comments)->map(function(SupportTicketComment $comment) {
+            $userComment = $comment->user;
+            $ownerComment = collect($userComment->getUserOwner())->toArray();
+            $comment = collect($comment)->toArray();
+            $comment['owner'] = $ownerComment;
+
+            return $comment;
+        })
+        ->toArray();
+
+        $ticket = $ticket->toArray();
+
+        if (!empty($ticket['user_created'])) {
+            $ticket['user_created']['owner'] = $userCreatedOwner->toArray();
+        }
+        
+        if (!empty($ticket['user_solved'])) {
+            $ticket['user_solved']['owner'] = $userSolvedOwner->toArray();
+        }
+
+        // Return the view
+        return view('admin.ticket.show', [
+            'user' => $user,
+            'ticket' => $ticket,
+            'comments' => collect($comments)->toArray(),
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'supportTicketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
+        ]);
+    }
+
+    public function solve(Request $request, SupportTicket $ticket)
+    {
+        $user = Auth::user();
+        if ($user->target == User::TARGET_CUSTOMER) {            
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->route('admin.dashboard')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Update status and user solved details
+        $ticket->status = SupportTicketEnum::STATUS_SOLVED;
+        $ticket->solved_user_id = $user->id;
+        $ticket->solved_date = Carbon::now()->format('Y-m-d H:i:s');
+
+        // If save unsuccessfully
+        if (!$ticket->save()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+        
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->back()->with(['response' => $responseData]);
+    }
+
+    public function active(Request $request, SupportTicket $ticket)
+    {
+        $user = Auth::user();
+        if ($user->target == User::TARGET_CUSTOMER) {            
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->route('admin.dashboard')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Update status and user solved details
+        $ticket->status = SupportTicketEnum::STATUS_ACTIVE;
+        $ticket->solved_user_id = 0;
+        $ticket->solved_date = null;
+
+        // If save unsuccessfully
+        if (!$ticket->save()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+        
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->back()->with(['response' => $responseData]);
+    }
+
+    public function delete(Request $request, SupportTicket $ticket)
+    {
+        $user = Auth::user();
+        if ($user->target == User::TARGET_CUSTOMER) {            
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->route('admin.dashboard')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Update status and user solved details
+        $ticket->status = SupportTicketEnum::STATUS_DELETED;
+
+        // If save unsuccessfully
+        if (!$ticket->save()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+        
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->back()->with(['response' => $responseData]);
     }
 }

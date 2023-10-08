@@ -171,6 +171,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/ticket/create', [SupportTicketController::class, 'create'])->name('admin.ticket.create.form');
         Route::get('/ticket/{ticket}', [SupportTicketController::class, 'show'])->name('admin.ticket.show');
         Route::post('/ticket', [SupportTicketController::class, 'store'])->name('admin.ticket.store');
+        Route::post('/ticket/{ticket}/solve', [SupportTicketController::class, 'solve'])->name('admin.ticket.solve');
+        Route::post('/ticket/{ticket}/active', [SupportTicketController::class, 'active'])->name('admin.ticket.active');
+        Route::post('/ticket/{ticket}/delete', [SupportTicketController::class, 'delete'])->name('admin.ticket.delete');
         /** [SUPPORT TICKET COMMENT ROUTES] */
         Route::post('/ticket/{ticket}/comment', [SupportTicketCommentController::class, 'store'])->name('admin.ticket.comment.store');
     });

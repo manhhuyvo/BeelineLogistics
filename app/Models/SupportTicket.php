@@ -31,7 +31,7 @@ class SupportTicket extends Model
     ];
 
     protected $casts = [
-        'solved_date' => 'date:d/m/Y',
+        'solved_date' => 'date:d/m/Y H:i:s',
         'created_at' => 'date:d/m/Y',
         'updated_at' => 'date:d/m/Y',
     ];

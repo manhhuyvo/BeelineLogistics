@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\FulfillmentProductPaymentController;
 use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Admin\SupportTicketCommentController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Models\Staff;
 
 // CUSTOMER INCLUDES
@@ -131,9 +132,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/small-elements/ticket-belongs-row/{target}', [SmallElementsLoader::class, 'getNewTicketBelongsRow'])->name('admin.small-elements.ticket-belongs-row');
 
         /** [DASHBOARD ADMIN ROUTES] */
-        Route::get('/dashboard', function() {
-            return view('admin.welcome');
-        })->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
         /** [USER PROFILE ROUTES] */
         Route::get('/profile', [ProfileController::class, 'index'])->name('admin.user.profile.form');

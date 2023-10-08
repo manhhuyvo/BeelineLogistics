@@ -47,13 +47,17 @@ class DashboardController extends Controller
         $fulfillmentProductPayments = $this->getFulfillmentProductPaymentsRecords($user, $startOfWeek, $endOfWeek);
         // Get the details for invoices
         $invoicesDetails = $this->getInvoicesRecords($user, $startOfWeek, $endOfWeek);
+        // Get the details for support tickets
+        $supportTicketsDetails = $this->getSupportTicketsRecords($user, $startOfWeek, $endOfWeek);
 
         return view('admin.dashboard.index', [
+            'user' => $user,
             'startOfWeek' => $startOfWeek->format('D d M Y'),
             'endOfWeek' => $endOfWeek->format('D d M Y'),
             'fulfillmentsDetails' => $fulfillmentsDetails,
             'fulfillmentProductPayments' => $fulfillmentProductPayments,
             'invoicesDetails' => $invoicesDetails,
+            'supportTicketsDetails' => $supportTicketsDetails,
         ]);
     }
 
@@ -64,12 +68,11 @@ class DashboardController extends Controller
                                     ->where('fulfillment_status', '!=', FulfillmentEnum::FULFILLMENT_STATUS_DELETE)        
                                     ->get();
 
-        $waiting = Fulfillment::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
+        $shipped = Fulfillment::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
                             ->where('shipping_status', FulfillmentEnum::SHIPPING_SHIPPED)
                             ->get();
 
-        $shipped = Fulfillment::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
-                            ->where('shipping_status', FulfillmentEnum::SHIPPING_WAITING)
+        $waiting = Fulfillment::where('shipping_status', FulfillmentEnum::SHIPPING_WAITING)
                             ->get();
                             
         $returned = Fulfillment::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
@@ -139,6 +142,26 @@ class DashboardController extends Controller
             'pending' => $pending->count(),
             'unpaid' => $unpaid->count(),
             'overdue' => $overdue->count(),
+        ];
+    }
+
+    private function getSupportTicketsRecords(User $user, string $startOfWeek, string $endOfWeek)
+    {
+        $created = SupportTicket::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+                                ->where('status', '!=', SupportTicketEnum::STATUS_DELETED)   
+                                ->get();
+        
+        $solved = SupportTicket::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
+                        ->where('status', SupportTicketEnum::STATUS_SOLVED)
+                        ->get();
+        
+        $active = SupportTicket::where('status', SupportTicketEnum::STATUS_ACTIVE)
+                        ->get();
+
+        return [
+            'created' => $created->count(),
+            'solved' => $solved->count(),
+            'active' => $active->count(),
         ];
     }
 }

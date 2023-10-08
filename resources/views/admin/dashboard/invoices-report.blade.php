@@ -6,7 +6,7 @@
                 <th scope="col" class="border px-6 sm:py-4 py-2 border-solid border-r-[2px] bg-gray-200 w-70">
                     Actions
                 </th>
-                <th scope="col" class="border px-6 sm:py-4 py-2 border-solid border-r-[2px] bg-gray-200 w-5">
+                <th scope="col" class="border px-6 sm:py-4 py-2 border-solid border-r-[2px] whitespace-nowrap bg-gray-200 w-20">
                     No. of records
                 </th>
             </tr>

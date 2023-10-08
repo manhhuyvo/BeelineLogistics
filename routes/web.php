@@ -30,6 +30,7 @@ use App\Http\Controllers\Customer\SmallElementsLoader as CustomerSmallElementsLo
 use App\Http\Controllers\Customer\FulfillmentProductPaymentController as CustomerFulfillmentProductPaymentController;
 use App\Http\Controllers\Customer\SupportTicketController as CustomerSupportTicketController;
 use App\Http\Controllers\Customer\SupportTicketCommentController as CustomerSupporTicketCommentController;
+use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -187,10 +188,7 @@ Route::prefix('customer')->group(function () {
         Route::get('/small-elements/ticket-belongs-row/{target}', [CustomerSmallElementsLoader::class, 'getNewTicketBelongsRow'])->name('customer.small-elements.ticket-belongs-row');
 
         /** [DASHBOARD CUSTOMER ROUTES] */
-        Route::get('/dashboard', function() {
-            
-            return view('customer.welcome');
-        })->name('customer.dashboard');        
+        Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('customer.dashboard');    
 
         /** [USER PROFILE ROUTES] */
         Route::get('/profile', [CustomerProfileController::class, 'index'])->name('customer.user.profile.form');

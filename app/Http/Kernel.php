@@ -68,6 +68,8 @@ class Kernel extends HttpKernel
         'staff.login.redirect' => \App\Http\Middleware\Admin\StaffLoginRedirect::class,
         'customer.permission' => \App\Http\Middleware\Customer\CustomerPermission::class,
         'customer.login.redirect' => \App\Http\Middleware\Customer\CustomerLoginRedirect::class,
+        'supplier.permission' => \App\Http\Middleware\Supplier\SupplierPermission::class,
+        'supplier.login.redirect' => \App\Http\Middleware\Supplier\SupplierLoginRedirect::class,
         'optimizeImages' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class,
     ];
 }

@@ -45,7 +45,7 @@ class UserController extends Controller
         // Get user's owner
         $owners = [];
         foreach ($allUsers as $user) {
-            $owners[$user->id] = $this->getUserOwner($user);
+            $owners[$user->id] =  $this->getUserOwner($user);
         }
 
         $allUsers = $allUsers->appends(request()->except('page'));        
@@ -296,8 +296,8 @@ class UserController extends Controller
 
                 break;
             case User::TARGET_SUPPLIER:
-                $customer = $user->customer;
-                $owner = collect($customer)->only([
+                $supplier = $user->supplier;
+                $owner = collect($supplier)->only([
                     'id',
                     'full_name',
                     'type',

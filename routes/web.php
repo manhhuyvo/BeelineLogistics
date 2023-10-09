@@ -32,6 +32,10 @@ use App\Http\Controllers\Customer\SupportTicketController as CustomerSupportTick
 use App\Http\Controllers\Customer\SupportTicketCommentController as CustomerSupporTicketCommentController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 
+// SUPPLIER INCLUDES
+use App\Http\Controllers\Supplier\AuthController as SupplierAuthController;
+use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -233,4 +237,23 @@ Route::prefix('customer')->group(function () {
 
     /* [CUSTOMER LOGOUT ROUTE] */
     Route::get('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
+});
+
+Route::prefix('supplier')->group(function() {
+    Route::group(['middleware' => 'supplier.permission:all'], function () {        
+        /** [DASHBOARD SUPPLIER ROUTES] */
+        Route::get('/dashboard', [SupplierDashboardController::class, 'index'])->name('supplier.dashboard'); 
+    });
+
+    Route::group(['middleware' => ['supplier.login.redirect']], function() {
+        /* [SUPPLIER AUTHENTICATION] */
+        Route::get('/', [SupplierAuthController::class,'index'])->name('supplier.index');
+
+        /* [SUPPLIER LOGIN ROUTES] */
+        Route::get('/login', [SupplierAuthController::class, 'loginView'])->name('supplier.login.form');
+        Route::post('/login', [SupplierAuthController::class, 'login'])->name('supplier.login');
+    });
+
+    /* [SUPPLIER LOGOUT ROUTE] */
+    Route::get('/logout', [SupplierAuthController::class, 'logout'])->name('supplier.logout');
 });

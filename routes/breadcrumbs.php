@@ -238,3 +238,21 @@ Breadcrumbs::for('customer.ticket.show', function (BreadcrumbTrail $trail, $tick
     $trail->parent('customer.ticket.list');
     $trail->push("Ticket #{$ticket->id}", route('customer.ticket.show', ['ticket' => $ticket->id]));
 });
+
+/**
+ * 
+ * SUPPLIER BREADCRUMBS
+ * 
+ */
+
+Breadcrumbs::for('supplier.dashboard', function (BreadcrumbTrail $trail): void {
+    $trail->push('Home', route('supplier.dashboard'));
+});
+
+/** Breadcrumbs for USER PROFILE */
+Breadcrumbs::for('supplier.user.profile.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('supplier.dashboard');
+    $trail->push('Profile', route('supplier.user.profile.form'));
+    $user = Auth::user();
+    $trail->push("{$user->username}", route('supplier.user.profile.form'));
+});

@@ -35,6 +35,7 @@ use App\Http\Controllers\Customer\DashboardController as CustomerDashboardContro
 // SUPPLIER INCLUDES
 use App\Http\Controllers\Supplier\AuthController as SupplierAuthController;
 use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
+use App\Http\Controllers\Supplier\ProfileController as SupplierProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -243,7 +244,12 @@ Route::prefix('supplier')->group(function() {
     Route::group(['middleware' => 'supplier.permission:all'], function () {        
         /** [DASHBOARD SUPPLIER ROUTES] */
         Route::get('/dashboard', [SupplierDashboardController::class, 'index'])->name('supplier.dashboard'); 
-    });
+    });    
+
+    /** [USER PROFILE ROUTES] */
+    Route::get('/profile', [SupplierProfileController::class, 'index'])->name('supplier.user.profile.form');
+    Route::post('/profile', [SupplierProfileController::class, 'update'])->name('supplier.user.profile.update');
+    Route::post('/profile/change-password', [SupplierProfileController::class, 'changePassword'])->name('supplier.user.profile.change-password');
 
     Route::group(['middleware' => ['supplier.login.redirect']], function() {
         /* [SUPPLIER AUTHENTICATION] */

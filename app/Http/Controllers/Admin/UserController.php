@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\SupplierEnum;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 
@@ -303,8 +304,8 @@ class UserController extends Controller
                     'type',
                     'status',
                 ])->toArray();
-                $owner['type'] = Supplier::MAP_TYPES[$owner['type']];
-                $owner['status'] = Supplier::MAP_STATUSES[$owner['status']];
+                $owner['type'] = SupplierEnum::MAP_TYPES[$owner['type']];
+                $owner['status'] = SupplierEnum::MAP_STATUSES[$owner['status']];
 
                 break;
         }

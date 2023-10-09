@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\SupplierEnum;
 use Illuminate\Validation\Rule;
 
 use function PHPUnit\Framework\isEmpty;
@@ -83,9 +84,9 @@ class AjaxController extends Controller
                 // If result is not empty, then we filter data 
                 if (!$result->isEmpty()) {
                     $returnData = collect($result)->map(function($row) {
-                        $row['status_color'] = Supplier::MAP_STATUSES_COLOR[$row['status']] ?? '';
-                        $row['type'] = Supplier::MAP_TYPES[$row['type']] ?? "Unknown";
-                        $row['status'] = Supplier::MAP_STATUSES[$row['status']] ?? "Unknown";
+                        $row['status_color'] = SupplierEnum::MAP_STATUSES_COLOR[$row['status']] ?? '';
+                        $row['type'] = SupplierEnum::MAP_TYPES[$row['type']] ?? "Unknown";
+                        $row['status'] = SupplierEnum::MAP_STATUSES[$row['status']] ?? "Unknown";
         
                         return collect($row)->only([
                             'id',

@@ -8,6 +8,8 @@ use App\Models\Supplier;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\CurrencyAndCountryEnum;
+use App\Enums\SupplierEnum;
 use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
@@ -52,9 +54,9 @@ class SupplierController extends Controller
         return view('admin.supplier.list', [
             'suppliers' => $returnData,
             'pagination' => $paginationData,   
-            'supplierStatusColors' => Supplier::MAP_STATUSES_COLOR,         
-            'supplierTypes' => Supplier::MAP_TYPES,
-            'supplierStatuses' => Supplier::MAP_STATUSES,
+            'supplierStatusColors' => SupplierEnum::MAP_STATUSES_COLOR,         
+            'supplierTypes' => SupplierEnum::MAP_TYPES,
+            'supplierStatuses' => SupplierEnum::MAP_STATUSES,
             'request' => $data,
         ]);
     }
@@ -62,9 +64,11 @@ class SupplierController extends Controller
     /** Display page for create new supplier */
     public function create(Request $request)
     {
-        return view('admin.supplier.create', [            
-            'supplierTypes' => Supplier::MAP_TYPES,
-            'supplierStatuses' => Supplier::MAP_STATUSES,
+        return view('admin.supplier.create', [
+            'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
+            'currencies' => CurrencyAndCountryEnum::MAP_CURRENCIES, 
+            'supplierTypes' => SupplierEnum::MAP_TYPES,
+            'supplierStatuses' => SupplierEnum::MAP_STATUSES,
         ]);
     }
 
@@ -106,9 +110,9 @@ class SupplierController extends Controller
     {       
         return view('admin.supplier.show', [
             'supplier' => $supplier->toArray(),
-            'supplierTypes' => Supplier::MAP_TYPES,
-            'supplierStatuses' => Supplier::MAP_STATUSES,
-            'supplierStatusColors' => Supplier::MAP_STATUSES_COLOR,
+            'supplierTypes' => SupplierEnum::MAP_TYPES,
+            'supplierStatuses' => SupplierEnum::MAP_STATUSES,
+            'supplierStatusColors' => SupplierEnum::MAP_STATUSES_COLOR,
         ]);
     }
 
@@ -117,9 +121,9 @@ class SupplierController extends Controller
     {    
         return view('admin.supplier.edit', [
             'supplier' => $supplier->toArray(),
-            'supplierTypes' => Supplier::MAP_TYPES,
-            'supplierStatuses' => Supplier::MAP_STATUSES,
-            'supplierStatusColors' => Supplier::MAP_STATUSES_COLOR,
+            'supplierTypes' => SupplierEnum::MAP_TYPES,
+            'supplierStatuses' => SupplierEnum::MAP_STATUSES,
+            'supplierStatusColors' => SupplierEnum::MAP_STATUSES_COLOR,
         ]);
     }
 

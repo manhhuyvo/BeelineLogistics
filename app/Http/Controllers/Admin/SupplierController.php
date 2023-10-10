@@ -110,12 +110,19 @@ class SupplierController extends Controller
 
     /** Display the page for create new supplier */
     public function show(Request $request, Supplier $supplier)
-    {       
+    {           
+        $countryMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY);
+        $serviceMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_SERVICE);
+
         return view('admin.supplier.show', [
             'supplier' => $supplier->toArray(),
             'supplierTypes' => SupplierEnum::MAP_TYPES,
             'supplierStatuses' => SupplierEnum::MAP_STATUSES,
             'supplierStatusColors' => SupplierEnum::MAP_STATUSES_COLOR,
+            'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
+            'services' => SupplierEnum::MAP_SERVICES,
+            'currentCountriesMeta' => $countryMeta ? $countryMeta->getValue() : [],
+            'currentServicesMeta' => $serviceMeta ? $serviceMeta->getValue() : [],
         ]);
     }
 

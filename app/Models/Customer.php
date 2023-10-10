@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Enums\CustomerMetaEnum;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Staff;
 use App\Models\Invoice;
 use App\Models\Fulfillment;
-use App\Enums\CustomerMetaEnum;
 use App\Models\Customer\Meta as CustomerMeta;
+use App\Models\CustomerSupplierMapper;
 
 class Customer extends Model
 {
@@ -132,6 +133,39 @@ class Customer extends Model
     public function supportTickets(): HasMany
     {
         return $this->hasMany(SupportTicket::class, 'customer_id', 'id');
+    }
+
+    public function supplierMapper(): HasMany
+    {
+        return $this->hasMany(CustomerSupplierMapper::class, 'customer_id', 'id');
+    }
+
+    // Multiple suppliers can be returned
+    public function getSuppliersByKeys(string $country = '', string $service = '')
+    {
+        if (empty($country) && empty($service)) {
+            return null;
+        }
+
+        // Initiate mapper by customer ID
+        $mapper = CustomerSupplierMapper::where('customer_id', $this->id);
+
+        // Assign country
+        if (!empty($country)) {
+            $mapper->where('country', $country);
+        }
+
+        // Assign service
+        if (!empty($service)) {
+            $mapper->where('service', $service);
+        }
+
+        $mapper = $mapper->get();
+        if (!$mapper) {
+            return null;
+        }
+
+        return $mapper;
     }
 
     public function getMeta(string $identifier = '')

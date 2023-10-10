@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\User;
 use App\Models\Bill;
 use App\Models\Supplier\Meta as SupplierMeta;
+use App\Models\CustomerSupplierMapper;
 
 
 class Supplier extends Model
@@ -47,6 +48,38 @@ class Supplier extends Model
     public function meta(): HasMany
     {
         return $this->hasMany(SupplierMeta::class, 'supplier_id', 'id');
+    }
+
+    public function customerMapper(): HasMany
+    {
+        return $this->hasMany(CustomerSupplierMapper::class, 'supplier_id', 'id');
+    }
+
+    // Many customers can be returned
+    public function getCustomersByKeys(string $country = '', string $service = '')
+    {
+        if (empty($country) && empty($service)) {
+            return null;
+        }
+
+        $mapper = CustomerSupplierMapper::where('supplier_id', $this->id);
+
+        // Assign country
+        if (!empty($country)) {
+            $mapper->where('country', $country);
+        }
+
+        // Assign service
+        if (!empty($service)) {
+            $mapper->where('service', $service);
+        }
+
+        $mapper = $mapper->get();
+        if (!$mapper) {
+            return null;
+        }
+
+        return $mapper;
     }
 
     public function getMeta(string $identifier = '')

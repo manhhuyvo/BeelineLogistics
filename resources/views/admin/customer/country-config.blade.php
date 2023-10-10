@@ -2,15 +2,15 @@
     <p class="text-lg px-3 py-1 font-medium text-blue-600">
         Country Configurations
     </p>
-    <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.supplier.service-config', ['supplier' => $supplier['id']]) }}" method="POST">
+    <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.customer.country-config', ['customer' => $customer['id']]) }}" method="POST">
         <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
-        <p class="text-sm font-semibold">Please select services available for this supplier</p>
+        <p class="text-sm font-semibold">Please select countries available for this customer</p>
         <div class="row md:grid md:grid-cols-3 gap-2 flex flex-col px-2.5">
-            @foreach ($services as $key => $value)
+            @foreach ($countries as $key => $value)
             <div class="h-[50px] p-0">
                 <label class="inline-flex gap-2 items-center cursor-pointer relative w-full h-full border-solid border-[2px] border-gray-300 flex justify-center items-center text-gray-500 rounded-[3px]">
-                    <input type="checkbox" name="services[]" class="services_checkbox border-transparent bg-transparent outline-none focus:ring-0 absolute hidden left-0" value="{{ $key }}"
-                        @if (!empty($currentServicesMeta) && in_array($key, $currentServicesMeta))
+                    <input type="checkbox" name="countries[]" class="countries_checkbox border-transparent bg-transparent outline-none focus:ring-0 absolute hidden left-0" value="{{ $key }}"
+                        @if (!empty($currentCountriesMeta) && in_array($key, $currentCountriesMeta))
                             checked = true
                         @endif
                     >
@@ -23,18 +23,15 @@
             <button type="submit" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">
                 Update
             </button>
-            <a href="{{ route('admin.supplier.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2">
+            <a href="{{ route('admin.customer.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2">
                 Cancel
             </a>
         </div>
     </form>
 </div>
 <script>
-    const selected = 'bg-gray-300 text-gray-800';
-    const notSelected = 'bg-white text-gray-500';
-
     $(document).ready(function() {
-        $('.services_checkbox').each(function(index, item) {
+        $('.countries_checkbox').each(function(index, item) {
             if($(item).is(':checked')) {
                 $(item).parent().addClass(selected)
                 $(item).parent().removeClass(notSelected)
@@ -44,7 +41,7 @@
             }
         });
 
-        $('.services_checkbox').on('change', function() {
+        $('.countries_checkbox').on('change', function() {
             if ($(this).is(':checked')) {
                 $(this).parent().addClass(selected)
                 $(this).parent().removeClass(notSelected)

@@ -12,6 +12,8 @@ use App\Models\Order;
 use App\Models\Staff;
 use App\Models\Invoice;
 use App\Models\Fulfillment;
+use App\Enums\CustomerMetaEnum;
+use App\Models\Customer\Meta as CustomerMeta;
 
 class Customer extends Model
 {
@@ -130,5 +132,50 @@ class Customer extends Model
     public function supportTickets(): HasMany
     {
         return $this->hasMany(SupportTicket::class, 'customer_id', 'id');
+    }
+
+    public function getMeta(string $identifier = '')
+    {
+        if (!in_array($identifier, CustomerMetaEnum::VALID_META)) {
+            return null;
+        }
+
+        return CustomerMeta::where('identifier', $identifier)->first();
+    }
+
+    public function createMeta(string $identifier, string $value)
+    {
+        if (empty($identifier) || empty($value)) {
+            return false;
+        }
+
+        if (!in_array($identifier, CustomerMetaEnum::VALID_META) || !is_string($value)) {
+            return false;
+        }
+
+        // If meta already exists, then we update it
+        $meta = CustomerMeta::where('identifier', $identifier)->first();
+        if ($meta) {
+            $meta->value = $value;
+
+            if (!$meta->update()) {
+                return false;
+            }
+    
+            return $meta;
+        }
+
+        // Otherwise if meta not exists, then we create
+        $meta = new CustomerMeta([
+            'supplier_id' => $this->id,
+            'identifier' => $identifier,
+            'value' => $value,
+        ]);
+
+        if (!$meta->save()) {
+            return false;
+        }
+
+        return $meta;
     }
 }

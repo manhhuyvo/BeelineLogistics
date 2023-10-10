@@ -78,7 +78,6 @@ Route::prefix('admin')->group(function () {
         Route::post('/supplier', [SupplierController::class, 'store'])->name('admin.supplier.store');
         Route::post('/supplier/{supplier}/country-config', [SupplierController::class, 'countryConfig'])->name('admin.supplier.country-config');
         Route::post('/supplier/{supplier}/service-config', [SupplierController::class, 'serviceConfig'])->name('admin.supplier.service-config');
-        Route::post('/supplier/{supplier}/customer-config', [SupplierController::class, 'customerConfig'])->name('admin.supplier.customer-config');
         Route::get('/supplier/{supplier}', [SupplierController::class, 'show'])->name('admin.supplier.show');
         Route::get('/supplier/{supplier}/edit', [SupplierController::class, 'edit'])->name('admin.supplier.edit.form');
         Route::post('/supplier/{supplier}', [SupplierController::class, 'update'])->name('admin.supplier.update');
@@ -130,6 +129,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit.form');
         Route::post('/product/{product}', [ProductController::class, 'update'])->name('admin.product.update');
         Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('admin.product.delete');
+
+        /** [CUSTOMER META ROUTES] */
+        Route::post('/customer/{customer}/country-config', [CustomerController::class, 'countryConfig'])->name('admin.customer.country-config');
+        Route::post('/customer/{customer}/service-config', [CustomerController::class, 'serviceConfig'])->name('admin.customer.service-config');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {

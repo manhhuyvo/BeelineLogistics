@@ -150,6 +150,14 @@
             </div>
         </form>
     </div>
+    @if (in_array($user['staff']['position'], [Staff::POSITION_DIRECTOR, Staff::POSITION_ACCOUNTANT]))
+        @include('admin.customer.country-config')
+        @include('admin.customer.service-config')
+    @endif
 </div>
 
+<script>
+    const selected = 'bg-gray-300 text-gray-800';
+    const notSelected = 'bg-white text-gray-500';
+</script>
 @endsection

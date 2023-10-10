@@ -7,9 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Staff;
 use App\Models\Order;
+use App\Models\Customer\Meta as CustomerMeta;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\CustomerMetaEnum;
+use App\Enums\GeneralEnum;
+use App\Enums\CurrencyAndCountryEnum;
 use App\Models\Product;
 use Illuminate\Validation\Rule;
 
@@ -138,15 +143,25 @@ class CustomerController extends Controller
     /** Display the page for update customer details */
     public function edit(Request $request, Customer $customer)
     {
+        $user = Auth::user();
+        $staff = $user->staff;
+        $countryMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_COUNTRY);
+        $serviceMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_SERVICE);
+
         // Get and validate customer data     
         $data = collect($customer)->toArray();
         $customer->default_sender = !empty($customer->default_sender) ? unserialize($data['default_sender']) : []; // turn default sender to array
         $customer->default_receiver = !empty($customer->default_receiver) ? unserialize($data['default_receiver']) : []; // turn default sender to array
 
         return view('admin.customer.edit', [
+            'user' => collect($user)->toArray(),
             'customer' => $customer->toArray(),                      
             'customerTypes' => Customer::MAP_TYPES,
             'customerStatuses' => Customer::MAP_STATUSES,
+            'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
+            'services' => GeneralEnum::MAP_SERVICES,
+            'currentCountriesMeta' => $countryMeta ? $countryMeta->getValue() : [],
+            'currentServicesMeta' => $serviceMeta ? $serviceMeta->getValue() : [],
             'staffsList' => $this->formatStaffsList(),
             'receiverZones' => Customer::MAP_ZONES,
             'customerStatusColors' => Customer::MAP_STATUSES_COLOR,
@@ -242,6 +257,114 @@ class CustomerController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
 
         return redirect()->route('admin.customer.show', ['customer' => $customer->id])->with(['response' => $responseData]);
+    }    
+
+    public function countryConfig(Request $request, Customer $customer)
+    {
+        $data = $request->only('countries');
+        
+        // If the list data 
+        if (empty($data) || !is_array($data) || empty($data['countries'])) {
+            // Get meta country of this supplier
+            $countryMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_COUNTRY);
+            if (!$countryMeta) {
+                $responseData = viewResponseFormat()->success()->data($customer->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+        
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+
+            // If this meta exist, then we delete it
+            if (!$countryMeta->delete()) {
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+    
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+
+            $responseData = viewResponseFormat()->success()->data($customer->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+        
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        // If the list was provided as an array and not empty, we validate
+        $eligibleItems = collect($data['countries'])
+                    ->filter(function($item) {
+                        return in_array($item, array_keys(CurrencyAndCountryEnum::MAP_COUNTRIES));
+                    })
+                    ->toArray();
+
+        //If the list is empty after validation, that means we should throw error back to FE
+        if (empty($eligibleItems)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ITEMS_PROVIDED)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        // Implode the items as a string and create record
+        $value = implode(',', $eligibleItems);
+        $newMeta = $customer->createMeta(CustomerMetaEnum::META_AVAILABLE_COUNTRY, $value ?? '');
+        if (!$newMeta) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->data($customer->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+    
+        return redirect()->back()->with(['response' => $responseData]);
+    }
+
+    public function serviceConfig(Request $request, Customer $customer)
+    {
+        $data = $request->only('services');
+        
+        // If the list data 
+        if (empty($data) || !is_array($data) || empty($data['services'])) {
+            // Get meta service of this supplier
+            $serviceMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_SERVICE);
+            if (!$serviceMeta) {
+                $responseData = viewResponseFormat()->success()->data($customer->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+        
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+
+            // If this meta exist, then we delete it
+            if (!$serviceMeta->delete()) {
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+    
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+
+            $responseData = viewResponseFormat()->success()->data($customer->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+        
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        // If the list was provided as an array and not empty, we validate
+        $eligibleItems = collect($data['services'])
+                    ->filter(function($item) {
+                        return in_array($item, array_keys(GeneralEnum::MAP_SERVICES));
+                    })
+                    ->toArray();
+
+        //If the list is empty after validation, that means we should throw error back to FE
+        if (empty($eligibleItems)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ITEMS_PROVIDED)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        // Implode the items as a string and create record
+        $value = implode(',', $eligibleItems);
+        $newMeta = $customer->createMeta(CustomerMetaEnum::META_AVAILABLE_SERVICE, $value ?? '');
+        if (!$newMeta) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->data($customer->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+    
+        return redirect()->back()->with(['response' => $responseData]);
     }
 
     /** Validate price configs form request */

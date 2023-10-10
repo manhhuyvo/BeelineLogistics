@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Meta extends Model
 {
     use HasFactory;
+    
+    protected $table = "supplier_meta";
 
     protected $fillable = [
         'supplier_id',
@@ -30,7 +32,7 @@ class Meta extends Model
 
     public function getValue()
     {
-        if (in_array($this->indentifer, SupplierMetaEnum::ARRAY_TYPE_META)) {
+        if (in_array($this->identifier, SupplierMetaEnum::ARRAY_TYPE_META)) {
             return !empty($this->value) ? explode(',', $this->value) : [];
         }
 

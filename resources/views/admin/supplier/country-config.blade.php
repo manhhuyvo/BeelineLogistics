@@ -8,8 +8,11 @@
         <div class="row md:grid md:grid-cols-3 gap-2 flex flex-col px-2.5">
             @foreach ($countries as $key => $value)
             <div class="h-[50px] p-0">
-                <label class="inline-flex gap-2 items-center cursor-pointer relative w-full h-full border-solid border-[2px] border-gray-300 flex justify-center items-center text-gray-500">
+                <label class="inline-flex gap-2 items-center cursor-pointer relative w-full h-full border-solid border-[2px] border-gray-300 flex justify-center items-center text-gray-500 rounded-[3px]">
                     <input type="checkbox" name="countries[]" class="countries_checkbox border-transparent bg-transparent outline-none focus:ring-0 absolute hidden left-0" value="{{ $key }}"
+                        @if (!empty($currentCountriesMeta) && in_array($key, $currentCountriesMeta))
+                            checked = true
+                        @endif
                     >
                     <span class="font-semibold md:text-[14px] text-sm">{{ Str::upper($value) }}</span>
                 </label>
@@ -29,16 +32,23 @@
 <script>
     const selected = 'bg-gray-300 text-gray-800';
     const notSelected = 'bg-white text-gray-500';
+
     $(document).ready(function() {
+        $('.countries_checkbox').each(function(index, item) {
+            if($(item).is(':checked')) {
+                $(item).parent().addClass(selected)
+                $(item).parent().removeClass(notSelected)
+            } else {
+                $(item).parent().addClass(notSelected)
+                $(item).parent().removeClass(selected)
+            }
+        });
+
         $('.countries_checkbox').on('change', function() {
             if ($(this).is(':checked')) {
-                console.log('checked')
-                console.log(selected + ' --- and --- ' + notSelected)
                 $(this).parent().addClass(selected)
                 $(this).parent().removeClass(notSelected)
             } else {
-                console.log('unchecked')
-                console.log(notSelected + ' --- and --- ' + selected)
                 $(this).parent().addClass(notSelected)
                 $(this).parent().removeClass(selected)
             }

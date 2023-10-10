@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Supplier;
+use App\Models\Supplier\Meta as SupplierMeta;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
 use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\SupplierEnum;
+use App\Enums\SupplierMetaEnum;
 use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
@@ -119,12 +121,15 @@ class SupplierController extends Controller
     /** Display the page for update supplier details */
     public function edit(Request $request, Supplier $supplier)
     {    
+        $countryMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY);
+
         return view('admin.supplier.edit', [
             'supplier' => $supplier->toArray(),
             'supplierTypes' => SupplierEnum::MAP_TYPES,
             'supplierStatuses' => SupplierEnum::MAP_STATUSES,
             'supplierStatusColors' => SupplierEnum::MAP_STATUSES_COLOR,
             'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
+            'currentCountriesMeta' => $countryMeta ? $countryMeta->getValue() : [],
         ]);
     }
 
@@ -176,7 +181,56 @@ class SupplierController extends Controller
 
     public function countryConfig(Request $request, Supplier $supplier)
     {
-        dd($request->all());
+        $data = $request->only('countries');
+        
+        // If the list data 
+        if (empty($data) || !is_array($data) || empty($data['countries'])) {
+            // Get meta country of this supplier
+            $countryMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY);
+            if (!$countryMeta) {
+                $responseData = viewResponseFormat()->success()->data($supplier->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+        
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+
+            // If this meta exist, then we delete it
+            if (!$countryMeta->delete()) {
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+    
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+
+            $responseData = viewResponseFormat()->success()->data($supplier->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+        
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        // If the list was provided as an array and not empty, we validate
+        $eligibleItems = collect($data['countries'])
+                    ->filter(function($item) {
+                        return in_array($item, array_keys(CurrencyAndCountryEnum::MAP_COUNTRIES));
+                    })
+                    ->toArray();
+
+        //If the list is empty after validation, that means we should throw error back to FE
+        if (empty($eligibleItems)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ITEMS_PROVIDED)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        // Implode the items as a string and create record
+        $value = implode(',', $eligibleItems);
+        $newMeta = $supplier->createMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY, $value ?? '');
+        if (!$newMeta) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->data($supplier->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+    
+        return redirect()->back()->with(['response' => $responseData]);
     }
 
     /** Validate form request for store and update functions */

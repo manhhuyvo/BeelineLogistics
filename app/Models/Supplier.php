@@ -57,4 +57,40 @@ class Supplier extends Model
 
         return SupplierMeta::where('identifier', $identifier)->first();
     }
+
+    public function createMeta(string $identifier, string $value)
+    {
+        if (empty($identifier) || empty($value)) {
+            return false;
+        }
+
+        if (!in_array($identifier, SupplierMetaEnum::VALID_META) || !is_string($value)) {
+            return false;
+        }
+
+        // If meta already exists, then we update it
+        $meta = SupplierMeta::where('identifier', $identifier)->first();
+        if ($meta) {
+            $meta->value = $value;
+
+            if (!$meta->update()) {
+                return false;
+            }
+    
+            return $meta;
+        }
+
+        // Otherwise if meta not exists, then we create
+        $meta = new SupplierMeta([
+            'supplier_id' => $this->id,
+            'identifier' => $identifier,
+            'value' => $value,
+        ]);
+
+        if (!$meta->save()) {
+            return false;
+        }
+
+        return $meta;
+    }
 }

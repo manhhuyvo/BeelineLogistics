@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Staff;
 use App\Enums\ResponseMessageEnum;
 use Illuminate\Support\Str;
 
@@ -29,7 +30,7 @@ class StaffPermission
             return redirect()->route('admin.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->status != User::STATUS_ACTIVE) {
+        if ($user->status != User::STATUS_ACTIVE ||  $user->staff->status != Staff::STATUS_CURRENT) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 

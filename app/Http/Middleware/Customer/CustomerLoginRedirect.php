@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Support\Facades\View;
 use App\Enums\ResponseMessageEnum;
 use Illuminate\Support\Facades\Session;
@@ -30,7 +31,7 @@ class CustomerLoginRedirect
         // We only allow customer to login to customer portal
         $user = Auth::user();
 
-        if ($user->target != User::TARGET_CUSTOMER || $user->status != User::STATUS_ACTIVE) {
+        if ($user->target != User::TARGET_CUSTOMER || $user->status != User::STATUS_ACTIVE || $user->customer->status != Customer::STATUS_ACTIVE) {
             try{
                 Session::flush();
                 Auth::logout();

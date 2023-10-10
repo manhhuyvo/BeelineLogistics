@@ -124,6 +124,7 @@ class SupplierController extends Controller
             'supplierTypes' => SupplierEnum::MAP_TYPES,
             'supplierStatuses' => SupplierEnum::MAP_STATUSES,
             'supplierStatusColors' => SupplierEnum::MAP_STATUSES_COLOR,
+            'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
         ]);
     }
 
@@ -171,6 +172,11 @@ class SupplierController extends Controller
         $responseData = viewResponseFormat()->success()->data($supplier->toArray())->message(ResponseMessageEnum::SUCCESS_DELETE_RECORD)->send();
 
         return redirect()->route('admin.supplier.list')->with(['response' => $responseData]);
+    }
+
+    public function countryConfig(Request $request, Supplier $supplier)
+    {
+        dd($request->all());
     }
 
     /** Validate form request for store and update functions */

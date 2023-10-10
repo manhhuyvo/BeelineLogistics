@@ -76,6 +76,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/supplier', [SupplierController::class, 'index'])->name('admin.supplier.list');
         Route::get('/supplier/create', [SupplierController::class, 'create'])->name('admin.supplier.create.form');
         Route::post('/supplier', [SupplierController::class, 'store'])->name('admin.supplier.store');
+        Route::post('/supplier/{supplier}/country-config', [SupplierController::class, 'countryConfig'])->name('admin.supplier.country-config');
+        Route::post('/supplier/{supplier}/service-config', [SupplierController::class, 'serviceConfig'])->name('admin.supplier.service-config');
+        Route::post('/supplier/{supplier}/customer-config', [SupplierController::class, 'customerConfig'])->name('admin.supplier.customer-config');
         Route::get('/supplier/{supplier}', [SupplierController::class, 'show'])->name('admin.supplier.show');
         Route::get('/supplier/{supplier}/edit', [SupplierController::class, 'edit'])->name('admin.supplier.edit.form');
         Route::post('/supplier/{supplier}', [SupplierController::class, 'update'])->name('admin.supplier.update');

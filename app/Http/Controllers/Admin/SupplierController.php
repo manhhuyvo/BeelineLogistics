@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
 use App\Enums\CurrencyAndCountryEnum;
+use App\Enums\GeneralEnum;
 use App\Enums\SupplierEnum;
 use App\Enums\SupplierMetaEnum;
 use Illuminate\Validation\Rule;
@@ -122,6 +123,7 @@ class SupplierController extends Controller
     public function edit(Request $request, Supplier $supplier)
     {    
         $countryMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY);
+        $serviceMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_SERVICE);
 
         return view('admin.supplier.edit', [
             'supplier' => $supplier->toArray(),
@@ -129,7 +131,9 @@ class SupplierController extends Controller
             'supplierStatuses' => SupplierEnum::MAP_STATUSES,
             'supplierStatusColors' => SupplierEnum::MAP_STATUSES_COLOR,
             'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
+            'services' => SupplierEnum::MAP_SERVICES,
             'currentCountriesMeta' => $countryMeta ? $countryMeta->getValue() : [],
+            'currentServicesMeta' => $serviceMeta ? $serviceMeta->getValue() : [],
         ]);
     }
 
@@ -222,6 +226,60 @@ class SupplierController extends Controller
         // Implode the items as a string and create record
         $value = implode(',', $eligibleItems);
         $newMeta = $supplier->createMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY, $value ?? '');
+        if (!$newMeta) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        $responseData = viewResponseFormat()->success()->data($supplier->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+    
+        return redirect()->back()->with(['response' => $responseData]);
+    }
+
+    public function serviceConfig(Request $request, Supplier $supplier)
+    {
+        $data = $request->only('services');
+        
+        // If the list data 
+        if (empty($data) || !is_array($data) || empty($data['services'])) {
+            // Get meta service of this supplier
+            $serviceMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_SERVICE);
+            if (!$serviceMeta) {
+                $responseData = viewResponseFormat()->success()->data($supplier->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+        
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+
+            // If this meta exist, then we delete it
+            if (!$serviceMeta->delete()) {
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+    
+                return redirect()->back()->with(['response' => $responseData]);
+            }
+
+            $responseData = viewResponseFormat()->success()->data($supplier->toArray())->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+        
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        // If the list was provided as an array and not empty, we validate
+        $eligibleItems = collect($data['services'])
+                    ->filter(function($item) {
+                        return in_array($item, array_keys(SupplierEnum::MAP_SERVICES));
+                    })
+                    ->toArray();
+
+        //If the list is empty after validation, that means we should throw error back to FE
+        if (empty($eligibleItems)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ITEMS_PROVIDED)->send();
+
+            return redirect()->back()->with(['response' => $responseData]);
+        }
+
+        // Implode the items as a string and create record
+        $value = implode(',', $eligibleItems);
+        $newMeta = $supplier->createMeta(SupplierMetaEnum::META_AVAILABLE_SERVICE, $value ?? '');
         if (!$newMeta) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
 

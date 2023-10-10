@@ -81,6 +81,10 @@
         </form>
     </div>
     @include('admin.supplier.country-config')
+    @include('admin.supplier.service-config')
 </div>
-
+<script>
+    const selected = 'bg-gray-300 text-gray-800';
+    const notSelected = 'bg-white text-gray-500';
+</script>
 @endsection

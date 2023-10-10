@@ -43,4 +43,16 @@ class SupplierEnum
         self::STATUS_TEMPORARY_STOP => 'Temporary Stop',
         self::STATUS_STOP => 'Stop',
     ];
+
+    const SERVICE_IMPORT = 'import';
+    const SERVICE_EXPORT = 'export';
+    const SERVICE_CHECKOUT = 'checkout';
+    const SERVICE_FULFILLMENT = 'fulfillment';
+
+    const MAP_SERVICES = [
+        self::SERVICE_IMPORT => 'Import',
+        self::SERVICE_EXPORT => 'Export',
+        self::SERVICE_CHECKOUT => 'Checkout',
+        self::SERVICE_FULFILLMENT => 'Fulfillment',
+    ];
 }

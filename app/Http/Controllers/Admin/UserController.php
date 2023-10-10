@@ -203,9 +203,23 @@ class UserController extends Controller
             "target" => ["required", Rule::in(User::USER_TARGETS)],
             "status" => ["required", "integer", Rule::in(User::USER_STATUSES)],
             "level" => ["required", "integer", Rule::in(User::USER_LEVELS)],
-            "password" => ["required"],
-            "confirm_password" => empty($action) && $action == 'update' ? ["required", "same:password"] : "",
-        ]);        
+        ]);
+
+        $validator->sometimes(
+            'password',
+            ["required"],
+            function ($input) use ($action) {
+                return empty($action) || $action != 'update';
+            }
+        );
+
+        $validator->sometimes(
+            'confirm_password',
+            ["required", "same:password"],
+            function ($input) use ($action) {
+                return empty($action) || $action != 'update';
+            }
+        );
 
         $validator->sometimes(
             'staff_id', 
@@ -253,7 +267,9 @@ class UserController extends Controller
             $data[$key] = "";
         }
 
-        $data['password'] = Hash::make($data['password']);
+        if (empty($action)) {
+            $data['password'] = Hash::make($data['password']);
+        }
 
         return collect($data)->only([
             'username',

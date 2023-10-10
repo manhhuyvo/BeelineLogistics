@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\View;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\SupplierEnum;
 use Illuminate\Support\Facades\Session;
 use Exception;
 
@@ -30,7 +31,7 @@ class SupplierLoginRedirect
         // We only allow customer to login to customer portal
         $user = Auth::user();
 
-        if ($user->target != User::TARGET_SUPPLIER || $user->status != User::STATUS_ACTIVE) {
+        if ($user->target != User::TARGET_SUPPLIER || $user->status != User::STATUS_ACTIVE || $user->supplier->status != SupplierEnum::STATUS_CURRENT) {
             try{
                 Session::flush();
                 Auth::logout();

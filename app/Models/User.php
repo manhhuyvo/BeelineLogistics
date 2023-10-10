@@ -51,7 +51,8 @@ class User extends Model implements Authenticatable
     const LEVEL_SUPPLIER = 30;
 
     const STATUS_ACTIVE = 1;
-    const STATUS_PENDING = 3;
+    const STATUS_PENDING = 2;
+    const STATUS_SUSPENDED = 3;
     const STATUS_DELETE = 4;
 
     const TARGET_STAFF = 'staffs';
@@ -67,6 +68,7 @@ class User extends Model implements Authenticatable
     const USER_STATUSES = [
         self::STATUS_ACTIVE,
         self::STATUS_PENDING,
+        self::STATUS_SUSPENDED,
         self::STATUS_DELETE,
     ];
 
@@ -108,13 +110,15 @@ class User extends Model implements Authenticatable
     const MAP_STATUSES = [
         self::STATUS_ACTIVE => 'Active',
         self::STATUS_PENDING => 'Pending',
+        self::STATUS_SUSPENDED => 'Suspended',
         self::STATUS_DELETE => 'Delete',
     ];
 
     const MAP_STATUSES_COLOR = [
         self::STATUS_ACTIVE => 'green',
         self::STATUS_PENDING => 'yellow',
-        self::STATUS_DELETE => 'red',
+        self::STATUS_SUSPENDED => 'red',
+        self::STATUS_DELETE => 'gray',
     ];
 
     public function staff(): BelongsTo

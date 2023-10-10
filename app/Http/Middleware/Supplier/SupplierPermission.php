@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\SupplierEnum;
 use Illuminate\Support\Str;
 
 class SupplierPermission
@@ -29,7 +30,7 @@ class SupplierPermission
             return redirect()->route('supplier.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->status != User::STATUS_ACTIVE) {
+        if ($user->status != User::STATUS_ACTIVE || $user->supplier->status != SupplierEnum::STATUS_CURRENT) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 

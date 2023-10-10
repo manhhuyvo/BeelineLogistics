@@ -39,7 +39,7 @@
                         <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $userStaffLevels[$user['level']] ?? 'Not provided' }}</div>
                     @elseif ($user['target'] == User::TARGET_CUSTOMER)
                         <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">Customer</div>
-                    @elseif ($user['target'] == User::TARGET_STAFF)
+                    @elseif ($user['target'] == User::TARGET_SUPPLIER)
                         <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">Supplier</div>
                     @endif
                 </div>

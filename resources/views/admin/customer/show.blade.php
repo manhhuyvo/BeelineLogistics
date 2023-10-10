@@ -96,6 +96,36 @@
                     <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $customer['default_receiver']['address'] ?? 'Not provided' }}</div>
                 </div>
             </div>
+            <p class="text-lg font-medium text-blue-600 mt-1">
+                Country Configurations
+            </p>
+            <div class="w-full flex flex-col gap-2">
+                <p class="text-sm font-semibold">Countries available for this customer</p>
+                <div class="w-full md:grid md:grid-cols-3 gap-2 flex flex-col">
+                    @foreach ($currentCountriesMeta as $country)
+                    <div class="h-[50px] p-0">
+                        <div class="inline-flex gap-2 items-center w-full h-full border-solid border-[2px] border-gray-300 flex justify-center items-center bg-gray-300 text-gray-800 rounded-[3px]">
+                            <span class="font-semibold md:text-[14px] text-sm">{{ Str::upper($countries[$country] ?? 'Unknown') }}</span>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            <p class="text-lg font-medium text-blue-600 mt-1">
+                Service Configurations
+            </p>
+            <div class="w-full flex flex-col gap-2">
+                <p class="text-sm font-semibold">Services available for this customer</p>
+                <div class="w-full md:grid md:grid-cols-3 gap-2 flex flex-col">
+                    @foreach ($currentServicesMeta as $service)
+                    <div class="h-[50px] p-0">
+                        <div class="inline-flex gap-2 items-center w-full h-full border-solid border-[2px] border-gray-300 flex justify-center items-center bg-gray-300 text-gray-800 rounded-[3px]">
+                            <span class="font-semibold md:text-[14px] text-sm">{{ Str::upper($services[$service] ?? 'Unknown') }}</span>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
             
             @if (!empty($customer['price_configs']))            
             <div class="w-full flex  gap-3 mt-2 items-start">

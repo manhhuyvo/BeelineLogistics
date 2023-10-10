@@ -150,7 +150,7 @@
             </div>
         </form>
     </div>
-    @if (in_array($user['staff']['position'], [Staff::POSITION_DIRECTOR, Staff::POSITION_ACCOUNTANT]))
+    @if ($user->staff->isAdmin())
         @include('admin.customer.country-config')
         @include('admin.customer.service-config')
     @endif

@@ -116,6 +116,9 @@ class CustomerController extends Controller
     /** Display the page for create new customer */
     public function show(Request $request, Customer $customer)
     {        
+        $countryMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_COUNTRY);
+        $serviceMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_SERVICE);
+
         // Get and validate customer data     
         $data = collect($customer)->toArray();
         $customer->default_sender = !empty($customer->default_sender) ? unserialize($data['default_sender']) : []; // turn default sender to array
@@ -129,6 +132,10 @@ class CustomerController extends Controller
             'staffsList' => $this->formatStaffsList(),
             'receiverZones' => Customer::MAP_ZONES,
             'customerStatusColors' => Customer::MAP_STATUSES_COLOR,
+            'countries' => CurrencyAndCountryEnum::MAP_COUNTRIES,
+            'services' => GeneralEnum::MAP_SERVICES,
+            'currentCountriesMeta' => $countryMeta ? $countryMeta->getValue() : [],
+            'currentServicesMeta' => $serviceMeta ? $serviceMeta->getValue() : [],
         ];
 
         if (!empty($customer->price_configs)) {
@@ -144,7 +151,6 @@ class CustomerController extends Controller
     public function edit(Request $request, Customer $customer)
     {
         $user = Auth::user();
-        $staff = $user->staff;
         $countryMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_COUNTRY);
         $serviceMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_SERVICE);
 
@@ -154,7 +160,7 @@ class CustomerController extends Controller
         $customer->default_receiver = !empty($customer->default_receiver) ? unserialize($data['default_receiver']) : []; // turn default sender to array
 
         return view('admin.customer.edit', [
-            'user' => collect($user)->toArray(),
+            'user' => $user,
             'customer' => $customer->toArray(),                      
             'customerTypes' => Customer::MAP_TYPES,
             'customerStatuses' => Customer::MAP_STATUSES,

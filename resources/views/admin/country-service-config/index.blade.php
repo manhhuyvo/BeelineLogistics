@@ -14,7 +14,7 @@
             <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
             <div class="mb-4 px-3 py-3 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200">
                 <p class="text-xl font-medium text-blue-600 mb-2">
-                    {{ $countryName }}
+                    {{ $countryName }} <span class="ml-1 text-[15px] font-normal text-gray-600 italic"> (Default Suppliers)</span>
                 </p>
                 <div class="w-full md:grid md:grid-cols-2 gap-3 flex flex-col">
                     <input type="hidden" name="country" value="{{ $countryCode }}" readonly />
@@ -27,9 +27,9 @@
                             @endif
                         @foreach($suppliersList as $key => $value)
                             @if (!empty($configsList[$countryCode][$serviceCode]) && $configsList[$countryCode][$serviceCode] == $key)
-                            <option selected value="{{ $key }}">{{ $value }}</option>
+                            <option selected value="{{ $key }}">{!! nl2br(e($value)) !!}</option>
                             @else
-                            <option value="{{ $key }}">{{ $value }}</option>
+                            <option value="{{ $key }}">{!! nl2br(e($value)) !!}</option>
                             @endif
                         @endforeach
                         </select>

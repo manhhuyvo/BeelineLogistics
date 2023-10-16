@@ -210,7 +210,7 @@ if (!function_exists('getFormattedSuppliersList')) {
             // Get the list of countries formatted as a string
             $countries = $countryMeta->getFormattedValue();
 
-            $data[$supplier['id']] = "{$supplier['full_name']}\n({$countries})";
+            $data[$supplier['id']] = "{$supplier['full_name']} - ({$countries})";
         }
 
         return $data;

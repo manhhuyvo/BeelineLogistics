@@ -11,6 +11,7 @@
     <div class="w-full my-2 py-1">
         @foreach ($countries as $countryCode => $countryName)
         <form method="POST" action="{{ route('admin.country-service-configuration.update') }}">
+            <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
             <div class="mb-4 px-3 py-3 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200">
                 <p class="text-xl font-medium text-blue-600 mb-2">
                     {{ $countryName }}
@@ -25,7 +26,7 @@
                             <option selected disabled>Choose a default supplier</option>
                             @endif
                         @foreach($suppliersList as $key => $value)
-                            @if (!empty($configsList[$countryCode][$serviceCode]) && configsList[$countryCode][$serviceCode] == $key)
+                            @if (!empty($configsList[$countryCode][$serviceCode]) && $configsList[$countryCode][$serviceCode] == $key)
                             <option selected value="{{ $key }}">{{ $value }}</option>
                             @else
                             <option value="{{ $key }}">{{ $value }}</option>

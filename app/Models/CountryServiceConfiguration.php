@@ -14,7 +14,7 @@ class CountryServiceConfiguration extends Model
 {
     use HasFactory;
     
-    protected $table = "customer_meta";
+    protected $table = "country_service_configuration";
 
     protected $fillable = [
         'default_supplier_id',

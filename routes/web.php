@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\FulfillmentProductPaymentController;
 use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Admin\SupportTicketCommentController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CountryServiceConfigurationController;
 use App\Models\Staff;
 
 // CUSTOMER INCLUDES
@@ -93,6 +94,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit.form');
         Route::post('/user/{user}', [UserController::class, 'update'])->name('admin.user.update');
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('admin.user.delete');
+
+        /** [COUNTRY SERVICE CONFIGURATION] */
+        Route::get('/country-service-configuration', [CountryServiceConfigurationController::class, 'index'])->name('admin.country-service-configuration.show');
+        Route::post('/country-service-configuration', [CountryServiceConfigurationController::class, 'update'])->name('admin.country-service-configuration.update');
 
         /* [AJAX USER OWNER SEARCH] */
         Route::post('/ajax/search-user-owner', [AjaxController::class, 'searchUserOwner'])->name('admin.ajax.search-user-owner');

@@ -119,6 +119,12 @@
                   </li>
               </ul>
            </li>
+           <li>
+              <a href="{{ route('admin.country-service-configuration.show') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  <i class="fa-solid fa-earth-americas flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
+                  <span class="flex-1 ml-3 whitespace-nowrap">Country & Service</span>
+              </a>
+           </li>
            @endif
            <li>
               <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100" aria-controls="sidebar-user-dropdown" data-collapse-toggle="sidebar-user-dropdown">

@@ -178,6 +178,16 @@ Breadcrumbs::for('admin.ticket.show', function (BreadcrumbTrail $trail, $ticket)
     $trail->push("Ticket #{$ticket->id}", route('admin.ticket.show', ['ticket' => $ticket->id]));
 });
 
+/** Country Service Configuration */
+Breadcrumbs::for('admin.country-service-configuration.show', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Country And Service', route('admin.country-service-configuration.show'));
+});
+Breadcrumbs::for('admin.country-service-configuration.update', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.country-service-configuration.show');
+    $trail->push('Default Country And Service Configurations', route('admin.country-service-configuration.update'));
+});
+
 /**
  * 
  * CUSTOMER BREADCRUMBS

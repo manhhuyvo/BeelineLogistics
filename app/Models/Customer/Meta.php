@@ -2,9 +2,11 @@
 
 namespace App\Models\Customer;
 
+use App\Enums\CurrencyAndCountryEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\CustomerMetaEnum;
+use App\Enums\GeneralEnum;
 use App\Models\Customer;
 use App\Models\Customer\Meta as CustomerMeta;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,5 +40,30 @@ class Meta extends Model
         }
 
         return $this->value;
+    }
+
+    public function getFormattedValue(): string
+    {
+        $arrayValues = $this->getValue();
+        if (empty($arrayValues)) {
+            return "";
+        }
+
+        switch ($this->identifier) {
+            case CustomerMetaEnum::META_AVAILABLE_COUNTRY:
+                return collect($arrayValues)
+                    ->map(function ($eachValue) {
+                        return CurrencyAndCountryEnum::MAP_COUNTRIES[$eachValue] ?? 'Unknown';
+                    })
+                    ->implode(', ');
+                break;
+            case CustomerMetaEnum::META_AVAILABLE_SERVICE:
+                return collect($arrayValues)
+                    ->map(function ($eachValue) {
+                        return GeneralEnum::MAP_SERVICES[$eachValue] ?? 'Unknown';
+                    })
+                    ->implode(', ');
+                break;
+        }
     }
 }

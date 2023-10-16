@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\SupplierEnum;
+use App\Enums\SupplierMetaEnum;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Fulfillment;
@@ -7,6 +9,7 @@ use App\Models\Order;
 use App\Models\Staff;
 use App\Models\User;
 use App\Models\Customer;
+use App\Models\Supplier;
 
 if (!function_exists('generateRandomString')) {
     function generateRandomString(int $outputLength = 5)
@@ -180,3 +183,36 @@ if (!function_exists('getFormattedCustomersList')) {
         return $data;
     }
 }
+
+if (!function_exists('getFormattedSuppliersList')) {
+    function getFormattedSuppliersList(bool $active = false) {
+        $user = Auth::user();
+        if (!$user) {
+            return null;
+        }
+
+        // Return empty list if this is not a staff
+        if (!$user->isStaff() || !$user->staff->isAdmin()) {
+            return [];
+        }
+
+        // Get the supplier list
+        if (!$active) {
+            $allSuppliers = Supplier::all();
+        } else {
+            $allSuppliers = Supplier::where('status', SupplierEnum::STATUS_CURRENT)->get();
+        }
+
+        $data = [];
+        foreach ($allSuppliers as $supplier) {
+            // Get country meta
+            $countryMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY);
+            // Get the list of countries formatted as a string
+            $countries = $countryMeta->getFormattedValue();
+
+            $data[$supplier['id']] = "{$supplier['full_name']}\n({$countries})";
+        }
+
+        return $data;
+    }
+};

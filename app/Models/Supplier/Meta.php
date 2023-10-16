@@ -2,6 +2,8 @@
 
 namespace App\Models\Supplier;
 
+use App\Enums\CurrencyAndCountryEnum;
+use App\Enums\GeneralEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Supplier;
@@ -37,5 +39,30 @@ class Meta extends Model
         }
 
         return $this->value;
+    }
+
+    public function getFormattedValue(): string
+    {
+        $arrayValues = $this->getValue();
+        if (empty($arrayValues)) {
+            return "";
+        }
+
+        switch ($this->identifier) {
+            case SupplierMetaEnum::META_AVAILABLE_COUNTRY:
+                return collect($arrayValues)
+                    ->map(function ($eachValue) {
+                        return CurrencyAndCountryEnum::MAP_COUNTRIES[$eachValue] ?? 'Unknown';
+                    })
+                    ->implode(', ');
+                break;
+            case SupplierMetaEnum::META_AVAILABLE_SERVICE:
+                return collect($arrayValues)
+                    ->map(function ($eachValue) {
+                        return GeneralEnum::MAP_SERVICES[$eachValue] ?? 'Unknown';
+                    })
+                    ->implode(', ');
+                break;
+        }
     }
 }

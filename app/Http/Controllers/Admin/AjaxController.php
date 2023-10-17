@@ -80,7 +80,7 @@ class AjaxController extends Controller
                 break;
             case User::TARGET_SUPPLIER:
                 // Search by supplier name
-                $result = Staff::where('full_name', 'like', "%{$data['searchTerm']}%")->get();        
+                $result = Supplier::where('full_name', 'like', "%{$data['searchTerm']}%")->get();        
                 // If result is not empty, then we filter data 
                 if (!$result->isEmpty()) {
                     $returnData = collect($result)->map(function($row) {

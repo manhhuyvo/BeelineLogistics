@@ -174,7 +174,9 @@ class Customer extends Model
             return null;
         }
 
-        return CustomerMeta::where('identifier', $identifier)->first();
+        return CustomerMeta::where('identifier', $identifier)
+                ->where('customer_id', $this->id)
+                ->first();
     }
 
     public function createMeta(string $identifier, string $value)
@@ -188,7 +190,10 @@ class Customer extends Model
         }
 
         // If meta already exists, then we update it
-        $meta = CustomerMeta::where('identifier', $identifier)->first();
+        $meta = CustomerMeta::where('identifier', $identifier)
+                    ->where('customer_id', $this->id)
+                    ->first();
+
         if ($meta) {
             $meta->value = $value;
 
@@ -201,7 +206,7 @@ class Customer extends Model
 
         // Otherwise if meta not exists, then we create
         $meta = new CustomerMeta([
-            'supplier_id' => $this->id,
+            'customer_id' => $this->id,
             'identifier' => $identifier,
             'value' => $value,
         ]);

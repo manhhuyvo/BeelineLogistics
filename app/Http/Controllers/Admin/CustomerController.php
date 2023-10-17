@@ -23,8 +23,23 @@ class CustomerController extends Controller
     /** Display the page for list of all customers */
     public function index(Request $request)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Retrieve list of all first
         $allCustomers = Customer::with('account');
+
+        // If this is not admin, then only show the fulfillments that this staff manage
+        if (!$user->staff->isAdmin()) {
+            $allCustomers = $allCustomers->where('staff_id', $user->staff->id);
+        }
 
         // Validate the filter request
         $data = $request->all();
@@ -38,7 +53,7 @@ class CustomerController extends Controller
                 $value = htmlspecialchars($value);
 
                 // Add conditions
-                $allStaffs = $allCustomers->where($key, 'like', "%$value%");
+                $alLCustomers = $allCustomers->where($key, 'like', "%$value%");
             }
         }
 
@@ -72,7 +87,10 @@ class CustomerController extends Controller
     /** Display page for create new customer */
     public function create(Request $request)
     {
-        return view('admin.customer.create', [            
+        $user = Auth::user();
+
+        return view('admin.customer.create', [   
+            'user' => $user,         
             'customerTypes' => Customer::MAP_TYPES,
             'customerStatuses' => Customer::MAP_STATUSES,
             'staffsList' => $this->formatStaffsList(),
@@ -83,6 +101,8 @@ class CustomerController extends Controller
     /** Handle request for create new customer */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
         // Validate the request coming
         $validation = $this->validateRequest($request);
                 
@@ -97,6 +117,10 @@ class CustomerController extends Controller
 
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
+        // If this is not an admin, then we override whatever value of the staff_id to be the current logged in user
+        if (!$user->staff->isAdmin()) {
+            $data['staff_id'] = $user->staff->id;
+        }
 
         $newCustomer = new Customer($data);
         if (!$newCustomer->save()) {
@@ -116,6 +140,26 @@ class CustomerController extends Controller
     /** Display the page for create new customer */
     public function show(Request $request, Customer $customer)
     {        
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a fulfillment doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         $countryMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_COUNTRY);
         $serviceMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_SERVICE);
 
@@ -126,6 +170,7 @@ class CustomerController extends Controller
         $customer->price_configs = !empty($customer->price_configs) ? unserialize($data['price_configs']) : []; // turn price configs to array
 
         $viewData = [            
+            'user' => $user,
             'customer' => $customer->toArray(),                      
             'customerTypes' => Customer::MAP_TYPES,
             'customerStatuses' => Customer::MAP_STATUSES,
@@ -151,6 +196,25 @@ class CustomerController extends Controller
     public function edit(Request $request, Customer $customer)
     {
         $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a fulfillment doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         $countryMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_COUNTRY);
         $serviceMeta = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_SERVICE);
 
@@ -177,6 +241,26 @@ class CustomerController extends Controller
     /** Handle request update customer details */
     public function update(Request $request, Customer $customer)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a fulfillment doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Validate the request coming
         $validation = $this->validateRequest($request, $customer->customer_id);
         
@@ -191,6 +275,11 @@ class CustomerController extends Controller
         
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
+        // If this is not an admin, then we override whatever value of the staff_id to be the current logged in user
+        if (!$user->staff->isAdmin()) {
+            $data['staff_id'] = $user->staff->id;
+        }
+        
         if (!$customer->update($data)) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
 
@@ -207,7 +296,14 @@ class CustomerController extends Controller
 
     /** Handle request delete customer */
     public function destroy(Request $request, Customer $customer)
-    {         
+    {
+        $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+        return redirect()->back()->with([
+            'response' => $responseData,
+            'request' => $request->all(),
+        ]);
+
         // Perform deletion
         if (!$customer->delete()) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_DELETE_RECORD)->send();
@@ -223,6 +319,26 @@ class CustomerController extends Controller
     /** Displage page for edit price configuration */
     public function editPriceConfigsPage(Request $request, Customer $customer)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Only available for admin staffs
+        if (!$user->staff->isAdmin()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         $priceConfigs = unserialize($customer->price_configs);
 
         return view('admin.customer.price-config', [
@@ -235,6 +351,26 @@ class CustomerController extends Controller
     /** Handle request for saving price configuration */
     public function updatePriceConfigs(Request $request, Customer $customer)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Only available for admin staffs
+        if (!$user->staff->isAdmin()) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Validate the request coming
         $validation = $this->validatePriceConfigsRequest($request);
         
@@ -267,6 +403,26 @@ class CustomerController extends Controller
 
     public function countryConfig(Request $request, Customer $customer)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a customer doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         $data = $request->only('countries');
         
         // If the list data 
@@ -321,6 +477,26 @@ class CustomerController extends Controller
 
     public function serviceConfig(Request $request, Customer $customer)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a customer doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         $data = $request->only('services');
         
         // If the list data 

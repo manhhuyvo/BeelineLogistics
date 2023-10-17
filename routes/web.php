@@ -134,9 +134,9 @@ Route::prefix('admin')->group(function () {
         Route::post('/product/{product}', [ProductController::class, 'update'])->name('admin.product.update');
         Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('admin.product.delete');
 
-        /** [CUSTOMER META ROUTES] */
-        Route::post('/customer/{customer}/country-config', [CustomerController::class, 'countryConfig'])->name('admin.customer.country-config');
-        Route::post('/customer/{customer}/service-config', [CustomerController::class, 'serviceConfig'])->name('admin.customer.service-config');
+        /** [CUSTOMER PRICING ROUTES] */
+        Route::get('/customer/price-configs/{customer}/edit', [CustomerController::class, 'editPriceConfigsPage'])->name('admin.customer.price-configs.edit.form');
+        Route::post('/customer/price-configs/{customer}/edit', [CustomerController::class, 'updatePriceConfigs'])->name('admin.customer.price-configs.update');
     });
 
     Route::group(['middleware' => 'staff.permission:all'], function () {
@@ -168,8 +168,10 @@ Route::prefix('admin')->group(function () {
         Route::delete('/customer/{customer}', [CustomerController::class, 'destroy'])->name('admin.customer.delete');
         Route::get('/customer/price-configs/create', [CustomerController::class, 'createPriceConfigsPage'])->name('admin.customer.price-configs.create.form');
         Route::post('/customer/price-configs', [CustomerController::class, 'storePriceConfigs'])->name('admin.customer.price-configs.store');
-        Route::get('/customer/price-configs/{customer}/edit', [CustomerController::class, 'editPriceConfigsPage'])->name('admin.customer.price-configs.edit.form');
-        Route::post('/customer/price-configs/{customer}/edit', [CustomerController::class, 'updatePriceConfigs'])->name('admin.customer.price-configs.update');
+
+        /** [CUSTOMER META ROUTES] */
+        Route::post('/customer/{customer}/country-config', [CustomerController::class, 'countryConfig'])->name('admin.customer.country-config');
+        Route::post('/customer/{customer}/service-config', [CustomerController::class, 'serviceConfig'])->name('admin.customer.service-config');
 
         /** [FULFILLMENT ROUTES] */
         Route::get('/fulfillment', [FulfillmentController::class, 'index'])->name('admin.fulfillment.list');

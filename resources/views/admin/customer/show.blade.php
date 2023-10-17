@@ -132,10 +132,12 @@
                 <p class="text-lg font-medium text-red-600">
                     Price Configuration
                 </p>
+                @if ($user->staff->isAdmin())
                 <a href="{{ route('admin.customer.price-configs.edit.form', ['customer' => $customer['id']]) }}" class="w-auto px-3 py-1 rounded-[5px] text-sm bg-blue-600 text-white font-medium hover:shadow-lg hover:bg-blue-500 flex items-center gap-3">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                     Edit Price
                 </a>
+                @endif
             </div>
                 @if (!empty($customer['price_configs']['fulfillment_pricing']))            
                 <p class="text-[16px] font-medium text-blue-600 mt-1">
@@ -168,10 +170,12 @@
                 @endif
             @else            
             <div class="w-full flex flex-col items-end mt-2 gap-2">
+                @if ($user->staff->isAdmin())
                 <a href="{{ route('admin.customer.price-configs.edit.form', ['customer' => $customer['id']]) }}" class="w-auto px-3 py-2 rounded-[5px] text-sm bg-green-600 text-white font-medium hover:shadow-lg hover:bg-green-500 flex items-center gap-3">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                     Add Price
                 </a>
+                @endif
                 <p class="text-md font-medium text-orange-600 text-center w-full">
                     There is no price configurations for this customer
                 </p>

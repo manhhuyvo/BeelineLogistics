@@ -94,7 +94,9 @@ class Supplier extends Model
             return null;
         }
 
-        return SupplierMeta::where('identifier', $identifier)->first();
+        return SupplierMeta::where('identifier', $identifier)
+                        ->where('supplier_id', $this->id)
+                        ->first();
     }
 
     public function createMeta(string $identifier, string $value)
@@ -108,7 +110,10 @@ class Supplier extends Model
         }
 
         // If meta already exists, then we update it
-        $meta = SupplierMeta::where('identifier', $identifier)->first();
+        $meta = SupplierMeta::where('identifier', $identifier)
+                        ->where('supplier_id', $this->id)
+                        ->first();
+                        
         if ($meta) {
             $meta->value = $value;
 

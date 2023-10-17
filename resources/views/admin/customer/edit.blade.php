@@ -35,6 +35,7 @@
                 </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
+                @if ($user->staff->isAdmin())
                 <div class="flex flex-col flex-1">
                     <label for="staff_id" class="mb-2 text-sm font-medium text-gray-900">Staff Manage</label>
                     <select id="staff_id" name="staff_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
@@ -50,6 +51,9 @@
                     @endforeach
                     </select>
                 </div>
+                @else
+                <input type="hidden" name="staff_id" value="{{ $user->staff->id }}" readonly />
+                @endif
                 <div class="flex flex-col flex-1">
                     <label for="type" class="mb-2 text-sm font-medium text-gray-900">Type</label>
                     <select id="type" name="type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
@@ -150,10 +154,8 @@
             </div>
         </form>
     </div>
-    @if ($user->staff->isAdmin())
-        @include('admin.customer.country-config')
-        @include('admin.customer.service-config')
-    @endif
+    @include('admin.customer.country-config')
+    @include('admin.customer.service-config')
 </div>
 
 <script>

@@ -28,6 +28,15 @@ class SupportTicketCommentController extends Controller
     {
         $user = Auth::user();
         $rawData = collect($request->all())->except(['attachment'])->toArray();
+        
+        if (!$user->staff->isAdmin() && $ticket->customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
 
         // Validate the request coming
         $validation = $this->validateRequest($rawData);                

@@ -34,8 +34,23 @@ class FulfillmentController extends Controller
     /** Display the page for list of all customers */
     public function index(Request $request)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Retrieve list of all first
         $allFulfillments = Fulfillment::with('staff', 'customer', 'supportTickets');
+
+        // If this is not admin, then only show the fulfillments that this staff manage
+        if (!$user->staff->isAdmin()) {
+            $allFulfillments = $allFulfillments->where('staff_id', $user->staff->id);
+        }
 
         // Get staff and customer list
         $staffsList = $this->formatStaffsList();
@@ -154,6 +169,7 @@ class FulfillmentController extends Controller
 
         // Return the view
         return view('admin.fulfillment.create', [
+            'user' => Auth::user(),
             'staffsList' => $staffsList,
             'customersList' => $customersList,
             'productsList' => $productsList,
@@ -169,6 +185,16 @@ class FulfillmentController extends Controller
     /** Handle request for storing new fulfillment */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Validate the request coming
         $validation = $this->validateRequest($request);                
         if ($validation->fails()) {
@@ -193,6 +219,10 @@ class FulfillmentController extends Controller
 
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
+        // If the current logged in user is not admin, then we save that user's staff ID as the fulfillment staff id
+        if (!$user->staff->isAdmin()) {
+            $data['staff_id'] = $user->staff->id;
+        }
 
         // If use chose to get default supplier, then get that details
         if (!empty($data['default_supplier']) && $data['default_supplier'] == 'on') {
@@ -302,8 +332,25 @@ class FulfillmentController extends Controller
     /** Display the page for viewing fulfillment */
     public function show(Request $request, Fulfillment $fulfillment)
     {
-        // Get logged in user
         $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a fulfillment doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $fulfillment->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
 
         // Get staff model
         $staff = collect($fulfillment->staff)->toArray();
@@ -367,6 +414,26 @@ class FulfillmentController extends Controller
     /** Display the page for edit fulfillment */
     public function edit(Request $request, Fulfillment $fulfillment)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a fulfillment doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $fulfillment->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Get all needed objects lists
         $staffsList = $this->formatStaffsList();
         $customersList = $this->formatCustomersList();
@@ -389,6 +456,7 @@ class FulfillmentController extends Controller
 
         // Return the view
         return view('admin.fulfillment.edit', [
+            'user' => Auth::user(),
             'fulfillment' => $fulfillment,
             'staffsList' => $staffsList,
             'customersList' => $customersList,
@@ -405,6 +473,26 @@ class FulfillmentController extends Controller
     /** Handle request for updating fulfillment */
     public function update(Request $request, Fulfillment $fulfillment)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a fulfillment doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $fulfillment->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Validate the request coming
         $validation = $this->validateRequest($request);                
         if ($validation->fails()) {
@@ -429,8 +517,10 @@ class FulfillmentController extends Controller
 
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
-
-        // TODO: WE HAVE TO CONSIDER ON STOCK CONTROL AND INVOICE, BILLING STUFFS LATER ON
+        // If the current logged in user is not admin, then we save that user's staff ID as the fulfillment staff id
+        if (!$user->staff->isAdmin()) {
+            $data['staff_id'] = $user->staff->id;
+        }
 
         // Calculate total product cost and labour cost
         $totalProductCost = $this->calculateTotalProductsCost($productList);

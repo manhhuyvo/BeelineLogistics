@@ -101,7 +101,6 @@ Route::prefix('admin')->group(function () {
 
         /* [AJAX USER OWNER SEARCH] */
         Route::post('/ajax/search-user-owner', [AjaxController::class, 'searchUserOwner'])->name('admin.ajax.search-user-owner');
-        Route::post('/ajax/search-customer', [AjaxController::class, 'searchCustomer'])->name('admin.ajax.search-customer');
 
         /** [INVOICE ROUTES] */
         Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
@@ -147,6 +146,9 @@ Route::prefix('admin')->group(function () {
         /** [SMALL ELEMENTS LOADER] */
         Route::get('/small-elements/product-row', [SmallElementsLoader::class, 'getNewProductRow'])->name('admin.small-elements.product-row');
         Route::get('/small-elements/ticket-belongs-row/{target}', [SmallElementsLoader::class, 'getNewTicketBelongsRow'])->name('admin.small-elements.ticket-belongs-row');
+
+        /** [AJAX SEARCH USER ROUTE] */        
+        Route::post('/ajax/search-customer', [AjaxController::class, 'searchCustomer'])->name('admin.ajax.search-customer');
 
         /** [DASHBOARD ADMIN ROUTES] */
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');

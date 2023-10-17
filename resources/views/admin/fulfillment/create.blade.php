@@ -22,6 +22,7 @@
                     >
                     <label for="default_supplier" class="mb-2 text-sm font-medium text-gray-900">Use Default Supplier</label>
                 </div>
+                @if ($user->staff->isAdmin())
                 <div class="flex flex-col flex-1 hidden supplier_container">
                     <label for="supplier_id" class="mb-2 text-sm font-medium text-gray-900">Supplier Handle</label>
                     <select id="supplier_id" name="supplier_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" disabled="disabled">
@@ -37,6 +38,7 @@
                     @endforeach
                     </select>
                 </div>
+                @endif
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
@@ -50,6 +52,7 @@
                         <div id="ajax-customer-search-result" class="min-h-[50px] w-full bg-gray-50 absolute top-[100%] border-solid border-x-[1px] border-y-[1px] border-gray-300 rounded-b-lg flex flex-col items-center gap-2 max-h-[200px] overflow-y-auto"></div>
                     </div>
                 </div>
+                @if ($user->staff->isAdmin())
                 <div class="flex flex-col flex-1">
                     <label for="staff_id" class="mb-2 text-sm font-medium text-gray-900">Staff Manage</label>
                     <select id="staff_id" name="staff_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
@@ -65,6 +68,9 @@
                     @endforeach
                     </select>
                 </div>
+                @else
+                <input type="hidden" name="staff_id" value="{{ $user->staff->id ?? 0 }}" readonly />
+                @endif
             </div>
             <!-- Display selected owner from the search -->
             <div class="row flex justify-center bg-blue-50 py-3 px-2 mx-2 border-blue-300 border-[2px] rounded-lg" id="selected-customer-owner">

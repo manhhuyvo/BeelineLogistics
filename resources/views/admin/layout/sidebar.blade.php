@@ -1,7 +1,14 @@
 @php
    $userLoggedIn = Auth::user();
    
-   $allTickets = SupportTicket::all();
+   if ($user->staff->isAdmin()) {
+      $allTickets = SupportTicket::all();
+   } else {
+      $allTickets = SupportTicket::whereHas('customer', function($query) use ($user) {
+         $query->where('staff_id', $user->staff->id);
+      })->get();
+   }
+   
    $activeTickets = collect($allTickets)
                ->filter(function($ticket) {
                   return $ticket->status == SupportTicketEnum::STATUS_ACTIVE;

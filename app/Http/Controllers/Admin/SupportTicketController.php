@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Enums\SupportTicketEnum;
 use App\Enums\ResponseMessageEnum;
 use App\Enums\GeneralEnum;
+use App\Models\Customer;
 // Helpers
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +30,24 @@ class SupportTicketController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
 
         // Retrieve list of all first
         $allTickets = SupportTicket::with(['userCreated', 'userSolved', 'comments']);
+
+        // If this is not admin, then only show the fulfillments that this staff manage
+        if (!$user->staff->isAdmin()) {
+            $allTickets = $allTickets->whereHas('customer', function($query) use ($user) {
+                $query->where('staff_id', $user->staff->id);
+            });
+        }
         
         // Validate the filter request
         $data = $request->all();
@@ -124,8 +140,7 @@ class SupportTicketController extends Controller
     }
 
     public function create(Request $request)
-    {
-        
+    {        
         $user = Auth::user();
 
         $allCustomers = getFormattedCustomersList();
@@ -147,6 +162,17 @@ class SupportTicketController extends Controller
         $validation = $this->validateRequest($rawData);                
         if ($validation->fails()) {
             $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $rawData,
+            ]);
+        }
+
+        // If this customer doesn't belong to a non-admin staff
+        $customer = Customer::find($rawData['customer_id']);
+        if (!$user->staff->isAdmin() && $customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
 
             return redirect()->back()->with([
                 'response' => $responseData,
@@ -227,6 +253,16 @@ class SupportTicketController extends Controller
     public function show(Request $request, SupportTicket $ticket)
     {
         $user = Auth::user();
+        
+        if (!$user->staff->isAdmin() && $ticket->customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         $customer = $ticket->customer;
         $userCreatedOwner = $ticket->userCreated ? $ticket->userCreated->getUserOwner() : null;
         $userSolvedOwner = $ticket->userSolved ? $ticket->userSolved->getUserOwner() : null;
@@ -274,6 +310,15 @@ class SupportTicketController extends Controller
                 'request' => $request->all(),
             ]);
         }
+        
+        if (!$user->staff->isAdmin() && $ticket->customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
 
         // Update status and user solved details
         $ticket->status = SupportTicketEnum::STATUS_SOLVED;
@@ -306,6 +351,15 @@ class SupportTicketController extends Controller
                 'request' => $request->all(),
             ]);
         }
+        
+        if (!$user->staff->isAdmin() && $ticket->customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
 
         // Update status and user solved details
         $ticket->status = SupportTicketEnum::STATUS_ACTIVE;
@@ -334,6 +388,15 @@ class SupportTicketController extends Controller
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 
             return redirect()->route('admin.dashboard')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+        
+        if (!$user->staff->isAdmin() && $ticket->customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);

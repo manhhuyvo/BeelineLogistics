@@ -50,10 +50,17 @@ if (!function_exists('getFormattedFulfillmentsList')) {
 
             return $data;
         }
-            
-        // Formatted list for staff
-        $allFulfillments = Fulfillment::with('customer')
-                ->get();
+
+        if (!$user->staff->isAdmin()) {
+            $allFulfillments = Fulfillment::with('customer')
+                    ->whereHas('customer', function($query) use ($user) {
+                        $query->where('staff_id', $user->staff->id);
+                    })
+                    ->get();
+        } else {
+            $allFulfillments = Fulfillment::with('customer')
+                    ->get();
+        }
 
         $data = [];
         foreach ($allFulfillments as $fulfillment) {
@@ -88,10 +95,19 @@ if (!function_exists('getFormattedOrdersList')) {
 
             return $data;
         }
-            
+
         // Formatted list for staff
-        $allOrders = Order::with('customer')
-                ->get();
+        if (!$user->staff->isAdmin()) {
+            $allOrders = Order::with('customer')
+                    ->where('staff_id', $user->staff->id)
+                    ->orWhereHas('customer', function($query) use ($user) {
+                        $query->where('staff_id', $user->staff->id);
+                    })
+                    ->get();
+        } else {
+            $allOrders = Order::with('customer')
+                    ->get();
+        }
 
         $data = [];
         foreach ($allOrders as $order) {
@@ -168,11 +184,19 @@ if (!function_exists('getFormattedCustomersList')) {
             return [];
         }
 
-        // Get the customers list (only apply for staff)
-        if (!$active) {
-            $allCustomers = Customer::all();
+        if (!$user->staff->isAdmin()) {
+            $allCustomers = Customer::where('staff_id', $user->staff->id);
+            if (!$active) {
+                $allCustomers = $allCustomers->get();
+            } else {
+                $allCustomers = $allCustomers->where('status', Customer::STATUS_ACTIVE)->get();
+            }
         } else {
-            $allCustomers = Customer::where('status', Customer::STATUS_ACTIVE)->get();
+            if (!$active) {
+                $allCustomers = Customer::all();
+            } else {
+                $allCustomers = Customer::where('status', Customer::STATUS_ACTIVE)->get();
+            }
         }
 
         $data = [];

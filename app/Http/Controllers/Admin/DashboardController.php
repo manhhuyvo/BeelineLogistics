@@ -65,23 +65,42 @@ class DashboardController extends Controller
     private function getFulfillmentRecords(User $user, string $startOfWeek, string $endOfWeek)
     {
         $createdThisWeek = Fulfillment::whereBetween('created_at', [$startOfWeek, $endOfWeek])
-                                    ->where('fulfillment_status', '!=', FulfillmentEnum::FULFILLMENT_STATUS_DELETE)        
-                                    ->get();
+                                    ->where('fulfillment_status', '!=', FulfillmentEnum::FULFILLMENT_STATUS_DELETE);
 
         $shipped = Fulfillment::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
-                            ->where('shipping_status', FulfillmentEnum::SHIPPING_SHIPPED)
-                            ->get();
+                            ->where('shipping_status', FulfillmentEnum::SHIPPING_SHIPPED);
 
-        $waiting = Fulfillment::where('shipping_status', FulfillmentEnum::SHIPPING_WAITING)
-                            ->get();
+        $waiting = Fulfillment::where('shipping_status', FulfillmentEnum::SHIPPING_WAITING);
                             
         $returned = Fulfillment::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
-                            ->where('shipping_status', FulfillmentEnum::SHIPPING_RETURNED)
-                            ->get();
+                            ->where('shipping_status', FulfillmentEnum::SHIPPING_RETURNED);
                             
         $delivered = Fulfillment::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
-                            ->where('shipping_status', FulfillmentEnum::SHIPPING_DELIVERED)
-                            ->get();
+                            ->where('shipping_status', FulfillmentEnum::SHIPPING_DELIVERED);
+
+        if ($user->staff->isAdmin()) {
+            $createdThisWeek = $createdThisWeek->get();
+            $shipped = $shipped->get();
+            $waiting = $waiting->get();
+            $returned = $returned->get();
+            $delivered = $delivered->get();
+        } else {
+            $createdThisWeek = $createdThisWeek
+                        ->where('staff_id', $user->staff->id)
+                        ->get();
+            $shipped = $shipped
+                        ->where('staff_id', $user->staff->id)
+                        ->get();
+            $waiting = $waiting
+                        ->where('staff_id', $user->staff->id)
+                        ->get();
+            $returned = $returned
+                        ->where('staff_id', $user->staff->id)
+                        ->get();
+            $delivered = $delivered
+                        ->where('staff_id', $user->staff->id)
+                        ->get();
+        }
 
         return [
             'created' => $createdThisWeek->count(),
@@ -148,15 +167,34 @@ class DashboardController extends Controller
     private function getSupportTicketsRecords(User $user, string $startOfWeek, string $endOfWeek)
     {
         $created = SupportTicket::whereBetween('created_at', [$startOfWeek, $endOfWeek])
-                                ->where('status', '!=', SupportTicketEnum::STATUS_DELETED)   
-                                ->get();
+                                ->where('status', '!=', SupportTicketEnum::STATUS_DELETED);
         
         $solved = SupportTicket::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
-                        ->where('status', SupportTicketEnum::STATUS_SOLVED)
-                        ->get();
+                        ->where('status', SupportTicketEnum::STATUS_SOLVED);
         
-        $active = SupportTicket::where('status', SupportTicketEnum::STATUS_ACTIVE)
-                        ->get();
+        $active = SupportTicket::where('status', SupportTicketEnum::STATUS_ACTIVE);
+
+        if ($user->staff->isAdmin()) {
+            $created = $created->get();
+            $solved = $created->get();
+            $active = $created->get();
+        } else {
+            $created = $created
+                ->whereHas('customer', function($query) use ($user) {
+                    $query->where('staff_id', $user->staff->id);
+                })
+                ->get();
+            $solved = $solved
+                ->whereHas('customer', function($query) use ($user) {
+                    $query->where('staff_id', $user->staff->id);
+                })
+                ->get();
+            $active = $active
+                ->whereHas('customer', function($query) use ($user) {
+                    $query->where('staff_id', $user->staff->id);
+                })
+                ->get();
+        }
 
         return [
             'created' => $created->count(),

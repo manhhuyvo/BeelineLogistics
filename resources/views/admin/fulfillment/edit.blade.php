@@ -31,6 +31,7 @@
                     @endforeach
                     </select>
                 </div>
+                @if ($user->staff->isAdmin())
                 <div class="flex flex-col flex-1">
                     <label for="staff_id" class="mb-2 text-sm font-medium text-gray-900">Staff Manage</label>
                     <select id="staff_id" name="staff_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
@@ -46,6 +47,10 @@
                     @endforeach
                     </select>
                 </div>
+                @else
+                <input type="hidden" name="staff_id" value="{{ $user->staff->id }}" readonly />
+                @endif
+                @if ($user->staff->isAdmin())
                 <div class="flex flex-col flex-1">
                     <label for="supplier_id" class="mb-2 text-sm font-medium text-gray-900">Supplier Handle</label>
                     <select id="supplier_id" name="supplier_id" class="select_products bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
@@ -61,6 +66,9 @@
                     @endforeach
                     </select>
                 </div>
+                @else
+                <input type="hidden" name="supplier_id" value="{{ $fulfillment['supplier_id'] }}" readonly />
+                @endif
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">

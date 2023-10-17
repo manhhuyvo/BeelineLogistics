@@ -42,7 +42,9 @@
                     @php
                         $paymentReceipt = $productPayment['payment_receipt'];
                     @endphp
+                    @if (!empty($productPayment['payment_receipt']))
                     <a href="{{ url("fulfillment_payment_receipts/$paymentReceipt") }}" target="_blank" class="flex flex-row items-center gap-2 text-sm text-blue-500 font-semibold hover:underline">View Payment Receipt<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
+                    @endif
                     <div class="flex flex-row gap-2 justify-center">
                         @if ($productPayment['status'] != ProductPaymentEnum::STATUS_APPROVED)
                         <input type="submit" class="px-3 py-2 rounded-[5px] text-[12px] bg-green-600 text-white font-medium w-auto hover:bg-green-500 flex items-center gap-2" name="update_payment" value="Approve">
@@ -84,7 +86,9 @@
                     @php
                         $paymentReceipt = $productPayment['payment_receipt'];
                     @endphp
+                    @if (!empty($productPayment['payment_receipt']))
                     <a href="{{ url("fulfillment_payment_receipts/$paymentReceipt") }}" target="_blank" class="flex flex-row items-center gap-2 text-sm text-blue-500 font-semibold hover:underline">View Payment Receipt<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
+                    @endif
                 </div>
             </div>
             @endforeach

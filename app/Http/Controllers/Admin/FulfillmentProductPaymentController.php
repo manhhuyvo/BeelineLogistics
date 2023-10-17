@@ -22,6 +22,26 @@ class FulfillmentProductPaymentController extends Controller
     public function addPayment(Request $request, Fulfillment $fulfillment)
     {
         $user = Auth::user();
+        $rawData = collect($request->all())->except(['payment_receipt'])->toArray();
+
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $rawData,
+            ]);
+        }
+
+        // If this user is not admin and trying to view a fulfillment doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $fulfillment->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $rawData,
+            ]);
+        }
         // Check if the file has been uploaded
         if ($request->hasFile('payment_receipt')) {
             // Prepare some values to save to database and store image
@@ -35,8 +55,6 @@ class FulfillmentProductPaymentController extends Controller
             // Save the file to public/fulfillment_payment_receipts folder
             $uploadedFile->move(public_path() . '/fulfillment_payment_receipts', $path);
         }
-
-        $rawData = collect($request->all())->except(['payment_receipt'])->toArray();
 
         // Create the record for payment
         // Validate the request coming
@@ -76,8 +94,7 @@ class FulfillmentProductPaymentController extends Controller
 
     public function updatePayment(Request $request, Fulfillment $fulfillment)
     {
-        $user = Auth::user();
-        
+        $user = Auth::user();        
         // Validate the request coming
         $validation = $this->validateUpdatePaymentRequest($request);
         if ($validation->fails()) {

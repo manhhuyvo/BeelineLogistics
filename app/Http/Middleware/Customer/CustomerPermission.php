@@ -30,7 +30,7 @@ class CustomerPermission
             return redirect()->route('customer.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->status != User::STATUS_ACTIVE || $user->customer->status != Customer::STATUS_ACTIVE) {
+        if ($user->target != User::TARGET_CUSTOMER) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 
@@ -38,7 +38,7 @@ class CustomerPermission
             return redirect()->route('customer.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->target != User::TARGET_CUSTOMER) {
+        if ($user->status != User::STATUS_ACTIVE || $user->customer->status != Customer::STATUS_ACTIVE) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 

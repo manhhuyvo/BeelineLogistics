@@ -30,7 +30,7 @@ class SupplierPermission
             return redirect()->route('supplier.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->status != User::STATUS_ACTIVE || $user->supplier->status != SupplierEnum::STATUS_CURRENT) {
+        if ($user->target != User::TARGET_SUPPLIER) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 
@@ -38,7 +38,7 @@ class SupplierPermission
             return redirect()->route('supplier.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->target != User::TARGET_SUPPLIER) {
+        if ($user->status != User::STATUS_ACTIVE || $user->supplier->status != SupplierEnum::STATUS_CURRENT) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 

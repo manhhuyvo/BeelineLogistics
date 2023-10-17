@@ -31,6 +31,7 @@ class ResponseMessageEnum
     /** Other customized error messages */
     const INVALID_PRODUCTS_PROVIDED = "There was no valid products provided.";
     const INVALID_ITEMS_PROVIDED = "There was no valid items provided.";
+    const INVALID_DEFAULT_CONFIGURATION_ACTION = "Some errors occurred. Failed to retrieve default configuration for action.";
     const FAILED_PRODUCT_PRICING_RETRIEVE = "Some errors occurred. Failed to retrieve product pricing.";
     const FAILED_CUSTOMER_RETRIEVE = "Some errors occurred. Failed to retrieve customer details.";
     const FAILED_CUSTOMER_PRICING_RETRIEVE = "Some errors occurred. Failed to retrieve customer pricing.";

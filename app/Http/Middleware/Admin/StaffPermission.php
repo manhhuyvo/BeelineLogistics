@@ -30,7 +30,7 @@ class StaffPermission
             return redirect()->route('admin.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->status != User::STATUS_ACTIVE ||  $user->staff->status != Staff::STATUS_CURRENT) {
+        if ($user->target != User::TARGET_STAFF) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 
@@ -38,7 +38,7 @@ class StaffPermission
             return redirect()->route('admin.login.form')->with(['response' => $responseData]);
         }
 
-        if ($user->target != User::TARGET_STAFF) {
+        if ($user->status != User::STATUS_ACTIVE ||  $user->staff->status != Staff::STATUS_CURRENT) {
             // Set error message
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 

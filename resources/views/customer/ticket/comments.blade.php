@@ -43,7 +43,7 @@
                         @else
                             <p class="font-bold">(Staff) {{ $comment['owner']['full_name'] ?? '' }}</p>
                         @endif
-                        <p class="text-sm italic text-gray-500">{{ Carbon::parse($comment['created_at'])->format('d M Y') }} at {{ Carbon::parse($comment['created_at'])->format('H:i:s') }}</p>
+                        <p class="text-sm italic text-gray-500">{{ $comment['created_at'] }}</p>
                     </div>
                     <div class="w-full mb-1 mt-2">
                         <div class="text-sm md:font-normal font-medium">{!! nl2br(e($comment['content'])) !!}</div>

@@ -17,6 +17,8 @@ use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\GeneralEnum;
 use App\Enums\ResponseStatusEnum;
 use App\Enums\SupportTicketEnum;
+use App\Models\CountryServiceConfiguration;
+use App\Models\Supplier;
 // Helpers
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -187,6 +189,32 @@ class FulfillmentController extends Controller
         $data['customer_id'] = $user->customer->id;
         $data['staff_id'] = $user->customer->staff_id;
         $data['labour_payment_status'] = FulfillmentEnum::PAYMENT_STATUS_UNPAID;
+        $countryServiceConfig = CountryServiceConfiguration::where('country', $data['country'])
+                            ->where('service', GeneralEnum::SERVICE_FULFILLMENT)
+                            ->first();
+        
+        if (!$countryServiceConfig) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_DEFAULT_CONFIGURATION_ACTION)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Always try to double check again if the current default supplier for this country and service is actually valid
+        $supplier = Supplier::find($countryServiceConfig->default_supplier_id);
+        if (!$supplier) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_DEFAULT_CONFIGURATION_ACTION)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Otherwise if we come to this part, that means we can use this supplier_id to save to database
+        $data['supplier_id'] = $countryServiceConfig->default_supplier_id;
 
         // TODO: WE HAVE TO CONSIDER ON STOCK CONTROL AND INVOICE, BILLING STUFFS LATER ON
 
@@ -418,6 +446,34 @@ class FulfillmentController extends Controller
 
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
+        $data['customer_id'] = $user->customer->id;
+        $data['staff_id'] = $fulfillment->staff_id;
+        $countryServiceConfig = CountryServiceConfiguration::where('country', $data['country'])
+                            ->where('service', GeneralEnum::SERVICE_FULFILLMENT)
+                            ->first();
+        
+        if (!$countryServiceConfig) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_DEFAULT_CONFIGURATION_ACTION)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Always try to double check again if the current default supplier for this country and service is actually valid
+        $supplier = Supplier::find($countryServiceConfig->default_supplier_id);
+        if (!$supplier) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_DEFAULT_CONFIGURATION_ACTION)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Otherwise if we come to this part, that means we can use this supplier_id to save to database
+        $data['supplier_id'] = $countryServiceConfig->default_supplier_id;
 
         // TODO: WE HAVE TO CONSIDER ON STOCK CONTROL AND INVOICE, BILLING STUFFS LATER ON
 

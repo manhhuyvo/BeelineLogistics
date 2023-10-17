@@ -176,8 +176,8 @@ class DashboardController extends Controller
 
         if ($user->staff->isAdmin()) {
             $created = $created->get();
-            $solved = $created->get();
-            $active = $created->get();
+            $solved = $solved->get();
+            $active = $active->get();
         } else {
             $created = $created
                 ->whereHas('customer', function($query) use ($user) {

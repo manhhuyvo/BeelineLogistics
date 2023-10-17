@@ -229,14 +229,20 @@ if (!function_exists('getFormattedSuppliersList')) {
 
         $data = [];
         foreach ($allSuppliers as $supplier) {
+            $company = $supplier['company'] ?? 'Company Unknown';
+
             // Get country meta
             $countryMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY);
+
+            if (!$countryMeta) {
+                $data[$supplier['id']] = "{$supplier['full_name']} [{$company}]";
+                continue;
+            }
+
             // Get the list of countries formatted as a string
             $countries = $countryMeta->getFormattedValue();
 
-            $company = $supplier['company'] ?? 'Company Unknown';
-
-            $data[$supplier['id']] = "{$supplier['full_name']} [{$company}] - ({$countries})";
+            $data[$supplier['id']] = "{$supplier['full_name']} [{$company}]";
         }
 
         return $data;

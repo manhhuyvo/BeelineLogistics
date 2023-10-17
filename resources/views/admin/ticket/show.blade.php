@@ -49,7 +49,7 @@
                         {{ $ticket['user_solved']['owner']['full_name'] ?? 'Not Known' }}
                         @endif
                     </div>
-                <span class="text-[12px] italic text-gray-500">- {{ Carbon::parse($ticket['solved_date'])->format('d M Y') }} at {{ Carbon::parse($ticket['solved_date'])->format('H:i:s') }}</span>
+                <span class="text-[12px] italic text-gray-500">{{ $ticket['solved_date'] }}</span>
                 @endif
             </div>
             <div class="row flex md:flex-row flex-col gap-2 flex-1 mb-3">

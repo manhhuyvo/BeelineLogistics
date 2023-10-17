@@ -332,6 +332,9 @@ class FulfillmentController extends Controller
         // Get any support ticket active for this fulfillment
         $supportTickets = $fulfillment->supportTickets;
 
+        // Supplier of this fulfillment
+        $supplier = $fulfillment->supplier;
+
         // Turn the fulfillment into an array
         $fulfillment = collect($fulfillment)->toArray();
 
@@ -352,6 +355,7 @@ class FulfillmentController extends Controller
             'staff' => $staff,
             'user' => $user,
             'customer' => $customer,
+            'supplier' => $supplier,
             'productPayments' => $productPayments,
             'productPaymentStatuses' => ProductPaymentEnum::MAP_STATUSES,
             'productPaymentStatusColors' => ProductPaymentEnum::MAP_STATUS_COLORS,
@@ -367,6 +371,8 @@ class FulfillmentController extends Controller
         $staffsList = $this->formatStaffsList();
         $customersList = $this->formatCustomersList();
         $productsList = $this->formatProductsList();
+
+        $suppliersList = getFormattedSuppliersList();
 
         // Turn the fulfillment into an array
         $fulfillment = collect($fulfillment)->toArray();
@@ -387,6 +393,7 @@ class FulfillmentController extends Controller
             'staffsList' => $staffsList,
             'customersList' => $customersList,
             'productsList' => $productsList,
+            'suppliersList' => $suppliersList,
             'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
             'fulfillmentStatusColors' => FulfillmentEnum::MAP_STATUS_COLORS,
             'paymentStatuses' => FulfillmentEnum::MAP_PAYMENT_STATUSES,

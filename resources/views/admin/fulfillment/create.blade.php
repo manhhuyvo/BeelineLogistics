@@ -25,7 +25,7 @@
                 <div class="flex flex-col flex-1 hidden supplier_container">
                     <label for="supplier_id" class="mb-2 text-sm font-medium text-gray-900">Supplier Handle</label>
                     <select id="supplier_id" name="supplier_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" disabled="disabled">
-                        @if (empty($request['supplier']))
+                        @if (empty($request['supplier_id']))
                         <option selected disabled>Choose a supplier</option>
                         @endif
                     @foreach($suppliersList as $key => $value)

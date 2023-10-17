@@ -18,11 +18,21 @@
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer Owner</label>
-                    <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $customer['customer_id'] }} - {{ $customer['full_name'] }}</div>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full h-full py-2.5 px-2">{{ $customer['customer_id'] }} - {{ $customer['full_name'] }}</div>
                 </div>
                 <div class="flex flex-col flex-1">
                     <label for="staff_id" class="mb-2 text-sm font-medium text-gray-900">Staff Manage</label>
-                    <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $staff['full_name'] }} ({{ Staff::MAP_POSITIONS[$staff['position']] ?? 'Position Not Known' }})</div>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full h-full py-2.5 px-2">{{ $staff['full_name'] }} ({{ Staff::MAP_POSITIONS[$staff['position']] ?? 'Position Not Known' }})</div>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <label for="staff_id" class="mb-2 text-sm font-medium text-gray-900">Supplier Handle</label>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">
+                        @if (!empty($supplier))
+                            {{ $supplier['full_name'] }} ({{ $supplier['company'] ?? 'Company Not Provided' }})
+                        @else
+                            Not Provided
+                        @endif
+                    </div>
                 </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">

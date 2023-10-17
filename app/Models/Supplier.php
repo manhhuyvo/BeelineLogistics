@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\User;
 use App\Models\Bill;
+use App\Models\Fulfillment;
 use App\Models\Supplier\Meta as SupplierMeta;
 use App\Models\CustomerSupplierMapper;
 
@@ -43,6 +44,11 @@ class Supplier extends Model
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class, 'supplier_id', 'id');
+    }
+
+    public function fulfillments(): HasMany
+    {
+        return $this->hasMany(Fulfillment::class, 'supplier_id', 'id');
     }
 
     public function meta(): HasMany

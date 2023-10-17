@@ -36,6 +36,7 @@ class ResponseMessageEnum
     const FAILED_CUSTOMER_PRICING_RETRIEVE = "Some errors occurred. Failed to retrieve customer pricing.";
     const FAILED_FULFILLMENT_RETRIEVE = "Some errors occurred. Failed to retrieve fulfillment details";
     const FAILED_ORDER_RETRIEVE = "Some errors occurred. Failed to retrieve order details";
+    const FAILED_DEFAULT_COUNTRY_SERVICE = "Some errors occurred. Failed to retrieve default configuration for the provided country and service";
 
     /** Bulk Actions messages */
     const INVALID_BULK_ACTION = "The action provided is unvalid. Please try again.";

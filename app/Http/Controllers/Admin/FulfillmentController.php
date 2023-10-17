@@ -21,6 +21,8 @@ use App\Enums\GeneralEnum;
 use App\Enums\ProductPaymentEnum;
 use App\Enums\ResponseStatusEnum;
 use App\Enums\SupportTicketEnum;
+use App\Models\CountryServiceConfiguration;
+use App\Models\Supplier;
 use App\Traits\Upload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -148,11 +150,14 @@ class FulfillmentController extends Controller
         $customersList = $this->formatCustomersList();
         $productsList = $this->formatProductsList();
 
+        $suppliersList = getFormattedSuppliersList();
+
         // Return the view
         return view('admin.fulfillment.create', [
             'staffsList' => $staffsList,
             'customersList' => $customersList,
             'productsList' => $productsList,
+            'suppliersList' => $suppliersList,
             'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
             'fulfillmentStatusColors' => FulfillmentEnum::MAP_STATUS_COLORS,
             'paymentStatuses' => FulfillmentEnum::MAP_PAYMENT_STATUSES,
@@ -189,7 +194,40 @@ class FulfillmentController extends Controller
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
 
-        // TODO: WE HAVE TO CONSIDER ON STOCK CONTROL AND INVOICE, BILLING STUFFS LATER ON
+        // If use chose to get default supplier, then get that details
+        if (!empty($data['default_supplier']) && $data['default_supplier'] == 'on') {
+            $countryServiceConfig = CountryServiceConfiguration::where('country', $data['country'])
+                                ->where('service', GeneralEnum::SERVICE_FULFILLMENT)
+                                ->first();
+            
+            if (!$countryServiceConfig) {
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_DEFAULT_COUNTRY_SERVICE)->send();
+    
+                return redirect()->back()->with([
+                    'response' => $responseData,
+                    'request' => $request->all(),
+                ]);
+            }
+
+            // Always try to double check again if the current default supplier for this country and service is actually valid
+            $supplier = Supplier::find($countryServiceConfig->default_supplier_id);
+            if (!$supplier) {
+                $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_DEFAULT_COUNTRY_SERVICE)->send();
+    
+                return redirect()->back()->with([
+                    'response' => $responseData,
+                    'request' => $request->all(),
+                ]);
+            }
+
+            // Otherwise if we come to this part, that means we can use this supplier_id to save to database
+            $data['supplier_id'] = $countryServiceConfig->default_supplier_id;
+        }
+
+        // Just for safety, if somehow the supplier_id is still empty, then we set it as 0
+        if (empty($data['supplier_id'])) {
+            $data['supplier_id'] = 0;
+        }
 
         // Calculate total product cost and labour cost
         $totalProductCost = $this->calculateTotalProductsCost($productList);
@@ -817,6 +855,14 @@ class FulfillmentController extends Controller
             "tracking_number" => ["nullable", "alpha_num"],
         ]);
 
+        $validator->sometimes(
+            'supplier_id', 
+            ["required", "exists:App\Models\Supplier,id"],
+            function ($input) {
+                return empty($input->default_supplier) || $input->default_supplier != 'on';
+            }
+        );
+
         return $validator;
     }
 
@@ -898,8 +944,10 @@ class FulfillmentController extends Controller
         $data['postage_unit'] = CurrencyAndCountryEnum::MAP_CURRENCIES[$data['country']] ?? '';
 
         return collect($data)->only([
+            'default_supplier',
             'staff_id',
             'customer_id',
+            'supplier_id',
             'name',
             'phone',
             'address',

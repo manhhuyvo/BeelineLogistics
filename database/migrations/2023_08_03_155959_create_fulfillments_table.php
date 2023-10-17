@@ -18,6 +18,7 @@ return new class extends Migration
             $table->json('product_configs');
             $table->unsignedBigInteger('customer_id')->index();
             $table->unsignedBigInteger('staff_id')->index();
+            $table->unsignedBigInteger('supplier_id')->index();
             $table->string('name', 255);
             $table->string('phone', 50);
             $table->string('address', 255);

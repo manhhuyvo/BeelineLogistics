@@ -16,6 +16,29 @@
                 Fulfillment Details
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
+                <div class="flex flex-1 gap-2 default_supplier_container">
+                    <input id="default_supplier" type="checkbox" name="default_supplier" class="bg-gray-200 border-solid border-[1px] border-gray-500 rounded-[5px] focus:ring-blue-500 focus:border-blue-500 mt-[2px]" value="on"
+                        checked="true"
+                    >
+                    <label for="default_supplier" class="mb-2 text-sm font-medium text-gray-900">Use Default Supplier</label>
+                </div>
+                <div class="flex flex-col flex-1 hidden supplier_container">
+                    <label for="supplier_id" class="mb-2 text-sm font-medium text-gray-900">Supplier Handle</label>
+                    <select id="supplier_id" name="supplier_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" disabled="disabled">
+                        @if (empty($request['supplier']))
+                        <option selected disabled>Choose a supplier</option>
+                        @endif
+                    @foreach($suppliersList as $key => $value)
+                        @if (!empty($request['supplier_id']) && $request['supplier_id'] == $key)
+                        <option selected value="{{ $key }}">{{ $value }}</option>
+                        @else
+                        <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer Owner</label>
                     <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
@@ -231,6 +254,11 @@
     const addNewRowBtn = $('#add_new_row')
     const addNewRowContainer = $('#add_new_row_container')
 
+    // Default supplier
+    const defaultSupplierCheckbox = $('#default_supplier');
+    const supplierContainer = $('.supplier_container');
+    const supplierIdDropdown = $('#supplier_id');
+
     // Hide all elements at first
     hideAllNeededElements();
 
@@ -269,6 +297,16 @@
 
         addNewRowBtn.on('click', function() {
             addNewRow();
+        })
+
+        defaultSupplierCheckbox.on('change', function() {
+            if ($(this).is(':checked')) {
+                supplierContainer.hide();
+                supplierIdDropdown.attr('disabled', 'disabled');
+            } else {
+                supplierContainer.show();
+                supplierIdDropdown.removeAttr('disabled');
+            }
         })
     })
 

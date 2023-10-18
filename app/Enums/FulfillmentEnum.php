@@ -241,4 +241,20 @@ class FulfillmentEnum
         'product_payment_status',
         'labour_payment_status',
     ];
+
+    const SUPPLIER_FILTERABLE_COLUMNS = [
+        'id',
+        'customer_id',
+        'name',
+        'phone',
+        'address',
+        'suburb',
+        'country',
+        'shipping_status',
+        'shipping_type',
+        'tracking_number',
+        'note',
+        'fulfillment_status',
+        'product_payment_status',
+    ];
 }

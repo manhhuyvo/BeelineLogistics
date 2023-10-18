@@ -135,6 +135,11 @@ class Customer extends Model
         return $this->hasMany(SupportTicket::class, 'customer_id', 'id');
     }
 
+    public function meta(): HasMany
+    {
+        return $this->hasMany(CustomerMeta::class, 'customer_id', 'id');
+    }
+
     public function supplierMapper(): HasMany
     {
         return $this->hasMany(CustomerSupplierMapper::class, 'customer_id', 'id');

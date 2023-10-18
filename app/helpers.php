@@ -2,6 +2,7 @@
 
 use App\Enums\SupplierEnum;
 use App\Enums\SupplierMetaEnum;
+use App\Enums\CustomerMetaEnum;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Fulfillment;
@@ -248,3 +249,54 @@ if (!function_exists('getFormattedSuppliersList')) {
         return $data;
     }
 };
+
+if (!function_exists('getFormattedCustomersListForSupplier')) {
+    function getFormattedCustomersListForSupplier(bool $active = false)
+    {
+        $user = Auth::user();        
+
+        // Formatted list for supplier
+        $countries = $user->supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY)->getValue();
+        $services = $user->supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_SERVICE)->getValue();
+
+        // If supplier is missing meta, them return empty
+        if (empty($countries) || empty($services)) {
+            return [];
+        }
+
+        if ($active) {
+            $allCustomers = Customer::has('meta')->where('status', Customer::STATUS_ACTIVE)->get();
+        } else {
+            $allCustomers = Customer::has('meta')->get();
+        }
+
+        $returnData = [];
+        foreach ($allCustomers as $customer) {
+            $customerCountries = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_COUNTRY)->getValue();
+            $countryMatched = collect($customerCountries)
+                    ->filter(function($country) use ($countries) {
+                        return in_array($country, $countries);
+                    });
+            
+            // If there is no countries matched, then skip this customer
+            if ($countryMatched->isEmpty()) {
+                continue;
+            }
+            
+            $customerServices = $customer->getMeta(CustomerMetaEnum::META_AVAILABLE_SERVICE)->getValue();
+            $serviceMatched = collect($customerServices)
+                    ->filter(function($service) use ($services) {
+                        return in_array($service, $services);
+                    });
+            
+            // If there is no services matched, then skip this customer
+            if ($serviceMatched->isEmpty()) {
+                continue;
+            }
+
+            $returnData[$customer->id] = "{$customer->customer_id} {$customer->full_name}";
+        }
+
+        return $returnData;
+    }
+}

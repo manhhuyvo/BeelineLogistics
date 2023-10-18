@@ -41,6 +41,7 @@ use App\Http\Controllers\Supplier\FulfillmentController as SupplierFulfillmentCo
 use App\Http\Controllers\Supplier\FulfillmentProductPaymentController as SupplierFulfillmentProductPaymentController;
 use App\Http\Controllers\Supplier\SupportTicketController as SupplierSupportTicketController;
 use App\Http\Controllers\Supplier\SupportTicketCommentController as SupplierSupportTicketCommentController;
+use App\Http\Controllers\Supplier\SmallElementsLoaderController as SupplierSmallElementsLoaderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -260,7 +261,10 @@ Route::prefix('customer')->group(function () {
 });
 
 Route::prefix('supplier')->group(function() {
-    Route::group(['middleware' => 'supplier.permission:all'], function () {        
+    Route::group(['middleware' => 'supplier.permission:all'], function () {     
+        /** [SMALL ELEMENTS LOADER] */
+        Route::get('/small-elements/ticket-belongs-row/{target}', [CustomerSmallElementsLoader::class, 'getNewTicketBelongsRow'])->name('supplier.small-elements.ticket-belongs-row');
+
         /** [DASHBOARD SUPPLIER ROUTES] */
         Route::get('/dashboard', [SupplierDashboardController::class, 'index'])->name('supplier.dashboard');
 

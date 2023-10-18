@@ -51,6 +51,11 @@ class Supplier extends Model
         return $this->hasMany(Fulfillment::class, 'supplier_id', 'id');
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'supplier_id', 'id');
+    }
+
     public function meta(): HasMany
     {
         return $this->hasMany(SupplierMeta::class, 'supplier_id', 'id');

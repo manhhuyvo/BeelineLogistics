@@ -52,6 +52,26 @@ if (!function_exists('getFormattedFulfillmentsList')) {
             return $data;
         }
 
+        // Formatted list for suppliers
+        if ($user->isSupplier()) {
+            $allFulfillments = $user->supplier->fulfillments;
+            if (!$allFulfillments) {
+                return [];
+            }
+
+            $data = collect($allFulfillments)->mapWithKeys(function($fulfillment, $index) {
+                $customer = $fulfillment->customer;
+                $fulfillmentArray = collect($fulfillment)->toArray();
+
+                return [
+                    $fulfillmentArray['id'] => "Fulfillment #{$fulfillmentArray['id']} - Name: " . htmlspecialchars($fulfillmentArray['name']) . " ({$fulfillment['customer']['customer_id']})",
+                ];
+            })
+            ->toArray();
+
+            return $data;
+        }
+
         if (!$user->staff->isAdmin()) {
             $allFulfillments = Fulfillment::with('customer')
                     ->whereHas('customer', function($query) use ($user) {
@@ -83,6 +103,22 @@ if (!function_exists('getFormattedOrdersList')) {
         // Formatted list for customer
         if ($user->isCustomer()) {
             $allOrders = $user->customer->orders;
+            if (!$allOrders) {
+                return [];
+            }
+
+            $data = collect($allOrders)->mapWithKeys(function($order, $index) {
+                $orderArray = collect($order)->toArray();
+
+                return [$orderArray['id'] => "Order #{$orderArray['id']}",];
+            })
+            ->toArray();
+
+            return $data;
+        }
+
+        if ($user->isSupplier()) {
+            $allOrders = $user->supplier->orders;
             if (!$allOrders) {
                 return [];
             }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id')->index();
             $table->unsignedBigInteger('customer_id')->index();
             $table->unsignedBigInteger('staff_id')->index();
+            $table->unsignedBigInteger('supplier_id')->index();
             $table->string('sender_name', 255);
             $table->string('sender_phone', 50);
             $table->string('sender_address', 255);

@@ -23,6 +23,7 @@ class Order extends Model
         'product_id',
         'customer_id',
         'staff_id',
+        'supplier_id',
         'sender_name',
         'sender_phone',
         'sender_address',
@@ -82,5 +83,10 @@ class Order extends Model
     public function orders(): BelongsToMany
     {
         return $this->belongsToMany(SupportTicket::class, 'ticket_order_maps', 'order_id', 'ticket_id');
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier', 'id');
     }
 }

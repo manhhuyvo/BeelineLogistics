@@ -166,7 +166,7 @@ class User extends Model implements Authenticatable
             return $this->customer;
         }
 
-        if ($this->supplier != 0) {
+        if ($this->supplier_id != 0) {
             return $this->supplier;
         }
 

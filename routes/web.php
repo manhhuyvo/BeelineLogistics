@@ -38,6 +38,7 @@ use App\Http\Controllers\Supplier\AuthController as SupplierAuthController;
 use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
 use App\Http\Controllers\Supplier\ProfileController as SupplierProfileController;
 use App\Http\Controllers\Supplier\FulfillmentController as SupplierFulfillmentController;
+use App\Http\Controllers\Supplier\FulfillmentProductPaymentController as SupplierFulfillmentProductPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -263,7 +264,7 @@ Route::prefix('supplier')->group(function() {
 
         /** [FULFILLMENT ROUTES] */
         Route::get('/fulfillment', [SupplierFulfillmentController::class, 'index'])->name('supplier.fulfillment.list');
-        Route::post('/fulfillment/{fulfillment}/add-payment', [SupplierFulfillmentController::class, 'addPayment'])->name('supplier.fulfillment.add-payment');
+        Route::post('/fulfillment/{fulfillment}/add-payment', [SupplierFulfillmentProductPaymentController::class, 'addPayment'])->name('supplier.fulfillment.add-payment');
         Route::post('/fulfillment/bulk', [SupplierFulfillmentController::class, 'bulk'])->name('supplier.fulfillment.bulk');
         Route::post('/fulfillment/export', [SupplierFulfillmentController::class, 'export'])->name('supplier.fulfillment.export');
         Route::get('/fulfillment/create', [SupplierFulfillmentController::class, 'create'])->name('supplier.fulfillment.create.form');

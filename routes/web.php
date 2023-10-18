@@ -265,11 +265,11 @@ Route::prefix('supplier')->group(function() {
         /** [FULFILLMENT ROUTES] */
         Route::get('/fulfillment', [SupplierFulfillmentController::class, 'index'])->name('supplier.fulfillment.list');
         Route::post('/fulfillment/{fulfillment}/add-payment', [SupplierFulfillmentProductPaymentController::class, 'addPayment'])->name('supplier.fulfillment.add-payment');
-        Route::post('/fulfillment/bulk', [SupplierFulfillmentController::class, 'bulk'])->name('supplier.fulfillment.bulk');
+        //Route::post('/fulfillment/bulk', [SupplierFulfillmentController::class, 'bulk'])->name('supplier.fulfillment.bulk');
         Route::post('/fulfillment/export', [SupplierFulfillmentController::class, 'export'])->name('supplier.fulfillment.export');
-        Route::get('/fulfillment/create', [SupplierFulfillmentController::class, 'create'])->name('supplier.fulfillment.create.form');
+        // Route::get('/fulfillment/create', [SupplierFulfillmentController::class, 'create'])->name('supplier.fulfillment.create.form');
         Route::get('/fulfillment/{fulfillment}', [SupplierFulfillmentController::class, 'show'])->name('supplier.fulfillment.show');
-        Route::post('/fulfillment', [SupplierFulfillmentController::class, 'store'])->name('supplier.fulfillment.store');
+        // Route::post('/fulfillment', [SupplierFulfillmentController::class, 'store'])->name('supplier.fulfillment.store');
         Route::get('/fulfillment/{fulfillment}/edit', [SupplierFulfillmentController::class, 'edit'])->name('supplier.fulfillment.edit.form');
         Route::post('/fulfillment/{fulfillment}', [SupplierFulfillmentController::class, 'update'])->name('supplier.fulfillment.update'); 
 

@@ -4,12 +4,6 @@
 <div class="relative sm:rounded-lg">
     @include('supplier.layout.response')
     <h2 class="text-2xl font-medium mt-2 mb-3">All fulfillments</h2>
-    <div class="w-full flex justify-end mb-3 items-center">
-        <a href="{{ route('supplier.fulfillment.create.form') }}" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium hover:shadow-lg hover:bg-blue-500 flex items-center gap-3">
-            <i class="fa-solid fa-plus"></i>
-            Add fulfillment
-        </a>
-    </div>
     @include('supplier.fulfillment.filter')    
     @if (empty($fulfillments['data']))
         <p class="w-full text-center text-red-600 font-semibold text-lg">Unable to find any records.</p>

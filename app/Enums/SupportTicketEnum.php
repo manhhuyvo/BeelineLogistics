@@ -35,4 +35,11 @@ class SupportTicketEnum
         'customer_id',
         'solved_user_id',
     ];
+
+    const SUPPLIER_FILTERABLE_COLUMNS = [
+        'id',
+        'customer_id',
+        'title',
+        'status',
+    ];
 }

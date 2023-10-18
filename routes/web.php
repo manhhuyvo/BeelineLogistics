@@ -39,6 +39,8 @@ use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardContro
 use App\Http\Controllers\Supplier\ProfileController as SupplierProfileController;
 use App\Http\Controllers\Supplier\FulfillmentController as SupplierFulfillmentController;
 use App\Http\Controllers\Supplier\FulfillmentProductPaymentController as SupplierFulfillmentProductPaymentController;
+use App\Http\Controllers\Supplier\SupportTicketController as SupplierSupportTicketController;
+use App\Http\Controllers\Supplier\SupportTicketCommentController as SupplierSupportTicketCommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -274,13 +276,13 @@ Route::prefix('supplier')->group(function() {
         Route::post('/fulfillment/{fulfillment}', [SupplierFulfillmentController::class, 'update'])->name('supplier.fulfillment.update'); 
 
         /** [SUPPORT TICKET ROUTES] */
-        Route::get('/ticket', [CustomerSupportTicketController::class, 'index'])->name('supplier.ticket.list');
-        Route::get('/ticket/export', [CustomerSupportTicketController::class, 'export'])->name('supplier.ticket.export');
-        Route::get('/ticket/create', [CustomerSupportTicketController::class, 'create'])->name('supplier.ticket.create.form');
-        Route::get('/ticket/{ticket}', [CustomerSupportTicketController::class, 'show'])->name('supplier.ticket.show');
-        Route::post('/ticket', [CustomerSupportTicketController::class, 'store'])->name('supplier.ticket.store');
+        Route::get('/ticket', [SupplierSupportTicketController::class, 'index'])->name('supplier.ticket.list');
+        Route::get('/ticket/export', [SupplierSupportTicketController::class, 'export'])->name('supplier.ticket.export');
+        Route::get('/ticket/create', [SupplierSupportTicketController::class, 'create'])->name('supplier.ticket.create.form');
+        Route::get('/ticket/{ticket}', [SupplierSupportTicketController::class, 'show'])->name('supplier.ticket.show');
+        Route::post('/ticket', [SupplierSupportTicketController::class, 'store'])->name('supplier.ticket.store');
         /** [SUPPORT TICKET COMMENT ROUTES] */
-        Route::post('/ticket/{ticket}/comment', [CustomerSupporTicketCommentController::class, 'store'])->name('supplier.ticket.comment.store');
+        Route::post('/ticket/{ticket}/comment', [SupplierSupportTicketCommentController::class, 'store'])->name('supplier.ticket.comment.store');
     });    
 
     /** [USER PROFILE ROUTES] */

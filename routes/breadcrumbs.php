@@ -272,10 +272,10 @@ Breadcrumbs::for('supplier.fulfillment.list', function (BreadcrumbTrail $trail):
     $trail->parent('supplier.dashboard');
     $trail->push('Fulfillment', route('supplier.fulfillment.list'));
 });
-Breadcrumbs::for('supplier.fulfillment.create.form', function (BreadcrumbTrail $trail): void {
-    $trail->parent('supplier.fulfillment.list');
-    $trail->push('Add New Fulfillment', route('supplier.fulfillment.create.form'));
-});
+// Breadcrumbs::for('supplier.fulfillment.create.form', function (BreadcrumbTrail $trail): void {
+//     $trail->parent('supplier.fulfillment.list');
+//     $trail->push('Add New Fulfillment', route('supplier.fulfillment.create.form'));
+// });
 Breadcrumbs::for('supplier.fulfillment.show', function (BreadcrumbTrail $trail, $fulfillment): void {
     $trail->parent('supplier.fulfillment.list');
     $trail->push("Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('supplier.fulfillment.show', ['fulfillment' => $fulfillment->id]));
@@ -283,4 +283,18 @@ Breadcrumbs::for('supplier.fulfillment.show', function (BreadcrumbTrail $trail, 
 Breadcrumbs::for('supplier.fulfillment.edit.form', function (BreadcrumbTrail $trail, $fulfillment): void {
     $trail->parent('supplier.fulfillment.list');
     $trail->push("Edit Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('supplier.fulfillment.edit.form', ['fulfillment' => $fulfillment->id]));
+});
+
+/** SUPPLIER SUPPORT TICKET */
+Breadcrumbs::for('supplier.ticket.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('supplier.dashboard');
+    $trail->push('Support Ticket', route('supplier.ticket.list'));
+});
+Breadcrumbs::for('supplier.ticket.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('supplier.ticket.list');
+    $trail->push('Add New Ticket', route('supplier.ticket.create.form'));
+});
+Breadcrumbs::for('supplier.ticket.show', function (BreadcrumbTrail $trail, $ticket): void {
+    $trail->parent('supplier.ticket.list');
+    $trail->push("Ticket #{$ticket->id}", route('supplier.ticket.show', ['ticket' => $ticket->id]));
 });

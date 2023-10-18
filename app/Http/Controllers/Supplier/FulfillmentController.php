@@ -214,6 +214,98 @@ class FulfillmentController extends Controller
         ]);
     }
 
+    /** Display the page for edit fulfillment */
+    public function edit(Request $request, Fulfillment $fulfillment)
+    {
+        // Get current logged-in user
+        $user = Auth::user();
+        // Get customer model
+        $customer = collect($fulfillment->customer)->toArray();
+        
+        // If this fulfillment doesn't belong to the supplier viewing, then return to previous page
+        if ($user->supplier->id != $fulfillment->supplier_id) {
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Turn the fulfillment into an array
+        $fulfillment = collect($fulfillment)->toArray();
+
+        // Get product model and assign it to the fulfillment
+        $fulfillment['product_configs'] = collect(unserialize($fulfillment['product_configs']))->map(function ($product) {
+            // Find the product model, product group and turn it to array
+            $productModel = Product::find($product['product_id']) ?? [];
+            $productGroup = !empty($productModel) ? collect($productModel->productGroup)->toArray() : [];
+            $product['model'] = array_merge(collect($productModel)->toArray(), ['product_group' => $productGroup]);
+
+            // Return this product back to list
+            return $product;
+        })->toArray();
+
+        // Return the view
+        return view('supplier.fulfillment.edit', [
+            'fulfillment' => $fulfillment,
+            'fulfillmentStatuses' => FulfillmentEnum::MAP_FULFILLMENT_STATUSES,
+            'fulfillmentStatusColors' => FulfillmentEnum::MAP_STATUS_COLORS,
+            'paymentStatuses' => FulfillmentEnum::MAP_PAYMENT_STATUSES,
+            'paymentStatusColors' => FulfillmentEnum::MAP_PAYMENT_COLORS,
+            'countries' => FulfillmentEnum::MAP_COUNTRIES,
+        ]);
+    }
+
+    /** Handle request for updating fulfillment */
+    public function update(Request $request, Fulfillment $fulfillment)
+    {
+        // Get current logged-in user
+        $user = Auth::user();
+        // Get customer model
+        $customer = collect($fulfillment->customer)->toArray();
+        
+        // If this fulfillment doesn't belong to the supplier viewing, then return to previous page
+        if ($user->supplier->id != $fulfillment->supplier_id) {
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Validate the request coming
+        $validation = $this->validateUpdateRequest($request);                
+        if ($validation->fails()) {
+            $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
+
+            return redirect()->route('supplier.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // We only want to take necessary fields
+        $data = $this->formatUpdateRequestData($request);
+
+        // Update data for this record
+        if (!$fulfillment->update($data)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_UPDATE_RECORD)->send();
+
+            return redirect()->route('supplier.fulfillment.edit.form', ['fulfillment' => $fulfillment->id])->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_UPDATE_RECORD)->send();
+
+        return redirect()->route('supplier.fulfillment.show', ['fulfillment' => $fulfillment->id])->with(['response' => $responseData]);
+    }
+
     /** Handle request for export action */
     public function export(Request $request)
     {        
@@ -348,5 +440,58 @@ class FulfillmentController extends Controller
         ]);
 
         return $validator;
+    }
+    
+    /** Validate form request for update functions */
+    private function validateUpdateRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            // Customer Details
+            "name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
+            "phone" => ["required", "regex:/^[0-9\s]+$/"],
+            "address" => ["required"],
+            "suburb" => ["required"],
+            "state" => ["required"],
+            "postcode" => ["required", "integer"],
+            "fulfillment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_FULFILLMENT_STATUSES))],
+            "shipping_type" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_SHIPPING))],
+            'shipping_status' => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_SHIPPING_STATUSES))],
+            "tracking_number" => ["nullable", "alpha_num"],
+        ]);
+
+        return $validator;
+    }
+
+    /** Format the data before saving to database */
+    private function formatUpdateRequestData(Request $request)
+    {
+        $data = $request->all();
+
+        //Avoid null values
+        foreach ($data as $key => $value) {
+            if ($value) {
+                continue;
+            }
+            
+            $data[$key] = "";
+        }
+
+        $data['postage_unit'] = CurrencyAndCountryEnum::MAP_CURRENCIES[$data['country']] ?? '';
+
+        return collect($data)->only([
+            'name',
+            'phone',
+            'address',
+            'address2',
+            'suburb',
+            'state',
+            'postcode',
+            'fulfillment_status',
+            'note',
+            'shipping_status',
+            'shipping_type',
+            'tracking_number',
+            'postage',
+        ])->toArray();
     }
 }

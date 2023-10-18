@@ -1,4 +1,4 @@
-@extends('customer.layout.layout')
+@extends('supplier.layout.layout')
 @section('content')
 
 @php    
@@ -6,20 +6,20 @@
 @endphp
 
 <div class="relative sm:rounded-lg">
-    @include('customer.layout.response')
+    @include('supplier.layout.response')
     <h2 class="text-2xl font-medium mt-2 mb-3">Edit Fulfillment Details</h2>
     <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-1">
-        <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('customer.fulfillment.update', ['fulfillment' => $fulfillment['id']]) }}" method="POST">
+        <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('supplier.fulfillment.update', ['fulfillment' => $fulfillment['id']]) }}" method="POST">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
-            <input type="hidden" name="customer_id" value="{{ $fulfillment['customer_id'] }}" />
-            <input type="hidden" name="staff_id" value="{{ $fulfillment['staff_id'] }}" />
-            <input type="hidden" name="postage" value="{{ $fulfillment['postage'] }}" />
-            <input type="hidden" name="labour_payment_status" value="{{ $fulfillment['labour_payment_status'] }}" />
             <!-- FULFILLMENT DETAILS -->
             <p class="text-lg font-medium text-blue-600 mt-1">
                 Fulfillment Details
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
+                <div class="flex flex-col flex-1">
+                    <label for="customer_id" class="mb-2 text-sm font-medium text-gray-900 opacity-50">Customer</label>
+                    <input id="customer_id" type="text" name="customer_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 opacity-50" value="{{ $fulfillment['customer']['customer_id'] ?? '' }} {{ $fulfillment['customer']['full_name'] }}" readonly>
+                </div>
                 <div class="flex flex-col flex-1">
                     <label for="name" class="mb-2 text-sm font-medium text-gray-900">Full Name</label>
                     <input id="name" type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Full Name" value="{{ $fulfillment['name'] ?? '' }}">
@@ -53,19 +53,8 @@
                     <input id="postcode" type="text" name="postcode" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Postcode" value="{{ $fulfillment['postcode'] ?? '' }}">
                 </div>
                 <div class="flex flex-col flex-1">
-                    <label for="country" class="mb-2 text-sm font-medium text-gray-900">Country</label>
-                    <select id="country" name="country" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
-                        @if (empty($fulfillment['country']))
-                        <option selected disabled>Choose a country</option>
-                        @endif
-                    @foreach($countries as $key => $value)
-                        @if (!empty($fulfillment['country']) && $fulfillment['country'] == $key)
-                        <option selected value="{{ $key }}">{{ $value }}</option>
-                        @else
-                        <option value="{{ $key }}">{{ $value }}</option>
-                        @endif
-                    @endforeach
-                    </select>
+                    <label for="country" class="mb-2 text-sm font-medium text-gray-900 opacity-50">Country</label>
+                    <input id="country" type="text" name="country" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 opacity-50" value="{{ $countries[$fulfillment['country']] ?? 'Unknown' }}" readonly>
                 </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
@@ -85,19 +74,8 @@
                     </select>
                 </div>
                 <div class="flex flex-col flex-1">
-                    <label for="product_payment_status" class="mb-2 text-sm font-medium text-gray-900">Product Payment Status</label>
-                    <select id="product_payment_status" name="product_payment_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 ">
-                        @if (empty($fulfillment['product_payment_status']))
-                        <option selected disabled>Choose a status</option>
-                        @endif
-                    @foreach($paymentStatuses as $key => $value)
-                        @if (!empty($fulfillment['product_payment_status']) && $fulfillment['product_payment_status'] == $key)
-                        <option selected value="{{ $key }}">{{ $value }}</option>
-                        @else
-                        <option value="{{ $key }}">{{ $value }}</option>
-                        @endif
-                    @endforeach
-                    </select>
+                    <label for="product_payment_status" class="mb-2 text-sm font-medium text-gray-900 opacity-50">Product Payment Status</label>
+                    <input id="product_payment_status" type="text" name="product_payment_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 opacity-50" value="{{ $paymentStatuses[$fulfillment['product_payment_status']] ?? 'Unknown' }}" readonly>
                 </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
@@ -141,62 +119,48 @@
                     @endforeach
                     </select>
                 </div>
+            </div>
+            <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="tracking_number" class="mb-2 text-sm font-medium text-gray-900">Tracking Number</label>
                     <input id="tracking_number" type="text" name="tracking_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Tracking Number" value="{{ $fulfillment['tracking_number'] ?? '' }}">
+                </div>
+                <div class="flex flex-col flex-1">
+                    <label for="postage" class="mb-2 text-sm font-medium text-gray-900">Postage</label>
+                    <input id="postage" type="number" step="0.01" name="postage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Postage Fee" value="{{ $fulfillment['postage'] ?? 0 }}">
                 </div>
             </div>
             <!-- PRODUCTS -->
             <p class="text-lg font-medium text-blue-600 mt-1">
                 Products Details
             </p>
-            <div class="row flex flex-col gap-2 px-2.5 justify-center" id="add_new_row_container">
+            <div class="row flex flex-col gap-2 px-2.5 justify-center opacity-50">
                 @foreach ($fulfillment['product_configs'] as $product)
-                    @include('customer.small_elements.product-row')
+                <div class="flex sm:flex-row sm:items-end flex-col gap-2 flex-1 bg-gray-100 border-solid border-[1px] border-gray-500 rounded-lg py-3 m-0 sm:gap-0 gap-3">
+                    <div class="flex flex-col flex-1">
+                        <label class="mb-2 text-sm font-medium text-gray-900">Product Name</label>
+                        <div class="bg-white border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $product['model']['name'] ?? '' }}</div>
+                    </div>
+                    <div class="flex flex-col flex-1">
+                        <label class="mb-2 text-sm font-medium text-gray-900">Product Group</label>
+                        <div class="bg-white border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $product['model']['product_group']['name'] ?? ''}}</div>
+                    </div>
+                    <div class="flex flex-col flex-2">
+                        <label class="mb-2 text-sm font-medium text-gray-900">Quantity</label>
+                        <div class="bg-white border-gray-300 text-gray-900 text-sm w-full py-2.5 px-2">{{ $product['quantity'] ?? 0 }}</div>
+                    </div>
+                </div>
                 @endforeach
-            </div>
-            <div class="row flex flex-row gap-2 px-2.5">
-                <button type="button" id="add_new_row" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-blue-800 text-white font-medium w-auto hover:bg-blue-700 flex items-center gap-2 w-fit">
-                    <i class="fa-solid fa-plus"></i>
-                    Add product
-                </button>
             </div>
             <div class="row flex justify-center px-3 gap-2 mt-4">
                 <button type="submit" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">
                     Update
                 </button>
-                <a href="{{ route('customer.fulfillment.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2">
+                <a href="{{ route('supplier.fulfillment.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2">
                     Cancel
                 </a>
             </div>
         </form>
     </div>
 </div>
-
-<script>
-    const searchCustomerInput = $('#customer_search');
-    const ajaxCustomerSearchResult = $('#ajax-customer-search-result');
-
-    // Owner section variables
-    const selectedCustomerOwner = $('#selected-customer-owner')
-    const customerOwnerDiv = $('#selected-owner-customer')
-
-    // Add new row
-    const addNewRowBtn = $('#add_new_row')
-    const addNewRowContainer = $('#add_new_row_container')
-
-    $(document).ready(function() {
-        addNewRowBtn.on('click', function() {
-            addNewRow();
-        })
-    })
-
-    // Add new row
-    function addNewRow()
-    {
-        $.get("{{ route('customer.small-elements.product-row') }}", function(data) {
-            addNewRowContainer.append(data)
-        })
-    }
-</script>
 @endsection

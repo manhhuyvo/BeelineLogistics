@@ -271,6 +271,15 @@ Route::prefix('supplier')->group(function() {
         Route::post('/fulfillment', [SupplierFulfillmentController::class, 'store'])->name('supplier.fulfillment.store');
         Route::get('/fulfillment/{fulfillment}/edit', [SupplierFulfillmentController::class, 'edit'])->name('supplier.fulfillment.edit.form');
         Route::post('/fulfillment/{fulfillment}', [SupplierFulfillmentController::class, 'update'])->name('supplier.fulfillment.update'); 
+
+        /** [SUPPORT TICKET ROUTES] */
+        Route::get('/ticket', [CustomerSupportTicketController::class, 'index'])->name('supplier.ticket.list');
+        Route::get('/ticket/export', [CustomerSupportTicketController::class, 'export'])->name('supplier.ticket.export');
+        Route::get('/ticket/create', [CustomerSupportTicketController::class, 'create'])->name('supplier.ticket.create.form');
+        Route::get('/ticket/{ticket}', [CustomerSupportTicketController::class, 'show'])->name('supplier.ticket.show');
+        Route::post('/ticket', [CustomerSupportTicketController::class, 'store'])->name('supplier.ticket.store');
+        /** [SUPPORT TICKET COMMENT ROUTES] */
+        Route::post('/ticket/{ticket}/comment', [CustomerSupporTicketCommentController::class, 'store'])->name('supplier.ticket.comment.store');
     });    
 
     /** [USER PROFILE ROUTES] */

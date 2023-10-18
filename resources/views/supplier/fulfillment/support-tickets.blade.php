@@ -32,9 +32,7 @@
                             <td scope="row" class="border px-2 py-2 whitespace-nowrap font-semibold text-gray-900">
                                 <span class="font-normal">[{{ $ticket['created_at'] }}]</span>
                                 <span class="text-{{ $supportTicketStatusColors[$ticket['status']] }}-600">{{ Str::upper($supportTicketStatuses[$ticket['status']] ?? '') }} - </span>
-                                {{-- <a target="_blank" href="{{ route('supplier.ticket.show', ['ticket' => $ticket['id']]) }}" class="hover:underline hover:text-blue-500">
-                                    Ticket #{{ $ticket['id'] }} - {{ e($ticket['title']) }}</a> --}}
-                                <a target="_blank" href="#" class="hover:underline hover:text-blue-500">
+                                <a target="_blank" href="{{ route('supplier.ticket.show', ['ticket' => $ticket['id']]) }}" class="hover:underline hover:text-blue-500">
                                     Ticket #{{ $ticket['id'] }} - {{ e($ticket['title']) }}</a>
                             </td>
                         </tr>

@@ -1,4 +1,4 @@
-<form method="POST" action={{ route('customer.fulfillment.add-payment', ['fulfillment' => $fulfillment['id']]) }} class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 flex flex-col gap-3 px-3 py-3 justify-center" enctype="multipart/form-data">
+<form method="POST" action={{ route('supplier.fulfillment.add-payment', ['fulfillment' => $fulfillment['id']]) }} class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 flex flex-col gap-3 px-3 py-3 justify-center" enctype="multipart/form-data">
     <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
     <input type="hidden" name="fulfillment_id" value="{{ $fulfillment['id'] }}" readonly />
     <input type="hidden" name="user_id" value="{{ $user->id }}" readonly />

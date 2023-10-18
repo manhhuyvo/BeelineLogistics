@@ -4,7 +4,7 @@
             Payment Records
         </p>
         <div class="w-full flex flex-col gap-4 px-2">
-        @if ($user->isCustomer())
+        @if ($user->isSupplier())
             @foreach ($productPayments as $productPayment)
             <div class="w-full flex flex-col gap-3 pb-3 border-solid border-[1px] border-gray-200 cursor-pointer shadow-lg rounded-lg my-1">
                 <div class="w-full py-2 text-center text-white text-sm font-bold bg-{{ $productPaymentStatusColors[$productPayment['status']] }}-500 rounded-t-lg">

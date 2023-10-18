@@ -1,4 +1,4 @@
-@extends('customer.layout.layout')
+@extends('supplier.layout.layout')
 @section('content')
 
 @php    
@@ -6,16 +6,20 @@
 @endphp
 
 <div class="relative sm:rounded-lg">
-    @include('customer.layout.response')
+    @include('supplier.layout.response')
     <h2 class="text-2xl font-medium mt-2 mb-3">View Fulfillment Details</h2>
     <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 pt-2 py-4">
-        <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('customer.fulfillment.store') }}" method="POST">
+        <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('supplier.fulfillment.store') }}" method="POST">
             <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
             <!-- FULFILLMENT DETAILS -->
             <p class="text-lg font-medium text-blue-600 mt-1">
                 Fulfillment Details
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
+                <div class="flex flex-col flex-1">
+                    <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer Owner</label>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full h-full py-2.5 px-2">{{ $customer['customer_id'] ?? '' }} - {{ $customer['full_name'] ?? 'Unknown' }}</div>
+                </div>
                 <div class="flex flex-col flex-1">
                     <label for="name" class="mb-2 text-sm font-medium text-gray-900">Full Name</label>
                     <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $fulfillment['name'] ?? 'Not Provided'}}</div>
@@ -62,10 +66,6 @@
                     <label for="product_payment_status" class="mb-2 text-sm font-medium text-gray-900">Product Payment Status</label>
                     <div class="bg-gray-50 font-semibold text-{{ FulfillmentEnum::MAP_PAYMENT_COLORS[$fulfillment['product_payment_status']] }}-600 text-sm w-full py-2.5 px-2">{{ FulfillmentEnum::MAP_PAYMENT_STATUSES[$fulfillment['product_payment_status']] ?? 'Not Provided' }}</div>
                 </div>
-                <div class="flex flex-col flex-1">
-                    <label for="labour_payment_status" class="mb-2 text-sm font-medium text-gray-900">Labour Payment Status</label>
-                    <div class="bg-gray-50 font-semibold text-{{ FulfillmentEnum::MAP_PAYMENT_COLORS[$fulfillment['labour_payment_status']] }}-600 text-sm w-full py-2.5 px-2">{{ FulfillmentEnum::MAP_PAYMENT_STATUSES[$fulfillment['labour_payment_status']] ?? 'Not Provided' }}</div>
-                </div>
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-2">
@@ -95,14 +95,6 @@
                 Amounts Details
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
-                <div class="flex flex-col flex-1">
-                    <label for="postage" class="mb-2 text-sm font-medium text-gray-900">Total Labour Amount</label>
-                    <div class="w-full flex items-center text-sm bg-gray-50">
-                        <div class="bg-transparent text-gray-600 text-sm w-full py-2.5 px-2">{{ $fulfillment['total_labour_amount'] ?? 0 }}</div>
-                        <p class="text-sm h-full font-medium text-sm flex-1 p-2.5 bg-gray-100 border-none pl-3">{{ $fulfillment['labour_unit'] ?? '' }}
-                        </p>
-                    </div>
-                </div>
                 <div class="flex flex-col flex-1">
                     <label for="postage" class="mb-2 text-sm font-medium text-gray-900">Total Product Amount</label>
                     <div class="w-full flex items-center text-sm bg-gray-50">
@@ -145,17 +137,17 @@
         </form>
     </div>       
     <div class="row flex md:justify-end justify-center gap-2 w-full">
-        <a href="{{ route('customer.fulfillment.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2 w-[20%]">
+        <a href="{{ route('supplier.fulfillment.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2 w-[20%]">
             <i class="fa-solid fa-arrow-left"></i>
             Back To List
         </a>
-        <a href="{{ route('customer.fulfillment.edit.form', ['fulfillment' => $fulfillment['id']]) }}" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2  w-[20%]">
+        <a href="{{ route('supplier.fulfillment.edit.form', ['fulfillment' => $fulfillment['id']]) }}" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2  w-[20%]">
             Edit Details
             <i class="fa-solid fa-arrow-right"></i>
         </a>
     </div>
-    @include('customer.fulfillment.support-tickets')
-    @include('customer.fulfillment.add-payment')
-    @include('customer.fulfillment.payment-records')
+    @include('supplier.fulfillment.support-tickets')
+    @include('supplier.fulfillment.add-payment')
+    @include('supplier.fulfillment.payment-records')
 </div>
 @endsection

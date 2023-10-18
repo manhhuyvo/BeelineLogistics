@@ -146,6 +146,74 @@ class FulfillmentController extends Controller
         ]);
     }
 
+    /** Display the page for viewing fulfillment */
+    public function show(Request $request, Fulfillment $fulfillment)
+    {
+        // Get current logged-in user
+        $user = Auth::user();
+
+        // Get customer model
+        $customer = collect($fulfillment->customer)->toArray();
+        
+        // If this fulfillment doesn't belong to the supplier viewing, then return to previous page
+        if ($user->supplier->id != $fulfillment->supplier_id) {
+            // Set error message
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // Get the payments recorded for this fulfillment
+        $productPayments = $fulfillment->productPayments;
+        $productPayments = $productPayments
+                ? collect($productPayments)->map(function(FulfillmentProductPayment $productPayment) {
+                    $approvedBy = $productPayment->staff;
+                    $userAction = $productPayment->user;
+                    // Entity owner
+                    $entityAction = $userAction->getUserOwner();
+                    
+                    $productPayment = collect($productPayment)->toArray();
+                    $productPayment['entity'] = $entityAction->toArray();
+
+                    return $productPayment;
+                })
+                ->sortBy('status')
+                ->toArray()
+                : [];
+
+        // Get any support ticket active for this fulfillment
+        $supportTickets = $fulfillment->supportTickets;
+
+        // Turn the fulfillment into an array
+        $fulfillment = collect($fulfillment)->toArray();
+
+        // Get product model and assign it to the fulfillment
+        $fulfillment['product_configs'] = collect(unserialize($fulfillment['product_configs']))->map(function ($product) {
+            // Find the product model, product group and turn it to array
+            $productModel = Product::find($product['product_id']) ?? [];
+            $productGroup = !empty($productModel) ? collect($productModel->productGroup)->toArray() : [];
+            $product['model'] = array_merge(collect($productModel)->toArray(), ['product_group' => $productGroup]);
+
+            // Return this product back to list
+            return $product;
+        })->toArray();
+
+        // Return the view
+        return view('supplier.fulfillment.show', [
+            'fulfillment' => $fulfillment,
+            'customer' => $customer,
+            'user' => $user,
+            'productPayments' => $productPayments,
+            'productPaymentStatuses' => ProductPaymentEnum::MAP_STATUSES,
+            'productPaymentStatusColors' => ProductPaymentEnum::MAP_STATUS_COLORS,
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'supportTicketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
+        ]);
+    }
+
     /** Handle request for export action */
     public function export(Request $request)
     {        

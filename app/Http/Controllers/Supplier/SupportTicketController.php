@@ -140,7 +140,7 @@ class SupportTicketController extends Controller
         if ($request->hasFile('attachments')) {
             // Prepare some values to save to database and store image
             $today = Carbon::now()->format('d_m_Y');
-            $randomString = generateRandomString(8);
+            $randomString = generateRandomString(7);
             $fileName = "ticket_attachment_{$today}_{$randomString}";
             $path = $this->UploadFile($request->file('attachments'), null, 'public', $fileName);
             // The file which has been uploaded
@@ -209,9 +209,11 @@ class SupportTicketController extends Controller
         $user = Auth::user();
 
         // Check if this user is allowed to view this ticket
-        $eligibleTicket = SupportTicket::whereHas('fulfillments', function ($query) use ($user) {
-            $query->where('supplier_id', $user->supplier->id);
-        })->first();
+        $eligibleTicket = SupportTicket::where('id', $ticket->id)
+                    ->whereHas('fulfillments', function ($query) use ($user) {
+                        $query->where('supplier_id', $user->supplier->id);
+                    })
+                    ->first();
         
         if (!$eligibleTicket) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();

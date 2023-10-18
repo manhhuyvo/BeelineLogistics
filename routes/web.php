@@ -37,6 +37,7 @@ use App\Http\Controllers\Customer\DashboardController as CustomerDashboardContro
 use App\Http\Controllers\Supplier\AuthController as SupplierAuthController;
 use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
 use App\Http\Controllers\Supplier\ProfileController as SupplierProfileController;
+use App\Http\Controllers\Supplier\FulfillmentController as SupplierFulfillmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -258,7 +259,18 @@ Route::prefix('customer')->group(function () {
 Route::prefix('supplier')->group(function() {
     Route::group(['middleware' => 'supplier.permission:all'], function () {        
         /** [DASHBOARD SUPPLIER ROUTES] */
-        Route::get('/dashboard', [SupplierDashboardController::class, 'index'])->name('supplier.dashboard'); 
+        Route::get('/dashboard', [SupplierDashboardController::class, 'index'])->name('supplier.dashboard');
+
+        /** [FULFILLMENT ROUTES] */
+        Route::get('/fulfillment', [SupplierFulfillmentController::class, 'index'])->name('supplier.fulfillment.list');
+        Route::post('/fulfillment/{fulfillment}/add-payment', [SupplierFulfillmentController::class, 'addPayment'])->name('supplier.fulfillment.add-payment');
+        Route::post('/fulfillment/bulk', [SupplierFulfillmentController::class, 'bulk'])->name('supplier.fulfillment.bulk');
+        Route::post('/fulfillment/export', [SupplierFulfillmentController::class, 'export'])->name('supplier.fulfillment.export');
+        Route::get('/fulfillment/create', [SupplierFulfillmentController::class, 'create'])->name('supplier.fulfillment.create.form');
+        Route::get('/fulfillment/{fulfillment}', [SupplierFulfillmentController::class, 'show'])->name('supplier.fulfillment.show');
+        Route::post('/fulfillment', [SupplierFulfillmentController::class, 'store'])->name('supplier.fulfillment.store');
+        Route::get('/fulfillment/{fulfillment}/edit', [SupplierFulfillmentController::class, 'edit'])->name('supplier.fulfillment.edit.form');
+        Route::post('/fulfillment/{fulfillment}', [SupplierFulfillmentController::class, 'update'])->name('supplier.fulfillment.update'); 
     });    
 
     /** [USER PROFILE ROUTES] */

@@ -266,3 +266,21 @@ Breadcrumbs::for('supplier.user.profile.form', function (BreadcrumbTrail $trail)
     $user = Auth::user();
     $trail->push("{$user->username}", route('supplier.user.profile.form'));
 });
+
+/** Breadcrumbs for FULFILLMENT */
+Breadcrumbs::for('supplier.fulfillment.list', function (BreadcrumbTrail $trail): void {
+    $trail->parent('supplier.dashboard');
+    $trail->push('Fulfillment', route('supplier.fulfillment.list'));
+});
+Breadcrumbs::for('supplier.fulfillment.create.form', function (BreadcrumbTrail $trail): void {
+    $trail->parent('supplier.fulfillment.list');
+    $trail->push('Add New Fulfillment', route('supplier.fulfillment.create.form'));
+});
+Breadcrumbs::for('supplier.fulfillment.show', function (BreadcrumbTrail $trail, $fulfillment): void {
+    $trail->parent('supplier.fulfillment.list');
+    $trail->push("Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('supplier.fulfillment.show', ['fulfillment' => $fulfillment->id]));
+});
+Breadcrumbs::for('supplier.fulfillment.edit.form', function (BreadcrumbTrail $trail, $fulfillment): void {
+    $trail->parent('supplier.fulfillment.list');
+    $trail->push("Edit Fulfillment #{$fulfillment->id} ({$fulfillment->name})", route('supplier.fulfillment.edit.form', ['fulfillment' => $fulfillment->id]));
+});

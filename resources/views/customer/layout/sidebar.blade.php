@@ -24,8 +24,8 @@
               </svg>
            </button>
           <a href="{{ route('customer.index') }}" class="flex ml-2 md:mr-24">
-            <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-3" alt="FlowBite Logo" />
-            <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Beeline Logistics</span>
+            <img src="{{ asset('assets/images/logo_landscape.png') }}" class="h-8 mr-4" alt="FlowBite Logo" />
+            <span class="self-center font-semibold sm:text-[16px] sm:flex hidden whitespace-nowrap">Customer Portal And Management System</span>
           </a>
         </div>
         <div class="flex items-center">
@@ -92,18 +92,18 @@
                     </svg>
               </button>
               <ul id="sidebar-user-dropdown" class="hidden bg-gray-100 text-sm">
-                    <li>
-                       <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Import Orders</a>
-                    </li>
-                    <li>
-                       <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Export Orders</a>
-                    </li>
-                    <li>
-                       <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Checkout Orders</a>
-                    </li>
-                    <li>
-                       <a href="{{ route('customer.fulfillment.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Fulfillment Orders</a>
-                    </li>
+                  <li>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Import Orders</a>
+                  </li>
+                  <li>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Export Orders</a>
+                  </li>
+                  <li>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Checkout Orders</a>
+                  </li>
+                  <li>
+                     <a href="{{ route('customer.fulfillment.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Fulfillment Orders</a>
+                  </li>
               </ul>
            </li>
            <li>

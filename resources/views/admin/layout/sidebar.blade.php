@@ -27,8 +27,8 @@
               </svg>
            </button>
           <a href="{{ route('admin.index') }}" class="flex ml-2 md:mr-24">
-            <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-3" alt="FlowBite Logo" />
-            <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Beeline Logistics</span>
+            <img src="{{ asset('assets/images/logo_landscape.png') }}" class="h-8 mr-4" alt="FlowBite Logo" />
+            <span class="self-center font-semibold sm:text-[16px] sm:flex hidden whitespace-nowrap">Admin Portal And Management System</span>
           </a>
         </div>
         <div class="flex items-center">
@@ -144,18 +144,18 @@
                     </svg>
               </button>
               <ul id="sidebar-user-dropdown" class="hidden bg-gray-100 text-sm">
-                    <li>
-                       <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Import Orders</a>
-                    </li>
-                    <li>
-                       <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Export Orders</a>
-                    </li>
-                    <li>
-                       <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Checkout Orders</a>
-                    </li>
-                    <li>
-                       <a href="{{ route('admin.fulfillment.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Fulfillment Orders</a>
-                    </li>
+                  <li>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Import Orders</a>
+                  </li>
+                  <li>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Export Orders</a>
+                  </li>
+                  <li>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Checkout Orders</a>
+                  </li>
+                  <li>
+                     <a href="{{ route('admin.fulfillment.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Fulfillment Orders</a>
+                  </li>
               </ul>
            </li>
            @if ( in_array($user->level, [StaffModel::POSITION_DIRECTOR, StaffModel::POSITION_ACCOUNTANT]))
@@ -166,19 +166,19 @@
               </a>
            </li>
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <a title="This feature is not available now" class="flex items-center p-2 text-gray-900 rounded-lg group cursor-pointer opacity-40">
                <i class="fa-solid fa-receipt flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
                  <span class="flex-1 ml-3 whitespace-nowrap">Bills</span>
               </a>
            </li>
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <a title="This feature is not available now" class="flex items-center p-2 text-gray-900 rounded-lg group cursor-pointer opacity-40">
                <i class="fa-solid fa-file-invoice-dollar flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
                  <span class="flex-1 ml-3 whitespace-nowrap">Salary Paycheck</span>
               </a>
            </li>
            <li>
-              <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100" aria-controls="sidebar-payments-dropdown" data-collapse-toggle="sidebar-payments-dropdown">
+              <button title="This feature is not available now" type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group opacity-40" aria-controls="sidebar-payments-dropdown" data-collapse-toggle="sidebar-payments-dropdown">
                   <i class="fa-solid fa-comment-dollar flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
                   <span class="flex-1 ml-3 text-left whitespace-nowrap">Payments</span>
                   <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -187,13 +187,13 @@
               </button>
               <ul id="sidebar-payments-dropdown" class="hidden bg-gray-100 text-sm">
                   <li>
-                     <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Invoice Payments</a>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Invoice Payments</a>
                   </li>
                   <li>
-                     <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Bill Payments</a>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Bill Payments</a>
                   </li>
                   <li>
-                     <a href="#" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Salary Payments</a>
+                     <a title="This feature is not available now" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer opacity-40">Salary Payments</a>
                   </li>
               </ul>
            </li>
@@ -209,7 +209,7 @@
               </a>
            </li>
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <a title="This feature is not available now" class="flex items-center p-2 text-gray-900 rounded-lg group cursor-pointer opacity-40">
                   <i class="fa-solid fa-clock-rotate-left flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
                  <span class="flex-1 ml-3 whitespace-nowrap">System Logs</span>
               </a>

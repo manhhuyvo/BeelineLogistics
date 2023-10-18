@@ -116,44 +116,6 @@
                         </tr>
                     </thead>
                     <tbody style="text-align: center !important;" id="add_new_row_container">
-                        <!--
-                        <tr class="bg-white border-b hover:bg-gray-50">
-                            <td class="px-2 py-2">
-                            </td>
-                            <td scope="row" class="px-2 py-2 text-center font-normal flex flex-col justify-start gap-2">
-                                <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
-                                    <select name="item_type[]" class="text-center bg-gray-50 border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5">
-                                        <option selected disabled>Choose item type</option>              
-                                    @foreach($createInvoiceFrom as $key => $value)
-                                        <option value="{{ $key }}">{{ $value }}</option>
-                                    @endforeach
-                                    </select>
-                                </div>
-                                <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
-                                    <select name="target_id[]" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full sm:p-2.5 p-1.5 searchableDropdowns target_id_dropdowns">
-                                        <option selected disabled>Choose item from list</option>        
-                                    @foreach($customersList as $key => $value)
-                                        <option value="{{ $key }}">{{ $value }}</option>
-                                    @endforeach
-                                    </select>
-                                    <div class="text-sm h-full font-medium text-sm focus:ring-1 flex-1 p-2.5 bg-gray-200 border-none pl-3 rounded-r-lg">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
-                                    </div>
-                                </div>
-                            </td>
-                            <td scope="row" class="px-2 py-2 font-normal text-gray-900 whitespace-nowrap">
-                                <textarea type="text" name="description[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-1.5 text-center resize-none min-h-[100px]"></textarea>
-                            </td>
-                            <td scope="row" class="px-2 py-2 font-normal">
-                                <input type="number" min="0" step="0.01" name="price[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]"/>
-                            </td>
-                            <td scope="row" class="px-2 py-2 font-normal">
-                                <input type="number" min="0" name="quantity[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]">
-                            </td>
-                            <td scope="row" class="px-2 py-2 font-normal">
-                                <input type="number" min="0" step="0.01" name="amount[]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-center min-h-[100px]">
-                            </td>
-                        </tr> -->
                     </tbody>
                     <tfoot>
                         <tr class="font-normal text-gray-900">
@@ -173,9 +135,9 @@
                         <tr class="font-normal text-gray-900">
                             <td colspan="2" class="pt-3">
                                 <div class="row flex flex-col gap-2 px-2.5">
-                                    <button type="button" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 hover:text-white font-medium w-fit min-w-[150px] hover:bg-blue-800 flex items-center gap-2 w-fit add_new_row" data-target="{{ InvoiceEnum::TARGET_ORDER }}">
+                                    <button type="button" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 hover:text-white font-medium w-fit min-w-[150px] hover:bg-blue-800 flex items-center gap-2 w-fit add_new_row" data-target="{{ InvoiceEnum::TARGET_MANUAL }}">
                                         <i class="fa-solid fa-plus"></i>
-                                        Add Order Row
+                                        Add Manual Row
                                     </button>
                                 </div>
                             </td>
@@ -186,12 +148,12 @@
                         </tr>
                         <tr class="font-semibold text-gray-900 text-lg">
                             <td colspan="2" class="pt-3">
-                                <div class="row flex flex-col gap-2 px-2.5">
-                                    <button type="button" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 hover:text-white font-medium w-fit min-w-[150px] hover:bg-blue-800 flex items-center gap-2 w-fit add_new_row" data-target="{{ InvoiceEnum::TARGET_MANUAL }}">
+                                {{-- <div class="row flex flex-col gap-2 px-2.5">
+                                    <button type="button" class="px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 hover:text-white font-medium w-fit min-w-[150px] hover:bg-blue-800 flex items-center gap-2 w-fit add_new_row" data-target="{{ InvoiceEnum::TARGET_ORDER }}">
                                         <i class="fa-solid fa-plus"></i>
-                                        Add Manual Row
+                                        Add Order Row
                                     </button>
-                                </div>
+                                </div> --}}
                             </td>
                             <td class="p-2.5"></td>
                             <th scope="row" class="p-2.5 border-t border-gray-500">Total</th>

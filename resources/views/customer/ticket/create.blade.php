@@ -41,10 +41,10 @@
                     <i class="fa-solid fa-plus"></i>
                     Add Fulfillment Row
                 </button>
-                <button type="button" class="add_new_row px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 font-medium hover:text-gray-400 flex items-center gap-2 w-fit min-w-[150px]" data-target="order">
+                {{-- <button type="button" class="add_new_row px-2.5 py-1.5 rounded-[5px] text-[12px] bg-gray-200 text-gray-900 font-medium hover:text-gray-400 flex items-center gap-2 w-fit min-w-[150px]" data-target="order">
                     <i class="fa-solid fa-plus"></i>
                     Add Order Row
-                </button>
+                </button> --}}
             </div>
             <div class="row flex justify-center px-3 gap-2 mt-4">
                 <button type="submit" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">

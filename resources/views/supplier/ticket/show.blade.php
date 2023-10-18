@@ -1,4 +1,4 @@
-@extends('customer.layout.layout')
+@extends('supplier.layout.layout')
 @section('content')
 
 @php    
@@ -6,7 +6,7 @@
 @endphp
 
 <div class="relative sm:rounded-lg">
-    @include('customer.layout.response')
+    @include('supplier.layout.response')
     <h2 class="text-2xl font-medium mt-2 mb-3">View Ticket Details</h2>
     <div class="relative w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-1">
         <h2 class="text-xl font-bold absolute top-3 right-3 text-{{ $supportTicketStatusColors[$ticket['status']] }}-500 px-3 py-2 border-solid border-{{ $supportTicketStatusColors[$ticket['status']] }}-500 border-[3px] rounded-lg">{{ Str::upper($supportTicketStatuses[$ticket['status']]) }}</h2>
@@ -99,7 +99,7 @@
                                             Fulfillment
                                         </td>
                                         <td scope="row" class="px-2 py-2 whitespace-nowrap font-semibold text-gray-900">
-                                            <a target="_blank" href="{{ route('customer.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" class="hover:underline hover:text-gray-500">Fulfillment #{{ $fulfillment['id'] }} - {{ e($fulfillment['name']) }} (<span class="text-{{ FulfillmentEnum::MAP_SHIPPING_COLORS[$fulfillment['shipping_status']] }}-600">{{ FulfillmentEnum::MAP_SHIPPING_STATUSES[$fulfillment['shipping_status']] ?? 'Waiting' }}</span>)</a>
+                                            <a target="_blank" href="{{ route('supplier.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" class="hover:underline hover:text-gray-500">Fulfillment #{{ $fulfillment['id'] }} - {{ e($fulfillment['name']) }} (<span class="text-{{ FulfillmentEnum::MAP_SHIPPING_COLORS[$fulfillment['shipping_status']] }}-600">{{ FulfillmentEnum::MAP_SHIPPING_STATUSES[$fulfillment['shipping_status']] ?? 'Waiting' }}</span>)</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -125,7 +125,7 @@
                 </div>
                 @endif
             </div>
-            @include('customer.ticket.comments')
+            @include('supplier.ticket.comments')
         </div>
     </div>
 </div>

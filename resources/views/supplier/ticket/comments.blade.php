@@ -1,5 +1,5 @@
 <div class="w-full flex flex-col gap-2 border-b border-x border-gray-200 py-2 px-2.5 tabContainers" id="comments">
-    <form method="POST" action="{{ route('customer.ticket.comment.store', ['ticket' => $ticket['id']]) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('supplier.ticket.comment.store', ['ticket' => $ticket['id']]) }}" enctype="multipart/form-data">
         <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
         <div class="w-full flex flex-col gap-1 items-end">
             <p class="text-lg font-medium text-blue-600 mt-1 text-left w-full">
@@ -41,7 +41,7 @@
                         @elseif ($comment['user']['target'] == User::TARGET_STAFF)
                             <p class="font-bold">({{ Staff::MAP_POSITIONS[$comment['user']['staff']['position']] }}) {{ $comment['owner']['full_name'] ?? '' }}</p>
                         @else
-                            <p class="font-bold">(Staff) {{ $comment['owner']['full_name'] ?? '' }}</p>
+                            <p class="font-bold">({{ $comment['owner']['company'] ?? 'Supplier' }}) {{ $comment['owner']['full_name'] ?? '' }}</p>
                         @endif
                         <p class="text-sm italic text-gray-500">{{ $comment['created_at'] }}</p>
                     </div>

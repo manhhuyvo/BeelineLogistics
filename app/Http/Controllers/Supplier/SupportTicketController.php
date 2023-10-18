@@ -202,6 +202,50 @@ class SupportTicketController extends Controller
         $responseData = viewResponseFormat()->success()->message(ResponseMessageEnum::SUCCESS_ADD_NEW_RECORD)->send();
 
         return redirect()->back()->with(['response' => $responseData]);
+    }    
+
+    public function show(Request $request, SupportTicket $ticket)
+    {        
+        $user = Auth::user();
+
+        // Check if this user is allowed to view this ticket
+        $eligibleTicket = SupportTicket::whereHas('fulfillments', function ($query) use ($user) {
+            $query->where('supplier_id', $user->supplier->id);
+        })->first();
+        
+        if (!$eligibleTicket) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        $customer = $ticket->customer;
+        $userCreated = $ticket->userCreated ? $ticket->userCreated->getUserOwner() : null;
+        $userSolved = $ticket->userSolved ? $ticket->userSolved->getUserOwner() : null;
+        $fulfillments = $ticket->fulfillments;
+        $orders = $ticket->orders;
+        $comments = $ticket->comments ?? [];
+        $comments = collect($comments)->map(function(SupportTicketComment $comment) {
+            $userComment = $comment->user;
+            $ownerComment = collect($userComment->getUserOwner())->toArray();
+            $comment = collect($comment)->toArray();
+            $comment['owner'] = $ownerComment;
+
+            return $comment;
+        })
+        ->toArray();
+
+        // Return the view
+        return view('supplier.ticket.show', [
+            'user' => $user,
+            'ticket' => $ticket->toArray(),
+            'comments' => collect($comments)->toArray(),
+            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'supportTicketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
+        ]);
     }
 
     /** Validate the item list of the request */

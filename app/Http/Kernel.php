@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\Customer\CustomerLoginRedirect;
+use App\Http\Middleware\Welcome\UserLoginRedirect;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -70,6 +71,7 @@ class Kernel extends HttpKernel
         'customer.login.redirect' => \App\Http\Middleware\Customer\CustomerLoginRedirect::class,
         'supplier.permission' => \App\Http\Middleware\Supplier\SupplierPermission::class,
         'supplier.login.redirect' => \App\Http\Middleware\Supplier\SupplierLoginRedirect::class,
+        'welcome.login.redirect' => \App\Http\Middleware\Welcome\UserLoginRedirect::class,
         'optimizeImages' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class,
     ];
 }

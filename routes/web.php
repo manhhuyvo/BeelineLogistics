@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IndexController;
 
 // ADMIN INCLUDES
 use App\Http\Controllers\Admin\StaffController;
@@ -53,6 +54,10 @@ use App\Http\Controllers\Supplier\SmallElementsLoaderController as SupplierSmall
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::prefix('/')->group(function () {    
+    Route::group(['middleware' => ['welcome.login.redirect']], function() {
+        Route::get('/', [IndexController::class,'index'])->name('welcome.index');
+    });
 
 Route::prefix('admin')->group(function () {
     Route::group(['middleware' => ['staff.login.redirect']], function() {
@@ -305,4 +310,7 @@ Route::prefix('supplier')->group(function() {
 
     /* [SUPPLIER LOGOUT ROUTE] */
     Route::get('/logout', [SupplierAuthController::class, 'logout'])->name('supplier.logout');
+});
+
+
 });

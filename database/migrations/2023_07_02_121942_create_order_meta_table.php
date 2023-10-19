@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id')->index();
             $table->string('name', 255);
-            $table->string('value', 255);
+            $table->json('value');
             $table->timestamps();
         });
     }

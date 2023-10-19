@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('address', 255);
             $table->date('dob');
             $table->string('position', 100);
+            $table->string('type', 100);
             $table->json('salary_configs');
             $table->string('status', 20);
             $table->string('note', 255);

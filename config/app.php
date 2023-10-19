@@ -1,6 +1,28 @@
 <?php
 
+use App\Enums\CurrencyAndCountryEnum;
+use App\Enums\FulfillmentEnum;
+use App\Enums\GeneralEnum;
+use App\Enums\InvoiceEnum;
+use App\Enums\ProductPaymentEnum;
+use App\Enums\SupportTicketEnum;
+use App\Models\User;
+use App\Models\Supplier;
+use App\Models\Staff;
+use App\Models\Customer;
+use App\Models\Fulfillment;
+use App\Models\Product\Group;
+use App\Models\Product;
+use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
+use App\Models\SupportTicket;
+use App\Models\SupportTicketComment;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 return [
 
@@ -69,7 +91,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -194,6 +216,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
 
     ],
 
@@ -210,6 +233,32 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'StaffModel' => App\Models\Staff::class,
+        'UserModel' => App\Models\User::class,
+        'SupplierModel' => App\Models\Supplier::class,
+        'Session' => Session::class,
+        'Carbon' => Carbon::class,
+        'Str' => Str::class,
+        'URL' => URL::class,
+        'Route' => Route::class,
+        'Auth' => Auth::class,
+        'User' => User::class,
+        'Staff' => Staff::class,
+        'Supplier' => Supplier::class,
+        'Customer' => Customer::class,
+        'ProductGroup' => Group::class,
+        'Product' => Product::class,
+        'Fulfillment' => Fulfillment::class,
+        'FulfillmentProductPayment' => FulfillmentProductPayment::class,
+        'SupportTicket' => SupportTicket::class,
+        'SupportTicketComment' => SupportTicketComment::class,
+        // Enums
+        'FulfillmentEnum' => FulfillmentEnum::class,
+        'InvoiceEnum' => InvoiceEnum::class,
+        'CurrencyAndCountryEnum' => CurrencyAndCountryEnum::class,
+        'GeneralEnum' => GeneralEnum::class,
+        'ProductPaymentEnum' => ProductPaymentEnum::class,
+        'SupportTicketEnum' => SupportTicketEnum::class,
     ])->toArray(),
 
 ];

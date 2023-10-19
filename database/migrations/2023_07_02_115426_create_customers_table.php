@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('full_name', 255);
             $table->string('phone', 50);
             $table->string('address', 255);
+            $table->json('price_configs');
             $table->json('default_sender');
             $table->json('default_receiver');
             $table->string('type', 20);

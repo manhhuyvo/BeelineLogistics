@@ -745,8 +745,8 @@ class FulfillmentController extends Controller
     {
         $validator = Validator::make($request->all(), [
             // Customer Details
-            "name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
-            "phone" => ["required", "regex:/^[0-9\s]+$/"],
+            "name" => ["required"],
+            "phone" => ["required"],
             "address" => ["required"],
             "suburb" => ["required"],
             "state" => ["required"],

@@ -936,8 +936,8 @@ class FulfillmentController extends Controller
             // Customer Details
             "staff_id" => ["required", "integer"],
             "customer_id" => ["required", "integer"],
-            "name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
-            "phone" => ["required", "regex:/^[0-9\s]+$/"],
+            "name" => ["required"],
+            "phone" => ["required"],
             "address" => ["required"],
             "suburb" => ["required"],
             "state" => ["required"],

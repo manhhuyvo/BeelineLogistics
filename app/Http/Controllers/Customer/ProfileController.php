@@ -123,17 +123,17 @@ class ProfileController extends Controller
     {        
         return Validator::make($request->all(), [
             // Personal Details
-            "full_name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
-            "phone" => ["required", "regex:/^[0-9\s]+$/"],
+            "full_name" => ["required"],
+            "phone" => ["required"],
             "address" => ["required"],
             // Default Sender
-            "default_sender_name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
-            "default_sender_phone" => ["required", "regex:/^[0-9\s]+$/"],
+            "default_sender_name" => ["required"],
+            "default_sender_phone" => ["required"],
             "default_sender_address" => ["required"],
             // Default Receiver
             "default_receiver_zone" => ["required", "integer", Rule::in(Customer::RECEIVER_ZONES)],
-            "default_receiver_name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
-            "default_receiver_phone" => ["required", "regex:/^[0-9\s]+$/"],
+            "default_receiver_name" => ["required"],
+            "default_receiver_phone" => ["required"],
             "default_receiver_address" => ["required"],
         ]);
     }

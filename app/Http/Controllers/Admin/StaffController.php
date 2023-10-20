@@ -199,17 +199,17 @@ class StaffController extends Controller
     private function validateRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "full_name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
-            "phone" => ["required", "regex:/^[0-9\s]+$/"],
+            "full_name" => ["required"],
+            "phone" => ["required"],
             "address" => ["required"],
-            "base_salary" => ["required", "regex:/^[0-9]+$/"],
+            "base_salary" => ["required", "numeric"],
             "position" => ["required", "integer"],
             "type" => ["required", "integer"],
             "dob" => ["required"],
             "status" => ["required", "integer"],
         ]);
 
-        $validator->sometimes('commission_amount', ["required", "regex:/^[0-9\.\,]+$/"], function ($input) {
+        $validator->sometimes('commission_amount', ["required", "numeric"], function ($input) {
             return $input->apply_commission != null;
         });
 

@@ -124,8 +124,8 @@ class ProfileController extends Controller
     private function validateRequest(Request $request)
     {        
         return Validator::make($request->all(), [
-            "full_name" => ["required", "regex:/^[a-zA-Z\s]+$/"],
-            "phone" => ["required", "regex:/^[0-9\s]+$/"],
+            "full_name" => ["required"],
+            "phone" => ["required"],
             "address" => ["required"],
             "dob" => ["required"],
         ]);

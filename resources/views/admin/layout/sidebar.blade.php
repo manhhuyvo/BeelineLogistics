@@ -45,7 +45,9 @@
                     {{ $userLoggedIn->username }}
                   </p>
                   <p class="text-sm font-medium text-gray-900 truncate" role="none">
-                    neil.sims@flowbite.com
+                     @if (!empty($user))
+                     {{ $user->staff->full_name }}
+                     @endif
                   </p>
                 </div>
                 <ul role="none">

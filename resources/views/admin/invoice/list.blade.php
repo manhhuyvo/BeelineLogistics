@@ -33,46 +33,46 @@
                             <label for="select_all_rows" class="sr-only">checkbox</label>
                         </div>
                     </th>
-                    <th scope="col" class="pl-4 sm:py-3 py-2">
+                    <th scope="col" class="pl-4 sm:py-3 py-2 whitespace-nowrap">
                         Index
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Invoice_ID
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Invoice ID
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Customer_Name
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Customer Name
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Reference
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Total_Amount
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Total Amount
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Outstanding
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Due Date
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Status
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Payment
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Items
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Staff_Created
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Staff Created
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Extra_Note
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Extra Note
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Date_Created
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Date Created
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Action
                     </th>
                 </tr>
@@ -86,7 +86,7 @@
                             <label class="sr-only">checkbox</label>
                         </div>
                     </td>
-                    <th scope="col" class="pl-4 py-3">
+                    <th scope="col" class="pl-4 py-3 whitespace-nowrap">
                         {{ $index + 1 }}
                     </th>
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
@@ -95,20 +95,20 @@
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $invoice['customer']['customer_id'] }} {{ $invoice['customer']['full_name'] }}
                     </th>
-                    <td class="px-6 py-4">
-                        {{ $invoice['reference'] ?? '' }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{ e(Str::limit($invoice['reference'] ?? '', 40, $end='...')) }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         @if (!empty($invoice['total_amount']))
                         {{ $invoice['total_amount'] ?? '' }} {{ $invoice['unit'] }}
                         @endif 
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         @if (!empty($invoice['outstanding_amount']))
                         {{ $invoice['outstanding_amount'] ?? '' }} {{ $invoice['unit'] }}
                         @endif 
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         {{ $invoice['due_date'] }}
                     </td>
                     <td scope="row" class="py-4 font-medium whitespace-nowrap text-[12px]">
@@ -117,16 +117,16 @@
                     <td scope="row" class="py-4 font-medium whitespace-nowrap text-[12px]">
                         <span class="bg-{{ $paymentStatusColors[$invoice['payment_status']] }}-500 py-2 px-3 rounded-lg text-white">{{ Str::upper($paymentStatuses[$invoice['payment_status']]) }}</span>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         {{ count($invoice['items']) }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         {{ $invoice['staff']['full_name'] }} ({{ Str::upper(Staff::MAP_POSITIONS[$invoice['staff']['position']]) }})
                     </td>
-                    <td class="px-6 py-4">
-                        {{ $invoice['note'] ?? '' }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{ e(Str::limit($invoice['note'] ?? '', 40, $end='...')) }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         {{ $invoice['created_at'] }}
                     </td>
                     <td class="px-6 py-4">

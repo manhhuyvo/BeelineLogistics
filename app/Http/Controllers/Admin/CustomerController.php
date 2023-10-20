@@ -122,6 +122,9 @@ class CustomerController extends Controller
             $data['staff_id'] = $user->staff->id;
         }
 
+        // Set default price_configs as empty string
+        $data['price_configs'] = '';
+
         $newCustomer = new Customer($data);
         if (!$newCustomer->save()) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::FAILED_ADD_NEW_RECORD)->send();

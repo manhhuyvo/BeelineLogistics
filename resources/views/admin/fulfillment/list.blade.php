@@ -30,63 +30,63 @@
                             <label for="select_all_rows" class="sr-only">checkbox</label>
                         </div>
                     </th>
-                    <th scope="col" class="pl-4 sm:py-3 py-2">
+                    <th scope="col" class="pl-4 sm:py-3 py-2 whitespace-nowrap">
                         Index
                     </th>
-                    <th scope="col" class="px-4 sm:py-3 py-2">
+                    <th scope="col" class="px-4 sm:py-3 py-2 whitespace-nowrap">
                         <div class="flex items-center">
-                            Current_Stage
+                            Current Stage
                         </div>
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Fulfillment_ID
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Fulfillment ID
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Customer_Owner
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Customer Owner
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Receiver_Name
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Receiver Name
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Receiver_Phone
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Receiver Phone
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Receiver_Address
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Receiver Address
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Staff_Manage
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Staff Manage
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Shipping_Type
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Shipping Type
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Tracking_Number
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Tracking Number
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Postage_Cost
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Postage Cost
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Fulfillment_Status
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Fulfillment Status
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Product_Amount
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Product Amount
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Product_Payment_Status
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Product Payment Status
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Labour_Cost
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Labour Cost
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Labour_Payment_Status
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Labour Payment Status
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Extra_Note
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Extra Note
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
-                        Date_Created
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Date Created
                     </th>
-                    <th scope="col" class="px-6 sm:py-3 py-2">
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Action
                     </th>
                 </tr>
@@ -148,7 +148,7 @@
                     <td class="px-6 py-4 text-{{ $fulfillmentStatusColors[$fulfillment['fulfillment_status']] }}-500 font-semibold whitespace-nowrap">
                         {{ $fulfillmentStatuses[$fulfillment['fulfillment_status']] }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         @if (!empty($fulfillment['total_product_amount']))
                         {{ $fulfillment['total_product_amount'] ?? '' }} {{ $fulfillment['product_unit'] }}
                         @endif 
@@ -164,10 +164,10 @@
                     <td class="px-6 py-4 text-{{ $paymentStatusColors[$fulfillment['labour_payment_status']] }}-500 font-semibold whitespace-nowrap">
                         {{ $paymentStatuses[$fulfillment['labour_payment_status']] }}
                     </td>
-                    <td class="px-6 py-4">
-                        {{ $fulfillment['note'] ?? '' }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{ e(Str::limit($fulfillment['note'] ?? '', 40, $end='...')) }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['created_at'] }}
                     </td>
                     <td class="px-6 py-4">

@@ -30,7 +30,7 @@ class AuthController extends Controller
         $data = $request->all();
         // Validate the request
         $validation = Validator::make($data, [
-            'username' => ["required", "regex:'^[a-zA-Z0-9]'"], // only allow normal string
+            'username' => ["required"], // only allow normal string
             'password' => ["required"]
         ]);
 

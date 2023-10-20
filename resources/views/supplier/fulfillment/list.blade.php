@@ -144,7 +144,7 @@
                         @endif 
                     </td>
                     <td class="px-6 py-4">
-                        {{ $fulfillment['note'] ?? '' }}
+                        {{ e(Str::limit($fulfillment['note'] ?? '', 40, $end='...')) }}
                     </td>
                     <td class="px-6 py-4">
                         {{ $fulfillment['created_at'] }}

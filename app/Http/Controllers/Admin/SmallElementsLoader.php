@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Enums\InvoiceEnum;
 use App\Enums\SupportTicketEnum;
 use App\Models\Fulfillment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class SmallElementsLoader extends Controller
@@ -65,7 +66,18 @@ class SmallElementsLoader extends Controller
     private function formatProductsList()
     {
         // Load all products with their groups
-        $allProducts = Product::with('productGroup')->get();
+        $allProducts = Product::with('productGroup');
+
+        // Check and query for each type of user
+        $user = Auth::user();
+        if ($user->isStaff() && !$user->staff->isAdmin()) {
+            $allProducts = $allProducts->whereHas('customer', function ($query) use ($user) {
+                $query->where('staff_id', $user->staff->id);
+            });
+        }
+
+        $allProducts = $allProducts->get();
+
         // Get group name and filter the un-used keys
         $allProducts = collect($allProducts)->mapWithKeys(function(Product $product, int $index) {
             $displayMessage = "{$product['name']}";

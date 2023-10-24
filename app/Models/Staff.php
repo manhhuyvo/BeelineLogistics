@@ -77,7 +77,7 @@ class Staff extends Model
     ];
 
     const MAP_POSITIONS = [
-        self::POSITION_DIRECTOR => 'Director',
+        self::POSITION_DIRECTOR => 'Executive',
         self::POSITION_ACCOUNTANT => 'Accountant',
         self::POSITION_SALES => 'Sales',
         self::POSITION_CUSTOMER_SERVICE => 'Customer Service',

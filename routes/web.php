@@ -136,13 +136,13 @@ Route::prefix('admin')->group(function () {
         Route::delete('/product-group/{group}', [ProductGroupController::class, 'destroy'])->name('admin.product-group.delete');
 
         /** [PRODUCT ROUTES] */
-        Route::get('/product', [ProductController::class, 'index'])->name('admin.product.list');
-        Route::get('/product/create', [ProductController::class, 'create'])->name('admin.product.create.form');
-        Route::post('/product', [ProductController::class, 'store'])->name('admin.product.store');
-        Route::get('/product/{product}', [ProductController::class, 'show'])->name('admin.product.show');
-        Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit.form');
-        Route::post('/product/{product}', [ProductController::class, 'update'])->name('admin.product.update');
-        Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('admin.product.delete');
+        // Route::get('/product', [ProductController::class, 'index'])->name('admin.product.list');
+        // Route::get('/product/create', [ProductController::class, 'create'])->name('admin.product.create.form');
+        // Route::post('/product', [ProductController::class, 'store'])->name('admin.product.store');
+        // Route::get('/product/{product}', [ProductController::class, 'show'])->name('admin.product.show');
+        // Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit.form');
+        // Route::post('/product/{product}', [ProductController::class, 'update'])->name('admin.product.update');
+        // Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('admin.product.delete');
 
         /** [CUSTOMER PRICING ROUTES] */
         Route::get('/customer/price-configs/{customer}/edit', [CustomerController::class, 'editPriceConfigsPage'])->name('admin.customer.price-configs.edit.form');
@@ -182,6 +182,15 @@ Route::prefix('admin')->group(function () {
         /** [CUSTOMER META ROUTES] */
         Route::post('/customer/{customer}/country-config', [CustomerController::class, 'countryConfig'])->name('admin.customer.country-config');
         Route::post('/customer/{customer}/service-config', [CustomerController::class, 'serviceConfig'])->name('admin.customer.service-config');
+
+        /** [PRODUCT ROUTES] */
+        Route::get('/product', [ProductController::class, 'index'])->name('admin.product.list');
+        Route::get('/product/create', [ProductController::class, 'create'])->name('admin.product.create.form');
+        Route::post('/product', [ProductController::class, 'store'])->name('admin.product.store');
+        Route::get('/product/{product}', [ProductController::class, 'show'])->name('admin.product.show');
+        Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit.form');
+        Route::post('/product/{product}', [ProductController::class, 'update'])->name('admin.product.update');
+        Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('admin.product.delete');
 
         /** [FULFILLMENT ROUTES] */
         Route::get('/fulfillment', [FulfillmentController::class, 'index'])->name('admin.fulfillment.list');

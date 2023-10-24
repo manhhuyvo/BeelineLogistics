@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Enums\ResponseMessageEnum;
 use App\Enums\SupplierEnum;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use function PHPUnit\Framework\isEmpty;
@@ -55,11 +56,12 @@ class AjaxController extends Controller
                     $view = view('admin.user.components.user-staff-owner', ['data' => $returnData]);
                 }
                 break;
-            case User::TARGET_CUSTOMER:
+            case User::TARGET_CUSTOMER:        
                 // Search by customer name or customer_id
                 $result = Customer::where('full_name', 'like', "%{$data['searchTerm']}%")
                 ->orWhere('customer_id', 'like', "%{$data['searchTerm']}%")
-                ->get();       
+                ->get();    
+
                 // If result is not empty, then we filter data 
                 if (!$result->isEmpty()) {
                     $returnData = collect($result)->map(function($row) {
@@ -109,6 +111,8 @@ class AjaxController extends Controller
 
     public function searchCustomer(Request $request)
     {
+        $user = Auth::user();
+
         // Validate the request coming
         $validation = $this->validateRequest($request);
                 
@@ -119,10 +123,15 @@ class AjaxController extends Controller
 
         // We only want to take necessary fields
         $data = $this->formatRequestData($request);
+
         // Search by customer name or customer_id
         $result = Customer::where('full_name', 'like', "%{$data['searchTerm']}%")
-        ->orWhere('customer_id', 'like', "%{$data['searchTerm']}%")
-        ->get();       
+        ->orWhere('customer_id', 'like', "%{$data['searchTerm']}%");
+        if ($user->isStaff() && !$user->staff->isAdmin()) {
+            $result = $result->where('staff_id', $user->staff->id);
+        }
+        $result = $result->get();
+
         // If result is not empty, then we filter data 
         if (!$result->isEmpty()) {
             $returnData = collect($result)->map(function($row) {

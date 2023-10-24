@@ -32,6 +32,9 @@
                         Ticket ID
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Customner
+                    </th>
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Ticket Title
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
@@ -69,7 +72,10 @@
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         <a href="{{ route('admin.ticket.show', ['ticket' => $ticket['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $ticket['id'] }}<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
                     </th>
-                    <th scope="row" class="px-6 py-4 min-w-[400px]">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        {{ $ticket['customer']['customer_id'] }} {{ $ticket['customer']['full_name'] }}
+                    </th>
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ e($ticket['title'] ?? '') }}
                     </th>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap">

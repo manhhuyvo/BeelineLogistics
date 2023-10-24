@@ -1069,7 +1069,18 @@ class FulfillmentController extends Controller
     private function formatProductsList()
     {
         // Load all products with their groups
-        $allProducts = Product::with(['productGroup', 'customer'])->get();
+        $allProducts = Product::with('productGroup');
+
+        // Check and query for each type of user
+        $user = Auth::user();
+        if ($user->isStaff() && !$user->staff->isAdmin()) {
+            $allProducts = $allProducts->whereHas('customer', function ($query) use ($user) {
+                $query->where('staff_id', $user->staff->id);
+            });
+        }
+
+        $allProducts = $allProducts->get();
+
         // Get group name and filter the un-used keys
         $allProducts = collect($allProducts)->mapWithKeys(function(Product $product, int $index) {
             $displayMessage = "{$product['name']}";

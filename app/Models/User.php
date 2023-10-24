@@ -84,7 +84,7 @@ class User extends Model implements Authenticatable
     ];
 
     const MAP_USER_LEVELS = [
-        self::LEVEL_DIRECTOR => "Director",
+        self::LEVEL_DIRECTOR => "Executive",
         self::LEVEL_ACCOUNTANT => "Accountant",
         self::LEVEL_SALES => "Sales",
         self::LEVEL_CUSTOMER_SERVICE => "Customer Service",
@@ -94,7 +94,7 @@ class User extends Model implements Authenticatable
     ];
 
     const MAP_USER_STAFF_LEVELS = [
-        self::LEVEL_DIRECTOR => "Director",
+        self::LEVEL_DIRECTOR => "Executive",
         self::LEVEL_ACCOUNTANT => "Accountant",
         self::LEVEL_SALES => "Sales",
         self::LEVEL_CUSTOMER_SERVICE => "Customer Service",

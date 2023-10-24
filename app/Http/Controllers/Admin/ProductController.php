@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Product\Group as ProductGroup;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -19,6 +20,14 @@ class ProductController extends Controller
     {
         // Retrieve list of all first
         $allProducts = Product::with(['productGroup', 'customer']);
+
+        // Filter out if this is sales viewing their products
+        $user = Auth::user();
+        if (!$user->staff->isAdmin()) {
+            $allProducts->whereHas('customer', function ($query) use ($user) {
+                $query->where('staff_id', $user->staff->id);
+            });
+        }
 
         // Validate the filter request
         $data = $request->all();
@@ -45,7 +54,7 @@ class ProductController extends Controller
             $product['price_configs'] = unserialize($product['price_configs']);
 
             return $product;
-        });
+        })->toArray();
         $paginationData = collect($allProducts)->except(['data'])->toArray();
 
         // Only cut the next and previous buttons if count > 7
@@ -105,6 +114,26 @@ class ProductController extends Controller
     /** Display the page for view product details */
     public function show(Request $request, Product $product)
     {       
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a product doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $product->customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->route('admin.product.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+        
         // Turn the product into array and unserialize the price configs
         $customer = $product->customer;
         $product = collect($product)->toArray();
@@ -130,6 +159,26 @@ class ProductController extends Controller
     /** Display the page for edit product details */
     public function edit(Request $request, Product $product)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a product doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $product->customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->route('admin.product.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Turn the product into array and unserialize the price configs
         $customer = $product->customer;
         $product = $product->toArray();
@@ -192,6 +241,26 @@ class ProductController extends Controller
     /** Handle request for edit product details */
     public function update(Request $request, Product $product)
     {
+        $user = Auth::user();
+        if (!$user || !$user->isStaff() || empty($user->staff)) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->back()->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
+        // If this user is not admin and trying to view a product doesn't belong to him, then throw error
+        if (!$user->staff->isAdmin() && $product->customer->staff_id != $user->staff->id) {
+            $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
+
+            return redirect()->route('admin.product.list')->with([
+                'response' => $responseData,
+                'request' => $request->all(),
+            ]);
+        }
+
         // Validate the request coming
         $validation = $this->validateRequest($request);
         
@@ -296,14 +365,20 @@ class ProductController extends Controller
     /** Format the array for customers list */
     private function formatCustomersList(string $listType = '')
     {
+        $user = Auth::user();
+
         $filterStatuses = (!empty($listType) && $listType  == "all") ? Customer::CUSTOMER_STATUSES : [
             Customer::STATUS_ACTIVE,
             Customer::STATUS_PENDING,
         ];
 
-        $allCustomers = Customer::whereIn('status', $filterStatuses)
-                    ->select('id', 'full_name', 'customer_id')
-                    ->get();
+        $allCustomers = Customer::whereIn('status', $filterStatuses);
+
+        if (!$user->staff->isAdmin()) {
+            $alLCustomers = $allCustomers->where('staff_id', $user->staff->id);
+        }
+
+        $allCustomers = $allCustomers->select('id', 'full_name', 'customer_id')->get();
         
         $data = [];
         foreach ($allCustomers as $customer) {

@@ -40,7 +40,7 @@ class SupportTicketController extends Controller
         }
 
         // Retrieve list of all first
-        $allTickets = SupportTicket::with(['userCreated', 'userSolved', 'comments']);
+        $allTickets = SupportTicket::with(['userCreated', 'userSolved', 'comments', 'customer']);
 
         // If this is not admin, then only show the fulfillments that this staff manage
         if (!$user->staff->isAdmin()) {

@@ -753,7 +753,7 @@ class FulfillmentController extends Controller
             "address" => ["required"],
             "suburb" => ["required"],
             "state" => ["required"],
-            "postcode" => ["required", "integer"],
+            "postcode" => ["required", "numeric"],
             "country" => ["required", Rule::in(array_keys(CurrencyAndCountryEnum::MAP_COUNTRIES))],
             "fulfillment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_FULFILLMENT_STATUSES))],
             "product_payment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_PAYMENT_STATUSES))],

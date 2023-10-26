@@ -5,10 +5,12 @@ class ProductPaymentEnum
 {
     const PAYMENT_METHOD_TRANSFER = '1';
     const PAYMENT_METHOD_CASH = '2';
+    const PAYMENT_METHOD_CHEQUE = '3';
     
     const MAP_PAYMENT_METHODS = [
         self::PAYMENT_METHOD_TRANSFER => 'Bank Transfer',
         self::PAYMENT_METHOD_CASH => 'Cash',
+        self::PAYMENT_METHOD_CHEQUE => 'Cheque',
     ];
 
     const STATUS_APPROVED = '1';

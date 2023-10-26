@@ -1,6 +1,6 @@
 <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-1">
     <p class="text-lg px-3 py-1 font-medium text-blue-600">
-        Country Configurations
+        Service Configurations
     </p>
     <form class="w-full flex flex-col gap-3 px-3 py-2 justify-center" action="{{ route('admin.supplier.service-config', ['supplier' => $supplier['id']]) }}" method="POST">
         <input name="_token" type="hidden" value="{{ csrf_token() }}"/>

@@ -224,6 +224,11 @@ class FulfillmentController extends Controller
             $data['staff_id'] = $user->staff->id;
         }
 
+        // If this is a non-admin staff creating new fulfillment, then don't allow them to manually select a supplier
+        if (!$user->staff->isAdmin()) {
+            $data['default_supplier'] = 'on';
+        }
+
         // If use chose to get default supplier, then get that details
         if (!empty($data['default_supplier']) && $data['default_supplier'] == 'on') {
             $countryServiceConfig = CountryServiceConfiguration::where('country', $data['country'])
@@ -944,7 +949,7 @@ class FulfillmentController extends Controller
             "address" => ["required"],
             "suburb" => ["required"],
             "state" => ["required"],
-            "postcode" => ["required", "integer"],
+            "postcode" => ["required", "numeric"],
             "country" => ["required", Rule::in(array_keys(CurrencyAndCountryEnum::MAP_COUNTRIES))],
             "fulfillment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_FULFILLMENT_STATUSES))],
             "product_payment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_PAYMENT_STATUSES))],

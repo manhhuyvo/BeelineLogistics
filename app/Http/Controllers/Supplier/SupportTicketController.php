@@ -35,6 +35,7 @@ class SupportTicketController extends Controller
         $allTickets = SupportTicket::whereHas('fulfillments', function ($query) use ($user) {
                             $query->where('supplier_id', $user->supplier->id);
                         })
+                        ->where('status', '!=', SupportTicketEnum::STATUS_DELETED)
                         ->with(['userCreated', 'userSolved', 'comments', 'customer']);
         
         // Validate the filter request
@@ -99,7 +100,7 @@ class SupportTicketController extends Controller
             'customersList' => $customersList,
             'tickets' => $returnData,
             'pagination' => $paginationData,   
-            'ticketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'ticketStatuses' => SupportTicketEnum::VISIBLE_STATUSES,
             'ticketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
             'exportRoute' => 'supplier.ticket.export',
             'request' => $data,
@@ -213,12 +214,13 @@ class SupportTicketController extends Controller
                     ->whereHas('fulfillments', function ($query) use ($user) {
                         $query->where('supplier_id', $user->supplier->id);
                     })
+                    ->where('status', '!=', SupportTicketEnum::STATUS_DELETED)
                     ->first();
         
         if (!$eligibleTicket) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 
-            return redirect()->back()->with([
+            return redirect()->route('supplier.ticket.list')->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);

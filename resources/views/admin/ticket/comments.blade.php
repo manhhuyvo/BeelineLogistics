@@ -40,8 +40,10 @@
                             <p class="font-bold">{{ $comment['user']['customer']['customer_id'] }} {{ $comment['owner']['full_name'] ?? '' }}</p>
                         @elseif ($comment['user']['target'] == User::TARGET_STAFF)
                             <p class="font-bold">({{ Staff::MAP_POSITIONS[$comment['user']['staff']['position']] }}) {{ $comment['owner']['full_name'] ?? '' }}</p>
-                        @else
+                        @elseif ($user->staff->isAdmin())
                             <p class="font-bold">({{ e($comment['owner']['company'] ?? 'Supplier') }}) {{ e($comment['owner']['full_name'] ?? '') }}</p>
+                        @else
+                            <p class="font-bold">BEEGROUP INTERNATIONAL WAREHOUSE</p>
                         @endif
                         <p class="text-sm italic text-gray-500">{{ $comment['created_at'] }}</p>
                     </div>

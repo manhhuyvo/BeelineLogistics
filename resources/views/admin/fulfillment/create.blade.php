@@ -16,9 +16,15 @@
                 Fulfillment Details
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
-                <div class="flex flex-1 gap-2 default_supplier_container">
-                    <input id="default_supplier" type="checkbox" name="default_supplier" class="bg-gray-200 border-solid border-[1px] border-gray-500 rounded-[5px] focus:ring-blue-500 focus:border-blue-500 mt-[2px]" value="on"
-                        checked="true"
+                <div class="flex flex-1 gap-2 default_supplier_container
+                    @if (!$user->staff->isAdmin())
+                    opacity-40
+                    @endif
+                ">
+                    <input id="default_supplier" type="checkbox" name="default_supplier" class="bg-gray-200 border-solid border-[1px] border-gray-500 rounded-[5px] focus:ring-blue-500 focus:border-blue-500 mt-[2px]" value="on" checked="true"
+                        @if (!$user->staff->isAdmin())
+                        onclick="return false;"
+                        @endif
                     >
                     <label for="default_supplier" class="mb-2 text-sm font-medium text-gray-900">Use Default Supplier</label>
                 </div>

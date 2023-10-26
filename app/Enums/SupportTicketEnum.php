@@ -19,6 +19,11 @@ class SupportTicketEnum
         self::STATUS_DELETED => 'gray',
     ];
 
+    const VISIBLE_STATUSES = [
+        self::STATUS_ACTIVE => 'Active',
+        self::STATUS_SOLVED => 'Solved',
+    ];
+
     const TARGET_FULFILLMENT = 'fulfillment';
     const TARGET_ORDER = 'order';
 

@@ -17,6 +17,10 @@
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
+                    <label for="fulfillment_number" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Number</label>
+                    <input id="fulfillment_number" type="text" name="fulfillment_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Fulfillment Number" value="{{ $fulfillment['fulfillment_number'] ?? '' }}">
+                </div>
+                <div class="flex flex-col flex-1">
                     <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer Owner</label>
                     <select name="customer_id" class="select_products bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
                     @if (empty($fulfillment['customer_id']))
@@ -31,6 +35,8 @@
                     @endforeach
                     </select>
                 </div>
+            </div>
+            <div class="row flex sm:flex-row flex-col gap-2">
                 @if ($user->staff->isAdmin())
                 <div class="flex flex-col flex-1">
                     <label for="staff_id" class="mb-2 text-sm font-medium text-gray-900">Staff Manage</label>
@@ -47,10 +53,6 @@
                     @endforeach
                     </select>
                 </div>
-                @else
-                <input type="hidden" name="staff_id" value="{{ $user->staff->id }}" readonly />
-                @endif
-                @if ($user->staff->isAdmin())
                 <div class="flex flex-col flex-1">
                     <label for="supplier_id" class="mb-2 text-sm font-medium text-gray-900">Supplier Handle</label>
                     <select id="supplier_id" name="supplier_id" class="select_products bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
@@ -67,6 +69,7 @@
                     </select>
                 </div>
                 @else
+                <input type="hidden" name="staff_id" value="{{ $user->staff->id }}" readonly />
                 <input type="hidden" name="supplier_id" value="{{ $fulfillment['supplier_id'] }}" readonly />
                 @endif
             </div>

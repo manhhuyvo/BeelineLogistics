@@ -26,6 +26,7 @@ class Fulfillment extends Model
     protected $table = 'fulfillments';
 
     protected $fillable = [
+        'fulfillment_number',
         'product_configs',
         'customer_id',
         'staff_id',

@@ -27,6 +27,10 @@
                 @endforeach
                 </select>
             </div>
+            <div class="flex flex-col flex-1">
+                <label for="fulfillment_number" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Number</label>
+                <input type="text" name="fulfillment_number" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5" placeholder="Fulfillment Number" value="{{ $request['fulfillment_number'] ?? '' }}">
+            </div>
         </div>
         <div class="row flex gap-2 sm:flex-row flex-col">
             <div class="flex flex-col flex-1">

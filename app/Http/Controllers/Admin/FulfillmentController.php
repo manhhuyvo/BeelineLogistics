@@ -224,6 +224,11 @@ class FulfillmentController extends Controller
             $data['staff_id'] = $user->staff->id;
         }
 
+        // If this is a non-admin staff creating new fulfillment, then don't allow them to manually select a supplier
+        if (!$user->staff->isAdmin()) {
+            $data['default_supplier'] = 'on';
+        }
+
         // If use chose to get default supplier, then get that details
         if (!empty($data['default_supplier']) && $data['default_supplier'] == 'on') {
             $countryServiceConfig = CountryServiceConfiguration::where('country', $data['country'])
@@ -494,7 +499,7 @@ class FulfillmentController extends Controller
         }
 
         // Validate the request coming
-        $validation = $this->validateRequest($request);                
+        $validation = $this->validateRequest($request, $fulfillment->fulfillment_number ?? '');                
         if ($validation->fails()) {
             $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
 
@@ -930,10 +935,13 @@ class FulfillmentController extends Controller
     }
     
     /** Validate form request for store and update functions */
-    private function validateRequest(Request $request)
+    private function validateRequest(Request $request, string $fulfillmentNumber = '')
     {
         $validator = Validator::make($request->all(), [
             // Customer Details
+            "fulfillment_number" => empty($fulfillmentNumber)
+                ? ["required", "unique:App\Models\Fulfillment,fulfillment_number"]
+                : ["required", Rule::unique('App\Models\Fulfillment')->ignore($fulfillmentNumber, 'fulfillment_number')],
             "staff_id" => ["required", "integer"],
             "customer_id" => ["required", "integer"],
             "name" => ["required"],
@@ -941,7 +949,7 @@ class FulfillmentController extends Controller
             "address" => ["required"],
             "suburb" => ["required"],
             "state" => ["required"],
-            "postcode" => ["required", "integer"],
+            "postcode" => ["required", "numeric"],
             "country" => ["required", Rule::in(array_keys(CurrencyAndCountryEnum::MAP_COUNTRIES))],
             "fulfillment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_FULFILLMENT_STATUSES))],
             "product_payment_status" => ["required", Rule::in(array_keys(FulfillmentEnum::MAP_PAYMENT_STATUSES))],
@@ -1041,6 +1049,7 @@ class FulfillmentController extends Controller
         $data['postage_unit'] = CurrencyAndCountryEnum::MAP_CURRENCIES[$data['country']] ?? '';
 
         return collect($data)->only([
+            'fulfillment_number',
             'default_supplier',
             'staff_id',
             'customer_id',

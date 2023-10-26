@@ -99,7 +99,7 @@
                                             Fulfillment
                                         </td>
                                         <td scope="row" class="px-2 py-2 whitespace-nowrap font-semibold text-gray-900">
-                                            <a target="_blank" href="{{ route('customer.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" class="hover:underline hover:text-gray-500">Fulfillment #{{ $fulfillment['id'] }} - {{ e($fulfillment['name']) }} (<span class="text-{{ FulfillmentEnum::MAP_SHIPPING_COLORS[$fulfillment['shipping_status']] }}-600">{{ FulfillmentEnum::MAP_SHIPPING_STATUSES[$fulfillment['shipping_status']] ?? 'Waiting' }}</span>)</a>
+                                            <a target="_blank" href="{{ route('customer.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" class="hover:underline hover:text-gray-500">Fulfillment #{{ $fulfillment['id'] }} ({{ e($fulfillment['fulfillment_number'] ?: 'Unknown') }}) - {{ e($fulfillment['name']) }} (<span class="text-{{ FulfillmentEnum::MAP_SHIPPING_COLORS[$fulfillment['shipping_status']] }}-600">{{ FulfillmentEnum::MAP_SHIPPING_STATUSES[$fulfillment['shipping_status']] ?? 'Waiting' }}</span>)</a>
                                         </td>
                                     </tr>
                                 @endforeach

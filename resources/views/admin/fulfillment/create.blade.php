@@ -16,9 +16,15 @@
                 Fulfillment Details
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
-                <div class="flex flex-1 gap-2 default_supplier_container">
-                    <input id="default_supplier" type="checkbox" name="default_supplier" class="bg-gray-200 border-solid border-[1px] border-gray-500 rounded-[5px] focus:ring-blue-500 focus:border-blue-500 mt-[2px]" value="on"
-                        checked="true"
+                <div class="flex flex-1 gap-2 default_supplier_container
+                    @if (!$user->staff->isAdmin())
+                    opacity-40
+                    @endif
+                ">
+                    <input id="default_supplier" type="checkbox" name="default_supplier" class="bg-gray-200 border-solid border-[1px] border-gray-500 rounded-[5px] focus:ring-blue-500 focus:border-blue-500 mt-[2px]" value="on" checked="true"
+                        @if (!$user->staff->isAdmin())
+                        onclick="return false;"
+                        @endif
                     >
                     <label for="default_supplier" class="mb-2 text-sm font-medium text-gray-900">Use Default Supplier</label>
                 </div>
@@ -41,6 +47,10 @@
                 @endif
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
+                <div class="flex flex-col flex-1">
+                    <label for="fulfillment_number" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Number</label>
+                    <input id="fulfillment_number" type="text" name="fulfillment_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Fulfillment Number" value="{{ $request['fulfillment_number'] ?? '' }}">
+                </div>
                 <div class="flex flex-col flex-1">
                     <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer Owner</label>
                     <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">

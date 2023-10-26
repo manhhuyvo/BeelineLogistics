@@ -17,9 +17,22 @@
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
+                    <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Number</label>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full h-full py-2.5 px-2">{{ e($fulfillment['fulfillment_number']) }}</div>
+                </div>
+                <div class="flex flex-col flex-1">
                     <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer Owner</label>
                     <div class="bg-gray-50 text-gray-600 text-sm w-full h-full py-2.5 px-2">{{ $customer['customer_id'] }} - {{ $customer['full_name'] }}</div>
                 </div>
+                @if (!$user->Staff->isAdmin())
+                <div class="flex flex-col flex-1">
+                    <label for="staff_id" class="mb-2 text-sm font-medium text-gray-900">Staff Manage</label>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full h-full py-2.5 px-2">{{ $staff['full_name'] }} ({{ Staff::MAP_POSITIONS[$staff['position']] ?? 'Position Not Known' }})</div>
+                </div>
+                @endif
+            </div>
+            @if ($user->staff->isAdmin())
+            <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="staff_id" class="mb-2 text-sm font-medium text-gray-900">Staff Manage</label>
                     <div class="bg-gray-50 text-gray-600 text-sm w-full h-full py-2.5 px-2">{{ $staff['full_name'] }} ({{ Staff::MAP_POSITIONS[$staff['position']] ?? 'Position Not Known' }})</div>
@@ -35,6 +48,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
                     <label for="name" class="mb-2 text-sm font-medium text-gray-900">Full Name</label>

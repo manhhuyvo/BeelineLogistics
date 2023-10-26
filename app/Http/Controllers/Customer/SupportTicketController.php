@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use App\Traits\Upload;
 use Illuminate\Support\Str;
 use Exception;
+use Illuminate\Support\Arr;
 
 class SupportTicketController extends Controller
 {
@@ -32,6 +33,7 @@ class SupportTicketController extends Controller
 
         // Retrieve list of all first
         $allTickets = SupportTicket::where('customer_id', $user->customer->id)
+                        ->where('status', '!=', SupportTicketEnum::STATUS_DELETED)
                         ->with(['userCreated', 'userSolved', 'comments']);
         
         // Validate the filter request
@@ -93,7 +95,7 @@ class SupportTicketController extends Controller
         return view('customer.ticket.list', [
             'tickets' => $returnData,
             'pagination' => $paginationData,   
-            'ticketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'ticketStatuses' => SupportTicketEnuM::VISIBLE_STATUSES,
             'ticketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
             'exportRoute' => 'customer.ticket.export',
             'request' => $data,
@@ -116,10 +118,10 @@ class SupportTicketController extends Controller
         $user = Auth::user();
 
         // Check if this user is allowed to view this ticket
-        if ($ticket && $ticket->customer_id != $user->customer->id) {
+        if (($ticket && $ticket->customer_id != $user->customer->id) || $ticket->status == SupportTicketEnum::STATUS_DELETED) {
             $responseData = viewResponseFormat()->error()->message(ResponseMessageEnum::INVALID_ACCESS)->send();
 
-            return redirect()->back()->with([
+            return redirect()->route('customer.ticket.list')->with([
                 'response' => $responseData,
                 'request' => $request->all(),
             ]);
@@ -146,7 +148,7 @@ class SupportTicketController extends Controller
             'user' => $user,
             'ticket' => $ticket->toArray(),
             'comments' => collect($comments)->toArray(),
-            'supportTicketStatuses' => SupportTicketEnum::MAP_STATUSES,
+            'supportTicketStatuses' => SupportTicketEnum::VISIBLE_STATUSES,
             'supportTicketStatusColors' => SupportTicketEnum::MAP_STATUS_COLORS,
         ]);
     }

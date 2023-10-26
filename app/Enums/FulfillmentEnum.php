@@ -133,6 +133,7 @@ class FulfillmentEnum
     /** Sortable fields */
     const SORTABLE_FIELDS = [
         'id',
+        'fulfillment_number',
         'customer_id',
         'staff_id',
         'name',
@@ -154,6 +155,7 @@ class FulfillmentEnum
     /** Columns for export */
     const EXPORT_COLUMNS = [
         'id',
+        'fulfillment_number',
         'customer_name',
         'staff_manage',
         'products',
@@ -183,6 +185,7 @@ class FulfillmentEnum
 
     const CUSTOMER_EXPORT_COLUMNS = [
         'id',
+        'fulfillment_number',
         'products',
         'total_product_amount',
         'product_unit',
@@ -210,6 +213,7 @@ class FulfillmentEnum
 
     const SUPPLIER_EXPORT_COLUMNS = [
         'id',
+        'fulfillment_number',
         'products',
         'total_product_amount',
         'product_unit',
@@ -234,6 +238,7 @@ class FulfillmentEnum
 
     const CUSTOMER_FILTERABLE_COLUMNS = [
         'id',
+        'fulfillment_number',
         'name',
         'phone',
         'address',
@@ -249,6 +254,7 @@ class FulfillmentEnum
 
     const STAFF_FILTERABLE_COLUMNS = [
         'id',
+        'fulfillment_number',
         'name',
         'phone',
         'address',
@@ -268,6 +274,7 @@ class FulfillmentEnum
 
     const SUPPLIER_FILTERABLE_COLUMNS = [
         'id',
+        'fulfillment_number',
         'customer_id',
         'name',
         'phone',

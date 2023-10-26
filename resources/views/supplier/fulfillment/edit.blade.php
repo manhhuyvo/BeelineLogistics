@@ -21,6 +21,12 @@
                     <input id="customer_id" type="text" name="customer_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 opacity-50" value="{{ $fulfillment['customer']['customer_id'] ?? '' }} {{ $fulfillment['customer']['full_name'] }}" readonly>
                 </div>
                 <div class="flex flex-col flex-1">
+                    <label for="fulfillment_number" class="mb-2 text-sm font-medium text-gray-900">Full Number</label>
+                    <input id="fulfillment_number" type="text" name="fulfillment_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Full Name" value="{{ e($fulfillment['fulfillment_number'] ?? '') }}">
+                </div>
+            </div>
+            <div class="row flex sm:flex-row flex-col gap-2">
+                <div class="flex flex-col flex-1">
                     <label for="name" class="mb-2 text-sm font-medium text-gray-900">Full Name</label>
                     <input id="name" type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Full Name" value="{{ $fulfillment['name'] ?? '' }}">
                 </div>

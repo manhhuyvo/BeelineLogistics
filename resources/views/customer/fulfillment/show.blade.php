@@ -17,6 +17,10 @@
             </p>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
+                    <label for="name" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Number</label>
+                    <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ e($fulfillment['fulfillment_number'] ?? 'Not Provided')}}</div>
+                </div>
+                <div class="flex flex-col flex-1">
                     <label for="name" class="mb-2 text-sm font-medium text-gray-900">Full Name</label>
                     <div class="bg-gray-50 text-gray-600 text-sm w-full py-2.5 px-2">{{ $fulfillment['name'] ?? 'Not Provided'}}</div>
                 </div>

@@ -45,7 +45,7 @@ if (!function_exists('getFormattedFulfillmentsList')) {
             $data = collect($allFulfillments)->mapWithKeys(function($fulfillment, $index) {
                 $fulfillmentArray = collect($fulfillment)->toArray();
 
-                return [$fulfillmentArray['id'] => "Fulfillment #{$fulfillmentArray['id']} - Name: " . htmlspecialchars($fulfillmentArray['name']),];
+                return [$fulfillmentArray['id'] => "Fulfillment #{$fulfillmentArray['id']} ({$fulfillmentArray['fulfillment_number']}) - Name: " . htmlspecialchars($fulfillmentArray['name']),];
             })
             ->toArray();
 
@@ -64,7 +64,7 @@ if (!function_exists('getFormattedFulfillmentsList')) {
                 $fulfillmentArray = collect($fulfillment)->toArray();
 
                 return [
-                    $fulfillmentArray['id'] => "Fulfillment #{$fulfillmentArray['id']} - Name: " . htmlspecialchars($fulfillmentArray['name']) . " ({$fulfillment['customer']['customer_id']})",
+                    $fulfillmentArray['id'] => "Fulfillment #{$fulfillmentArray['id']} ({$fulfillmentArray['fulfillment_number']}) - Name: " . htmlspecialchars($fulfillmentArray['name']) . " ({$fulfillment['customer']['customer_id']})",
                 ];
             })
             ->toArray();
@@ -85,7 +85,7 @@ if (!function_exists('getFormattedFulfillmentsList')) {
 
         $data = [];
         foreach ($allFulfillments as $fulfillment) {
-            $data[$fulfillment['id']] = "Fulfillment #{$fulfillment['id']} " . htmlspecialchars($fulfillment['name']) . " ({$fulfillment['customer']['customer_id']})";
+            $data[$fulfillment['id']] = "Fulfillment #{$fulfillment['id']} ({$fulfillment['fulfillment_number']}) " . htmlspecialchars($fulfillment['name']) . " ({$fulfillment['customer']['customer_id']})";
         }
 
         return $data;

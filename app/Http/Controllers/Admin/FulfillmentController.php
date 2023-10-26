@@ -494,7 +494,7 @@ class FulfillmentController extends Controller
         }
 
         // Validate the request coming
-        $validation = $this->validateRequest($request);                
+        $validation = $this->validateRequest($request, $fulfillment->fulfillment_number ?? '');                
         if ($validation->fails()) {
             $responseData = viewResponseFormat()->error()->data($validation->messages())->message(ResponseMessageEnum::FAILED_VALIDATE_INPUT)->send();
 
@@ -930,10 +930,13 @@ class FulfillmentController extends Controller
     }
     
     /** Validate form request for store and update functions */
-    private function validateRequest(Request $request)
+    private function validateRequest(Request $request, string $fulfillmentNumber = '')
     {
         $validator = Validator::make($request->all(), [
             // Customer Details
+            "fulfillment_number" => empty($fulfillmentNumber)
+                ? ["required", "unique:App\Models\Fulfillment,fulfillment_number"]
+                : ["required", Rule::unique('App\Models\Fulfillment')->ignore($fulfillmentNumber, 'fulfillment_number')],
             "staff_id" => ["required", "integer"],
             "customer_id" => ["required", "integer"],
             "name" => ["required"],
@@ -1041,6 +1044,7 @@ class FulfillmentController extends Controller
         $data['postage_unit'] = CurrencyAndCountryEnum::MAP_CURRENCIES[$data['country']] ?? '';
 
         return collect($data)->only([
+            'fulfillment_number',
             'default_supplier',
             'staff_id',
             'customer_id',

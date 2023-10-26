@@ -42,6 +42,10 @@
             </div>
             <div class="row flex sm:flex-row flex-col gap-2">
                 <div class="flex flex-col flex-1">
+                    <label for="fulfillment_number" class="mb-2 text-sm font-medium text-gray-900">Fulfillment Number</label>
+                    <input id="fulfillment_number" type="text" name="fulfillment_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" placeholder="Fulfillment Number" value="{{ $request['fulfillment_number'] ?? '' }}">
+                </div>
+                <div class="flex flex-col flex-1">
                     <label for="customer_search" class="mb-2 text-sm font-medium text-gray-900">Customer Owner</label>
                     <div class="w-full flex items-center border-solid border-[1px] border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-50 relative">
                         <input type="text" name="customer_search" id="customer_search" class="text-sm bg-transparent w-full p-2.5 border-none focus:ring-0" placeholder="Search Customer ID...">

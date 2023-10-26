@@ -98,7 +98,7 @@
                         @if (!empty($fulfillment['support_tickets']) && count($fulfillment['support_tickets']) > 0)
                             <span class="px-2 text-[11px] text-white rounded-lg bg-red-500 absolute top-25 right-0">{{ count($fulfillment['support_tickets']) }}</span>
                         @endif
-                        <a href="{{ route('customer.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $fulfillment['id'] }}<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
+                        <a href="{{ route('customer.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $fulfillment['id'] }} ({{ e($fulfillment['fulfillment_number'] ?: 'Unknown') }})<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
                     </th>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap ">
                         {{ $fulfillment['name'] ?? '' }}

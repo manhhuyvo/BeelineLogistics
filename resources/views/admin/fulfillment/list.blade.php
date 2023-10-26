@@ -39,7 +39,7 @@
                         </div>
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
-                        Fulfillment ID
+                        Fulfillment Number
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Customer Owner
@@ -110,7 +110,7 @@
                         @if (!empty($fulfillment['support_tickets']) && count($fulfillment['support_tickets']) > 0)
                             <span class="px-1.5 text-[10px] text-white rounded-lg bg-red-500 absolute top-25 right-0">{{ count($fulfillment['support_tickets']) }}</span>
                         @endif
-                        <a href="{{ route('admin.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $fulfillment['id'] }}<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
+                        <a href="{{ route('admin.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $fulfillment['id'] }} ({{ e($fulfillment['fulfillment_number'] ?: 'Unknown') }})<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
                     </th>
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['customer']['customer_id'] }} {{ $fulfillment['customer']['full_name'] }}

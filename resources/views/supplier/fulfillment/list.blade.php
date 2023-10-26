@@ -36,6 +36,9 @@
                         Customer
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Country
+                    </th>
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Receiver Name
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
@@ -99,6 +102,9 @@
                     </th>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap ">
                         {{ $fulfillment['customer']['customer_id'] ?? '' }} {{ $fulfillment['customer']['full_name'] ?? 'Unknown' }}
+                    </td>
+                    <td scope="row" class="px-6 py-4 whitespace-nowrap ">
+                        {{ $countries[$fulfillment['country']] ?? '' }}
                     </td>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap ">
                         {{ $fulfillment['name'] ?? '' }}

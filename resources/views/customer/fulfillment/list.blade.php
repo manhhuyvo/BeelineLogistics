@@ -36,7 +36,10 @@
                         </div>
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
-                        Fulfillment ID
+                        Fulfillment Number
+                    </th>
+                    <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
+                        Country
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Receiver Name
@@ -100,6 +103,9 @@
                         @endif
                         <a href="{{ route('customer.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $fulfillment['id'] }} ({{ e($fulfillment['fulfillment_number'] ?: 'Unknown') }})<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
                     </th>
+                    <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                        {{ $countries[$fulfillment['country']] ?? '' }}
+                    </td>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap ">
                         {{ $fulfillment['name'] ?? '' }}
                     </td>

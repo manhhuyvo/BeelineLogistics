@@ -218,9 +218,9 @@ class User extends Model implements Authenticatable
     }
 
     /** ALL PRIVATE FUNCTIONS */  
-    private static function beforeUpdate(self $newItem)
+    private static function beforeUpdate(?self $newItem)
     {
-        $logDetails = $newItem->getDetailsChangedForUpdateBoot($newItem);
+        $logDetails = $newItem->getDetailsChangedForUpdateBoot();
         if (empty($logDetails)) {
             return ;
         }

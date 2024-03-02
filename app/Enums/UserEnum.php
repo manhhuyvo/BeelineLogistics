@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-class userEnum
+class UserEnum
 {
     /* Columns to check and add log entry if changed */
     const LOG_COLUMNS = [

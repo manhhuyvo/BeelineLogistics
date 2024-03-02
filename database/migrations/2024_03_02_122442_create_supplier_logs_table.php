@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('target_id')->index();
             $table->longText('description');
-            $table->unsignedBigInteger('action_by_id')->index();
+            $table->unsignedBigInteger('action_by_id')->nullable()->index();
             $table->timestamps();
         });
     }

@@ -3,17 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Staff;
 use App\Models\Customer;
 use App\Models\Supplier;
 use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
 use App\Models\SupportTicket;
 use App\Models\SupportTicket\Comment as SupportTicketComment;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\User\Log as UserLog;
+use App\Enums\UserEnum;
 
 class User extends Model implements Authenticatable
 {
@@ -121,6 +124,15 @@ class User extends Model implements Authenticatable
         self::STATUS_DELETE => 'gray',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::updating(function ($newItem) {
+            static::beforeUpdate($newItem);
+        });
+    }
+
     public function staff(): BelongsTo
     {
         return $this->belongsTo(Staff::class, 'staff_id', 'id');
@@ -186,5 +198,70 @@ class User extends Model implements Authenticatable
     public function isSupplier()
     {
         return $this->target == self::TARGET_SUPPLIER && $this->supplier_id != 0;
+    }
+
+    public function addLog(?string $message = ''): bool
+    {
+        $loggedInUser = Auth::user();
+
+        $newLog = new UserLog([
+            'target_id' => $this->id,
+            'description' => $message,
+            'action_by_id' => $loggedInUser->id ?? null,
+        ]);
+
+        return $newLog->save();
+    }
+
+    /** ALL PRIVATE FUNCTIONS */  
+    private static function beforeUpdate(self $newItem)
+    {
+        $logDetails = $newItem->getDetailsChangedForUpdateBoot($newItem);
+        if (empty($logDetails)) {
+            return ;
+        }
+        
+        $newItem->addLog("User's information has been updated as below:\n- " . implode("\n- ", $logDetails));
+    }
+
+    private function getDetailsChangedForUpdateBoot()
+    {
+        $oldUser = self::find($this->id);
+
+        $logDetails = [];
+        foreach (UserEnum::LOG_COLUMNS as $column => $title) {
+            if (is_null($oldUser->{$column}) || is_null($this->{$column})) {
+                continue;
+            }
+
+            if ($oldUser->{$column} == $this->{$column}) {
+                continue;
+            }
+
+            switch ($column) {
+                case 'status':
+                    $oldValue = UserEnum::MAP_STATUSES[$oldUser->{$column}] ?? 'Unknown';
+                    $newValue = UserEnum::MAP_STATUSES[$this->{$column}] ?? 'Unknown';
+                    $messageField = "{$title}: {$oldValue} -> {$newValue}";
+                    break;
+                case 'level':
+                    $oldValue = UserEnum::MAP_USER_LEVELS[$oldUser->{$column}] ?? 'Unknown';
+                    $newValue = UserEnum::MAP_USER_LEVELS[$this->{$column}] ?? 'Unknown';
+                    $messageField = "{$title}: {$oldValue} -> {$newValue}";
+                    break;
+                case 'password':
+                    $messageField = "{$title} has been updated to a different value";
+                    break;
+                default:
+                    $oldValue = $oldUser->{$column};
+                    $newValue = $this->{$column};
+                    $messageField = "{$title}: {$oldValue} -> {$newValue}";
+                    break;
+            }
+
+            $logDetails[] = $messageField;
+        }
+
+        return $logDetails;
     }
 }

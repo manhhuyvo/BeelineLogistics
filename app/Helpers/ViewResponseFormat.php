@@ -1,5 +1,5 @@
 <?php
-namespace App\Models\Helpers;
+namespace App\Helpers;
 
 class ViewResponseFormat
 {

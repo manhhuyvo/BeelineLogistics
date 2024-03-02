@@ -11,6 +11,8 @@ use App\Models\Staff;
 use App\Models\User;
 use App\Models\Customer;
 use App\Models\Supplier;
+use App\Helpers\ViewResponseFormat;
+use App\Helpers\ApiResponseFormat;
 
 if (!function_exists('generateRandomString')) {
     function generateRandomString(int $outputLength = 5)
@@ -334,5 +336,19 @@ if (!function_exists('getFormattedCustomersListForSupplier')) {
         }
 
         return $returnData;
+    }
+}
+
+if (!function_exists('viewResponseFormat')) {
+    function viewResponseFormat()
+    {
+        return new ViewResponseFormat();
+    }
+}
+
+if (!function_exists('apiResponseFormat')) {
+    function apiResponseFormat()
+    {
+        return new ApiResponseFormat();
     }
 }

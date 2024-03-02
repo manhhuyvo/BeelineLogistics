@@ -1,5 +1,5 @@
 <?php
-namespace App\Models\Helpers;
+namespace App\Helpers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;

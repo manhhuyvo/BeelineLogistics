@@ -32,6 +32,7 @@ if (!function_exists('generateRandomString')) {
 if (!function_exists('getFormattedFulfillmentsList')) {
     function getFormattedFulfillmentsList()
     {
+        /** @var User */
         $user = Auth::user();
         if (!$user) {
             return null;
@@ -97,6 +98,7 @@ if (!function_exists('getFormattedFulfillmentsList')) {
 if (!function_exists('getFormattedOrdersList')) {
     function getFormattedOrdersList()
     {
+        /** @var User */
         $user = Auth::user();
         if (!$user) {
             return null;
@@ -160,6 +162,7 @@ if (!function_exists('getFormattedOrdersList')) {
 if (!function_exists('getFormattedStaffsList')) {
     function getFormattedStaffsList()
     {
+        /** @var User */
         $user = Auth::user();
         if (!$user) {
             return null;
@@ -185,7 +188,7 @@ if (!function_exists('getFormattedStaffsList')) {
 if (!function_exists('getFormattedUsersListOfStaff')) {
     function getFormattedUsersListOfStaff()
     {
-        
+        /** @var User */        
         $user = Auth::user();
         if (!$user) {
             return null;
@@ -212,7 +215,8 @@ if (!function_exists('getFormattedUsersListOfStaff')) {
 
 if (!function_exists('getFormattedCustomersList')) {
     function getFormattedCustomersList(bool $active = false)
-    {        
+    {     
+        /** @var User */   
         $user = Auth::user();
         if (!$user) {
             return null;
@@ -248,7 +252,9 @@ if (!function_exists('getFormattedCustomersList')) {
 }
 
 if (!function_exists('getFormattedSuppliersList')) {
-    function getFormattedSuppliersList(bool $active = false) {
+    function getFormattedSuppliersList(bool $active = false)
+    {        
+        /** @var User */
         $user = Auth::user();
         if (!$user) {
             return null;
@@ -291,6 +297,7 @@ if (!function_exists('getFormattedSuppliersList')) {
 if (!function_exists('getFormattedCustomersListForSupplier')) {
     function getFormattedCustomersListForSupplier(bool $active = false)
     {
+        /** @var User */
         $user = Auth::user();        
 
         // Formatted list for supplier

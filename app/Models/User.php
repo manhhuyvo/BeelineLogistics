@@ -131,6 +131,10 @@ class User extends Model implements Authenticatable
         static::updating(function ($newItem) {
             static::beforeUpdate($newItem);
         });
+
+        static::created(function ($newItem) {
+            static::afterCreated($newItem);
+        });
     }
 
     public function staff(): BelongsTo
@@ -221,7 +225,7 @@ class User extends Model implements Authenticatable
             return ;
         }
         
-        $newItem->addLog("User's information has been updated as below:\n- " . implode("\n- ", $logDetails));
+        return $newItem->addLog("User's information has been updated as below:\n- " . implode("\n- ", $logDetails));
     }
 
     private function getDetailsChangedForUpdateBoot()
@@ -263,5 +267,17 @@ class User extends Model implements Authenticatable
         }
 
         return $logDetails;
+    }
+
+    private static function afterCreated(self $newItem)
+    {
+        $userOwner = $newItem->getUserOwner();
+        $logDetails = "User #{$newItem->id} ($newItem->username) has been created with the following details:";
+        $logDetails .= "\n- Owner: " . UserEnum::MAP_TARGETS[$newItem->target] . " #{$userOwner->id} ({$userOwner->full_name})";
+        $logDetails .= "\n- Level: " . UserEnum::MAP_USER_LEVELS[$newItem->level];
+        $logDetails .= "\n- Status: " . UserEnum::MAP_STATUSES[$newItem->status];
+        $logDetails .= "\n- Note: {$newItem->note}";
+
+        return $newItem->addLog($logDetails);
     }
 }

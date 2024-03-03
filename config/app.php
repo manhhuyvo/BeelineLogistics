@@ -5,7 +5,9 @@ use App\Enums\FulfillmentEnum;
 use App\Enums\GeneralEnum;
 use App\Enums\InvoiceEnum;
 use App\Enums\ProductPaymentEnum;
+use App\Enums\StaffEnum;
 use App\Enums\SupportTicketEnum;
+use App\Enums\UserEnum;
 use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Staff;
@@ -15,7 +17,7 @@ use App\Models\Product\Group;
 use App\Models\Product;
 use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
 use App\Models\SupportTicket;
-use App\Models\SupportTicketComment;
+use App\Models\SupportTicket\Comment as SupportTicketComment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
@@ -259,6 +261,8 @@ return [
         'GeneralEnum' => GeneralEnum::class,
         'ProductPaymentEnum' => ProductPaymentEnum::class,
         'SupportTicketEnum' => SupportTicketEnum::class,
+        'StaffEnum' => StaffEnum::class,
+        'UserEnum' => UserEnum::class,
     ])->toArray(),
 
 ];

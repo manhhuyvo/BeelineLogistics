@@ -25,7 +25,7 @@ class Log extends Model
         'updated_at' => 'date:d/m/Y',
     ];
 
-    public function supplier(): BelongsTo
+    public function target(): BelongsTo
     {
         return $this->belongsTo(Supplier::class, 'target_id', 'id');
     }

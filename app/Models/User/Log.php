@@ -24,7 +24,7 @@ class Log extends Model
         'updated_at' => 'date:d/m/Y',
     ];
 
-    public function user(): BelongsTo
+    public function target(): BelongsTo
     {
         return $this->belongsTo(User::class, 'target_id', 'id');
     }

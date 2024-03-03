@@ -13,6 +13,10 @@ Breadcrumbs::for('admin.staff.list', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Staff', route('admin.staff.list'));
 });
+Breadcrumbs::for('admin.staff.log', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Staff Logs', route('admin.staff.log'));
+});
 Breadcrumbs::for('admin.staff.show', function (BreadcrumbTrail $trail, $staff): void {
     $trail->parent('admin.staff.list');
     $trail->push("{$staff->full_name}", route('admin.staff.show', ['staff' => $staff->id]));

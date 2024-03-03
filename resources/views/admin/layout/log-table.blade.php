@@ -20,17 +20,27 @@
             </th>
         </tr>
     </thead>
-    <tbody style="text-align: center !important;">
+    <tbody>
         @foreach ($logData['data'] as $entry)
         <tr class="bg-white border-b hover:bg-gray-50">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 #{{ $entry['target']['id'] }} {{ $entry['target']['full_name'] ?? '' }} ({{ StaffEnum::MAP_POSITIONS[$entry['target']['position']] ?? '' }})
             </th>
-            <td class="px-6 py-4 whitespace-nowrap">
-                {{ $entry['description'] ?? '' }}
+            <td class="px-6 py-4">
+                {!! nl2br(e($entry['description'] ?? '')) !!}
             </td>
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                {{ UserEnum::MAP_TARGETS[$entry['actionUser']['target']] }} #{{ $entry['actionUser']['owner']['id'] ?? '' }} ({{ $entry['actionUser']['owner']['full_name'] ?? '' }})
+                @if (!empty($entry['action_user']))
+                    @if ($entry['action_user']['target'] == UserEnum::TARGET_STAFF)
+                        {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['staff']['id'] ?? '' }} ({{ $entry['action_user']['staff']['full_name'] ?? '' }})
+                    @elseif ($entry['action_user']['target'] == UserEnum::TARGET_CUSTOMER)
+                        {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['customer']['id'] ?? '' }} ({{ $entry['action_user']['customer']['full_name'] ?? '' }})
+                    @elseif ($entry['action_user']['target'] == UserEnum::TARGET_SUPPLIER)
+                        {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['supplier']['id'] ?? '' }} ({{ $entry['action_user']['supplier']['full_name'] ?? '' }})
+                    @endif
+                @else
+                    N/A
+                @endif
             </th>
             <td class="px-6 py-4 whitespace-nowrap">
                 {{ $entry['created_at'] }}

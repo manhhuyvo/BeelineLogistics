@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Admin\SupportTicketCommentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CountryServiceConfigurationController;
+use App\Http\Controllers\Admin\Staff\LogController as StaffLogController;
 use App\Models\Staff;
 
 // CUSTOMER INCLUDES
@@ -76,6 +77,7 @@ Route::prefix('admin')->group(function () {
 
         /* [STAFF ROUTES] */
         Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.list');
+        Route::get('/staff/log', [StaffLogController::class, 'index'])->name('admin.staff.log');
         Route::get('/staff/create', [StaffController::class, 'create'])->name('admin.staff.create.form');
         Route::post('/staff', [StaffController::class, 'store'])->name('admin.staff.store');
         Route::get('/staff/{staff}', [StaffController::class, 'show'])->name('admin.staff.show');

@@ -211,7 +211,9 @@ class Staff extends Model
 
     private static function afterCreated(self $newItem)
     {
+        $logDetails = $newItem->getDetailsForNewStaffCreated();
 
+        return $newItem->addLog(implode("\n- ", $logDetails));
     }
 
     private function getDetailsChangedForUpdateBoot(?self $oldItem)
@@ -316,5 +318,63 @@ class Staff extends Model
         }
 
         return $salaryDetails;
+    }
+
+    private function getDetailsForNewStaffCreated()
+    {
+        $logDetails = ["The staff #{$this->id} has been created with the following details:"];
+        foreach (StaffEnum::LOG_COLUMNS as $column => $title) {
+            if ($column == 'salary_configs') {
+                continue;
+            }            
+
+            switch ($column) {
+                case 'status':
+                    $value = StaffEnum::MAP_STATUSES[$this->{$column}] ?? 'Unknown';
+                    break;
+                case 'position':
+                    $value = StaffEnum::MAP_POSITIONS[$this->{$column}] ?? 'Unknown';
+                    break;
+                case 'type':
+                    $value = StaffEnum::MAP_TYPES[$this->{$column}] ?? 'Unknown';
+                    break;
+                default:
+                    $value = $this->{$column};
+                    break;
+            }
+
+            $logDetails[] = "{$title}: {$value}";
+        }
+
+        $salaryConfigs = unserialize($this->salary_configs);
+        foreach ($salaryConfigs as $column => $description) {
+            if ($column == 'base_salary') {
+                $logDetails[] = "{$description}: {$salaryConfigs[$column]}";
+                continue;
+            }
+
+            if (empty($salaryConfigs[$column])) {
+                $logDetails[] = "No commission applied";
+                continue;
+            }
+
+            foreach ($description as $subField => $subDescription) {
+                switch ($subField) {
+                    case 'commission_unit':
+                        $subData = !empty($salaryConfigs[$column]) ? (StaffEnum::MAP_COMMISSION_UNITS[$salaryConfigs[$column][$subField]] ?? 'Unknown') : 'Not set';
+                        break;
+                    case 'commission_type':
+                        $subData = !empty($salaryConfigs[$column]) ? (StaffEnum::MAP_COMMISSION_TYPES[$salaryConfigs[$column][$subField]] ?? 'Unknown') : 'Not set';
+                        break;
+                    default:
+                        $subData = !empty($salaryConfigs[$column]) ? $salaryConfigs[$column][$subField] : 'Not set';
+                        break;
+                }
+
+                $salaryDetails[] = "{$subDescription}: {$subData}";
+            }
+        }
+
+        return $logDetails;
     }
 }

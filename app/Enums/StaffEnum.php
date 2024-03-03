@@ -10,10 +10,10 @@ class StaffEnum
         'address' => 'Address',
         'dob' => 'Date of Birth',
         'type' => 'Employment Type',
-        'salary_configs' => 'Salary Configurations',
         'position' => 'Position',
         'status' => 'Status',
         'note' => 'Note',
+        'salary_configs' => 'Salary Configurations',
     ];
 
     const SALARY_COLUMNS = [

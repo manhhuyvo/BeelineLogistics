@@ -34,9 +34,10 @@ class LogController extends Controller
             $paginationData['links'] = $paginationDataLinks;
         }
 
-        return view('admin.staff.log', [
+        return view('admin.staff.log.index', [
             'logData' => $returnData,
             'pagination' => $paginationData,
+            'allStaffs' => getFormattedStaffsList(),
         ]);
     }
 }

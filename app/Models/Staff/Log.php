@@ -30,7 +30,7 @@ class Log extends Model
         return $this->belongsTo(Staff::class, 'target_id', 'id');
     }
 
-    public function actionUser(): BelongsTo
+    public function action_user(): BelongsTo
     {        
         return $this->belongsTo(User::class, 'action_by_id', 'id');
     }

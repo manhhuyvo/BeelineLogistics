@@ -14,12 +14,12 @@ class LogRepo
 
     public function getAllWithRelations()
     {
-        return StaffLog::with(['target', 'actionUser', 'actionUser.owner'])->get();
+        return StaffLog::with(['target', 'action_user', 'action_user.owner'])->get();
     }
 
     public function getAllWithPagination(?array $data = [], ?int $perPage = 50, ?array $columns = ['*'], ?string $pageName = 'page')
     {
-        $allRecords = StaffLog::with(['target', 'actionUser', 'actionUser.staff']);        
+        $allRecords = StaffLog::with(['target', 'action_user', 'action_user.staff']);        
         if (!empty($data)){
             foreach($data as $key => $value) {
                 if (empty($value) || $key == 'page' || $key == '_method') {
@@ -30,7 +30,7 @@ class LogRepo
                 $value = htmlspecialchars($value);
 
                 // Add conditions
-                $allStaffs = $allRecords->where($key, 'like', "%$value%");
+                $allRecords = $allRecords->where($key, 'like', "%$value%");
             }
         }
 

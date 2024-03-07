@@ -124,4 +124,11 @@ class StaffEnum
         self::COMMISSION_TYPE_SALE,
         self::COMMISSION_TYPE_ORDER,
     ];
+
+    /** Staff Logs */
+    const LOG_FILTERABLE_COLUMNS = [
+        'description',
+        'target_id',
+        'action_by_id',
+    ];
 }

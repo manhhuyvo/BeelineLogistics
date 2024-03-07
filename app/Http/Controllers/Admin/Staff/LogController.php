@@ -21,7 +21,8 @@ class LogController extends Controller
      */
     public function index(Request $request)
     {
-        $allLogs = $this->staffLogRepo->getAllWithPagination($request->all());     
+        $allLogs = $this->staffLogRepo->getAllWithPagination($request->all());  
+        $allLogs = $allLogs->appends(request()->except('page'));       
         $returnData = collect($allLogs)->only('data')->toArray();
         $paginationData = collect($allLogs)->except(['data'])->toArray();
 
@@ -38,6 +39,8 @@ class LogController extends Controller
             'logData' => $returnData,
             'pagination' => $paginationData,
             'allStaffs' => getFormattedStaffsList(),
+            'allUsers' => getFormattedUsersListOfStaff(),
+            'request' => $request->all(),
         ]);
     }
 }

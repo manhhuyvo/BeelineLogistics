@@ -18,8 +18,8 @@
         </div>  
         <div class="row flex gap-2 flex-1">
             <div class="flex flex-col flex-1">
-                <label for="countries" class="mb-2 text-sm font-medium text-gray-900">Description</label>
-                <textarea type="text" name="full_name" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5 resize-none" rows=5 placeholder="Log Description / Keywords">{{ $request['description'] ?? '' }}</textarea>
+                <label for="description" class="mb-2 text-sm font-medium text-gray-900">Description</label>
+                <textarea type="text" name="description" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full px-2.5 sm:py-2.5 py-1.5 resize-none" rows=5 placeholder="Log Description / Keywords">{{ $request['description'] ?? '' }}</textarea>
             </div>
         </div>
         <div class="row flex gap-2">
@@ -48,7 +48,7 @@
                     @else
                     <option value="">Choose a staff</option>
                     @endif                    
-                @foreach($allStaffs as $key => $value)
+                @foreach($allUsers as $key => $value)
                     @if (!empty($request['action_by_id']) && $request['action_by_id'] == $key)
                     <option selected value="{{ $key }}">{{ $value }}</option>
                     @else

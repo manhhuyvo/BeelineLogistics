@@ -4,6 +4,8 @@ namespace App\Repositories\Staff;
 use App\Models\Staff;
 use App\Models\User;
 use App\Models\Staff\Log as StaffLog;
+use Carbon\Carbon;
+use App\Enums\StaffEnum;
 
 class LogRepo
 {
@@ -22,7 +24,7 @@ class LogRepo
         $allRecords = StaffLog::with(['target', 'action_user', 'action_user.staff']);        
         if (!empty($data)){
             foreach($data as $key => $value) {
-                if (empty($value) || $key == 'page' || $key == '_method') {
+                if (empty($value) || !in_array($key, StaffEnum::LOG_FILTERABLE_COLUMNS)) {
                     continue;
                 }
                 // Escape to prevent break
@@ -31,6 +33,16 @@ class LogRepo
 
                 // Add conditions
                 $allRecords = $allRecords->where($key, 'like', "%$value%");
+            }
+
+            // Created between date range
+            if (!empty($data['date_from']) && !empty($data['date_to'])) {
+                $allRecords = $data['date_from'] == $data['date_to']
+                                ? $allRecords->whereDate('created_at', $data['date_from'])
+                                : $allRecords->whereBetween('created_at', [
+                                    Carbon::parse($data['date_from'])->startOfDay()->format('Y-m-d H:i:S'),
+                                    Carbon::parse($data['date_to'])->endOfDay()->format('Y-m-d H:i:S')
+                                ]);
             }
         }
 

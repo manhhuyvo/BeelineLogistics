@@ -15,10 +15,11 @@ use App\Models\Fulfillment\ProductPayment as FulfillmentProductPayment;
 use App\Enums\StaffPositionEnum;
 use App\Enums\StaffEnum;
 use App\Models\Staff\Log as StaffLog;
+use App\Traits\ModelBootTrait;
 
 class Staff extends Model
 {
-    use HasFactory;
+    use HasFactory, ModelBootTrait;
 
     protected $table = 'staffs';
 
@@ -143,15 +144,7 @@ class Staff extends Model
 
     public static function boot()
     {
-        parent::boot();
-
-        static::updating(function ($newItem) {
-            static::beforeUpdate($newItem);
-        });
-
-        static::created(function ($newItem) {
-            static::afterCreated($newItem);
-        });
+        self::modelBoot();
     }
 
     public function customers(): HasMany

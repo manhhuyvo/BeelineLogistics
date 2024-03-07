@@ -21,7 +21,14 @@ class LogController extends Controller
      */
     public function index(Request $request)
     {
-        $allLogs = $this->staffLogRepo->getAllWithPagination($request->all());  
+        $allLogs = $this->staffLogRepo->findAllWithPagination(
+            $request->all(),
+            ['*'],
+            ['target', 'action_user', 'action_user.staff'],
+            [
+                'orderByDesc' => ['id'],
+            ],
+        );  
         $allLogs = $allLogs->appends(request()->except('page'));       
         $returnData = collect($allLogs)->only('data')->toArray();
         $paginationData = collect($allLogs)->except(['data'])->toArray();

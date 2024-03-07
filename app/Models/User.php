@@ -17,10 +17,11 @@ use App\Models\SupportTicket;
 use App\Models\SupportTicket\Comment as SupportTicketComment;
 use App\Models\User\Log as UserLog;
 use App\Enums\UserEnum;
+use App\Traits\ModelBootTrait;
 
 class User extends Model implements Authenticatable
 {
-    use HasFactory, AuthenticatableTrait;
+    use HasFactory, AuthenticatableTrait, ModelBootTrait;
 
     protected $table = "users";
 
@@ -126,15 +127,7 @@ class User extends Model implements Authenticatable
 
     public static function boot()
     {
-        parent::boot();
-
-        static::updating(function ($newItem) {
-            static::beforeUpdate($newItem);
-        });
-
-        static::created(function ($newItem) {
-            static::afterCreated($newItem);
-        });
+        self::modelBoot();
     }
 
     public function staff(): BelongsTo

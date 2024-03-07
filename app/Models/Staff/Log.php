@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Staff;
 use App\Models\User;
+use App\Enums\StaffEnum;
 
 class Log extends Model
 {
@@ -21,8 +22,8 @@ class Log extends Model
     ];
 
     protected $casts = [
-        'created_at' => 'date:d/m/Y',
-        'updated_at' => 'date:d/m/Y',
+        'created_at' => 'date:d/m/Y H:i:s',
+        'updated_at' => 'date:d/m/Y H:i:s',
     ];
 
     public function target(): BelongsTo

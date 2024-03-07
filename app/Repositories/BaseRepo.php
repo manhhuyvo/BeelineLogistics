@@ -59,21 +59,20 @@ class BaseRepo implements BaseRepoInterface
                 $value = htmlspecialchars($value);
 
                 // Add conditions
-                $results = $results->where($key, 'like', "%$value%")->orderBy;
+                $results = $results->where($key, 'like', "%$value%");
             }
 
             // Created between date range
-            if (!empty($data['date_from']) && !empty($data['date_to'])) {
-                $results = $data['date_from'] == $data['date_to']
-                                ? $results->whereDate('created_at', $data['date_from'])
+            if (!empty($filters['date_from']) && !empty($filters['date_to'])) {
+                $results = $filters['date_from'] == $filters['date_to']
+                                ? $results->whereDate('created_at', $filters['date_from'])
                                 : $results->whereBetween('created_at', [
-                                    Carbon::parse($data['date_from'])->startOfDay()->format('Y-m-d H:i:S'),
-                                    Carbon::parse($data['date_to'])->endOfDay()->format('Y-m-d H:i:S')
+                                    Carbon::parse($filters['date_from'])->startOfDay()->format('Y-m-d H:i:S'),
+                                    Carbon::parse($filters['date_to'])->endOfDay()->format('Y-m-d H:i:S')
                                 ]);
             }
         }
 
-        $results = $this->model->with($relations);
         if (!empty($extra)) {
             /**
              * @var array $value

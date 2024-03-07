@@ -19,4 +19,6 @@ interface BaseRepoInterface
     public function update(?int $id, array $payload): bool;
     
     public function delete(?int $id): bool;
+
+    public function getFilterableColumns(): array;
 }

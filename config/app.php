@@ -6,6 +6,7 @@ use App\Enums\GeneralEnum;
 use App\Enums\InvoiceEnum;
 use App\Enums\ProductPaymentEnum;
 use App\Enums\StaffEnum;
+use App\Enums\SupplierEnum;
 use App\Enums\SupportTicketEnum;
 use App\Enums\UserEnum;
 use App\Models\User;
@@ -263,6 +264,7 @@ return [
         'SupportTicketEnum' => SupportTicketEnum::class,
         'StaffEnum' => StaffEnum::class,
         'UserEnum' => UserEnum::class,
+        'SupplierEnum' => SupplierEnum::class,
     ])->toArray(),
 
 ];

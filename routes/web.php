@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CountryServiceConfigurationController;
 use App\Http\Controllers\Admin\Staff\LogController as StaffLogController;
 use App\Http\Controllers\Admin\User\LogController as UserLogController;
+use App\Http\Controllers\Admin\Supplier\LogController as SupplierLogController;
 use App\Models\Staff;
 
 // CUSTOMER INCLUDES
@@ -88,6 +89,7 @@ Route::prefix('admin')->group(function () {
 
         /** [SUPPLIER ROUTES] */
         Route::get('/supplier', [SupplierController::class, 'index'])->name('admin.supplier.list');
+        Route::get('/supplier/log', [SupplierLogController::class, 'index'])->name('admin.supplier.log');
         Route::get('/supplier/create', [SupplierController::class, 'create'])->name('admin.supplier.create.form');
         Route::post('/supplier', [SupplierController::class, 'store'])->name('admin.supplier.store');
         Route::post('/supplier/{supplier}/country-config', [SupplierController::class, 'countryConfig'])->name('admin.supplier.country-config');

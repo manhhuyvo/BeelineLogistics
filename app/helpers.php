@@ -215,7 +215,7 @@ if (!function_exists('getFormattedUsersListOfStaff')) {
 }
 
 if (!function_exists('getFormattedUsersList')) {
-    function getFormattedUsersList()
+    function getFormattedUsersList(array $exclude = [])
     {
         /** @var User */        
         $user = Auth::user();
@@ -228,10 +228,18 @@ if (!function_exists('getFormattedUsersList')) {
             return [];
         }
 
-        $allUsers = User::with(['staff', 'customer', 'supplier'])
+        if (!empty($exclude)) {
+            $allUsers = User::with(['staff', 'customer', 'supplier'])
+            ->whereNotIn('target', $exclude)
             ->orderBy('target')
             ->get()
             ->toArray();
+        } else {
+            $allUsers = User::with(['staff', 'customer', 'supplier'])
+            ->orderBy('target')
+            ->get()
+            ->toArray();
+        }
 
         $data = [];
         foreach ($allUsers as $user) {

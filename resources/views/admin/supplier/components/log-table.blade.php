@@ -8,7 +8,7 @@
         <thead class="text-xs text-white font-semibold uppercase bg-indigo-950">
             <tr>
                 <th scope="col" class="pl-4 sm:py-3 py-2">
-                    Target
+                    Supplier
                 </th>            
                 <th scope="col" class="pl-4 sm:py-3 py-2">
                     Description
@@ -24,9 +24,9 @@
         <tbody>
             @foreach ($logData['data'] as $entry)
             <tr class="bg-white border-b hover:bg-gray-50">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900">
-                    <a href="{{ route('admin.user.show', ['user' => $entry['target']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
-                        #{{ $entry['target']['id'] }} {{ $entry['target']['username'] ?? '' }}
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                    <a href="{{ route('admin.supplier.show', ['supplier' => $entry['target']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
+                        #{{ $entry['target']['id'] }} {{ $entry['target']['full_name'] ?? '' }} ({{ SupplierEnum::MAP_TYPES[$entry['target']['type']] ?? '' }})
                     </a>
                 </th>
                 <td class="px-6 py-4 whitespace-nowrap">

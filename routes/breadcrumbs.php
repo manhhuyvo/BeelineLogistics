@@ -57,6 +57,10 @@ Breadcrumbs::for('admin.supplier.list', function (BreadcrumbTrail $trail): void 
     $trail->parent('admin.dashboard');
     $trail->push('Supplier', route('admin.supplier.list'));
 });
+Breadcrumbs::for('admin.supplier.log', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Supplier Logs', route('admin.supplier.log'));
+});
 Breadcrumbs::for('admin.supplier.create.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.supplier.list');
     $trail->push('Add New Supplier', route('admin.supplier.create.form'));

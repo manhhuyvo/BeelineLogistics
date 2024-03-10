@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Staff;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\UserEnum;
 use Illuminate\Support\Str;
 use App\Repositories\Staff\LogRepo;
 
@@ -47,6 +48,7 @@ class LogController extends Controller
             'pagination' => $paginationData,
             'allStaffs' => getFormattedStaffsList(),
             'allUsers' => getFormattedUsersListOfStaff(),
+            'target' => UserEnum::TARGET_STAFF,
             'request' => $request->all(),
         ]);
     }

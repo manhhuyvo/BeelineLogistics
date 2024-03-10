@@ -28,44 +28,52 @@
         @foreach ($logData['data'] as $entry)
         <tr class="bg-white border-b hover:bg-gray-50">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                @if (!empty($target))
-                    @if ($target == UserEnum::TARGET_STAFF)
+                @switch($target ?? '')
+                    @case (UserEnum::TARGET_STAFF)
                         <a href="{{ route('admin.staff.show', ['staff' => $entry['target']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
                             #{{ $entry['target']['id'] }} {{ $entry['target']['full_name'] ?? '' }} ({{ StaffEnum::MAP_POSITIONS[$entry['target']['position']] ?? '' }})
                         </a>
-                    @elseif ($target == UserEnum::TARGET_CUSTOMER)
+                        @break
+                    @case (UserEnum::TARGET_CUSTOMER)
                         <a href="{{ route('admin.customer.show', ['customer' => $entry['target']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
                             #{{ $entry['target']['id'] }} ({{ $entry['target']['customer_id'] ?? 'Unknown' }}) {{ $entry['target']['full_name'] ?? '' }}
                         </a>
-                    @elseif ($target == UserEnum::TARGET_SUPPLIER)
+                        @break
+                    @case (UserEnum::TARGET_SUPPLIER)
                         <a href="{{ route('admin.supplier.show', ['supplier' => $entry['target']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
                             #{{ $entry['target']['id'] }} {{ $entry['target']['full_name'] ?? '' }}
-                        @endif
                         </a>
-                @else
-                    Not known
-                @endif
+                        @break
+                    @default
+                        Not known
+                        @break
+                @endswitch
             </th>
             <td class="px-6 py-4">
                 {!! nl2br(e($entry['description'] ?? '')) !!}
             </td>
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 @if (!empty($entry['action_user']))
-                    @if ($entry['action_user']['target'] == UserEnum::TARGET_STAFF)
-                        <a href="{{ route('admin.staff.show', ['staff' => $entry['action_user']['staff']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
-                            {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['staff']['id'] ?? '' }} ({{ $entry['action_user']['staff']['full_name'] ?? '' }})
-                        </a>
-                    @elseif ($entry['action_user']['target'] == UserEnum::TARGET_CUSTOMER)
-                        <a href="{{ route('admin.customer.show', ['customer' => $entry['action_user']['customer']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
-                            {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['customer']['id'] ?? '' }} ({{ $entry['action_user']['customer']['full_name'] ?? '' }})
-                        </a>
-                    @elseif ($entry['action_user']['target'] == UserEnum::TARGET_SUPPLIER)
-                        <a href="{{ route('admin.supplier.show', ['staff' => $entry['action_user']['supplier']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
-                            {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['supplier']['id'] ?? '' }} ({{ $entry['action_user']['supplier']['full_name'] ?? '' }})
-                        </a>
-                    @endif
-                @else
-                    Not known
+                    @switch($entry['action_user']['target'] ?? '')
+                        @case (UserEnum::TARGET_STAFF)
+                            <a href="{{ route('admin.staff.show', ['staff' => $entry['action_user']['staff']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
+                                {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['staff']['id'] ?? '' }} ({{ $entry['action_user']['staff']['full_name'] ?? '' }})
+                            </a>
+                            @break
+                        @case (UserEnum::TARGET_CUSTOMER)
+                            <a href="{{ route('admin.customer.show', ['customer' => $entry['action_user']['customer']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
+                                {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['customer']['id'] ?? '' }} ({{ $entry['action_user']['customer']['full_name'] ?? '' }})
+                            </a>
+                            @break
+                        @case (UserEnum::TARGET_SUPPLIER)
+                            <a href="{{ route('admin.supplier.show', ['staff' => $entry['action_user']['supplier']['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
+                                {{ UserEnum::MAP_TARGETS[$entry['action_user']['target']] }} #{{ $entry['action_user']['supplier']['id'] ?? '' }} ({{ $entry['action_user']['supplier']['full_name'] ?? '' }})
+                            </a>
+                            @break
+                        @default
+                            Not known
+                            @break
+                    @endswitch
                 @endif
             </th>
             <td class="px-6 py-4 whitespace-nowrap">

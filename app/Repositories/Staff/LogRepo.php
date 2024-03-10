@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Staff;
 use App\Models\Staff\Log as StaffLog;
-use App\Repositories\BaseRepo;
 use App\Enums\StaffEnum;
+use App\Repositories\Base\BaseLogRepo;
 
-class LogRepo extends BaseRepo
+class LogRepo extends BaseLogRepo
 {    
     public function __construct(StaffLog $model)
     {

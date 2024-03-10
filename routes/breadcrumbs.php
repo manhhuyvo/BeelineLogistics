@@ -75,6 +75,10 @@ Breadcrumbs::for('admin.user.list', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('User', route('admin.user.list'));
 });
+Breadcrumbs::for('admin.user.log', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('User Logs', route('admin.user.log'));
+});
 Breadcrumbs::for('admin.user.create.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.user.list');
     $trail->push('Add New User', route('admin.user.create.form'));

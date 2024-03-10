@@ -3,6 +3,7 @@
 use App\Enums\SupplierEnum;
 use App\Enums\SupplierMetaEnum;
 use App\Enums\CustomerMetaEnum;
+use App\Enums\UserEnum;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Fulfillment;
@@ -207,6 +208,46 @@ if (!function_exists('getFormattedUsersListOfStaff')) {
         $data = [];
         foreach ($allUsers as $user) {
             $data[$user['id']] =  "{$user['staff']['full_name']} (" . Staff::MAP_POSITIONS[$user['staff']['position']] . ")";
+        }
+
+        return $data;
+    }
+}
+
+if (!function_exists('getFormattedUsersList')) {
+    function getFormattedUsersList()
+    {
+        /** @var User */        
+        $user = Auth::user();
+        if (!$user) {
+            return null;
+        }
+
+        // Return empty list if this is not a staff
+        if (!$user->isStaff()) {
+            return [];
+        }
+
+        $allUsers = User::with(['staff', 'customer', 'supplier'])
+            ->orderBy('target')
+            ->get()
+            ->toArray();
+
+        $data = [];
+        foreach ($allUsers as $user) {
+            switch ($user['target']) {
+                case UserEnum::TARGET_STAFF:
+                    $data[$user['id']] =  "[STAFF] {$user['username']} ({$user['staff']['full_name']})";
+                    break;
+                case UserEnum::TARGET_CUSTOMER:
+                    $data[$user['id']] =  "[CUSTOMER] {$user['username']} ({$user['customer']['customer_id']} {$user['customer']['full_name']})";
+                    break;
+                case UserEnum::TARGET_SUPPLIER:
+                    $data[$user['id']] =  "[SUPPLIER] {$user['username']} ({$user['supplier']['full_name']})";
+                    break;
+                default:
+                    break;
+            }
         }
 
         return $data;

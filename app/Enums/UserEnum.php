@@ -95,4 +95,11 @@ class UserEnum
         self::STATUS_SUSPENDED => 'red',
         self::STATUS_DELETE => 'gray',
     ];
+
+    /** User Logs */
+    const LOG_FILTERABLE_COLUMNS = [
+        'description',
+        'target_id',
+        'action_by_id',
+    ];
 }

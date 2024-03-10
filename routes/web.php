@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\SupportTicketCommentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CountryServiceConfigurationController;
 use App\Http\Controllers\Admin\Staff\LogController as StaffLogController;
+use App\Http\Controllers\Admin\User\LogController as UserLogController;
 use App\Models\Staff;
 
 // CUSTOMER INCLUDES
@@ -100,6 +101,7 @@ Route::prefix('admin')->group(function () {
     Route::group(['middleware' => 'staff.permission:' . Staff::POSITION_DIRECTOR . '|' . Staff::POSITION_ACCOUNTANT], function () {
         /* [USER MANAGEMENT] */
         Route::get('/user', [UserController::class, 'index'])->name('admin.user.list');
+        Route::get('/user/log', [UserLogController::class, 'index'])->name('admin.user.log');
         Route::get('/user/create', [UserController::class, 'create'])->name('admin.user.create.form');
         Route::post('/user', [UserController::class, 'store'])->name('admin.user.store');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('admin.user.show');

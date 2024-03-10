@@ -20,8 +20,8 @@ class Log extends Model
     ];
 
     protected $casts = [
-        'created_at' => 'date:d/m/Y',
-        'updated_at' => 'date:d/m/Y',
+        'created_at' => 'date:d/m/Y H:i:s',
+        'updated_at' => 'date:d/m/Y H:i:s',
     ];
 
     public function target(): BelongsTo
@@ -29,7 +29,7 @@ class Log extends Model
         return $this->belongsTo(User::class, 'target_id', 'id');
     }
 
-    public function actionUser(): BelongsTo
+    public function action_user(): BelongsTo
     {        
         return $this->belongsTo(User::class, 'action_by_id', 'id');
     }

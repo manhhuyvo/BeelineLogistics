@@ -80,7 +80,7 @@
                 @endif
             </div>
         </div>
-    </div>       
+    </div>   
     <div class="row flex md:justify-end justify-center gap-2 w-full">
         <a href="{{ route('admin.staff.list') }}" class="px-3 py-2 rounded-[5px] text-sm bg-gray-600 text-white font-medium w-auto hover:bg-gray-500 flex items-center gap-2 w-[20%]">
             <i class="fa-solid fa-arrow-left"></i>
@@ -90,6 +90,13 @@
             Edit Details
             <i class="fa-solid fa-arrow-right"></i>
         </a>
+    </div> 
+    <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 pt-2 pb-4 px-3">
+        <p class="text-lg font-medium text-blue-600">
+            Action Logs
+        </p>
+            @include ('admin.layout.general-log-table')
+        </div>        
     </div>
 </div>
   @endsection

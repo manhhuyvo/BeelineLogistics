@@ -66,10 +66,10 @@
                     {{ $index + 1 }}
                 </th>
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {{ $product['name'] ?? 'Not Provided' }}
+                    <a href="{{ route('admin.product.show', ['product' => $product['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">{{ $product['name'] ?? 'Not Provided' }}</a>
                 </th>
                 <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                    {{ $product['customer']['customer_id'] }} {{ $product['customer']['full_name'] }}
+                    <a href="{{ route('admin.customer.show', ['customer' => $product['customer_id']]) }}" class="underline hover:text-gray-400" target="_blank">{{ $product['customer']['customer_id'] }} {{ $product['customer']['full_name'] }}</a>
                 </th>
                 <td class="px-6 py-4 whitespace-nowrap">
                     {{ $product['product_group']['name'] ?? 'Not Provided' }}

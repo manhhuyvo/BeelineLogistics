@@ -63,7 +63,9 @@
                     {{ $index + 1 }}
                 </th>
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {{ $customer['customer_id'] }}
+                    <a href="{{ route('admin.customer.show', ['customer' => $customer['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
+                        {{ $customer['customer_id'] }}
+                    </a>
                 </th>
                 <th scope="row" class="px-6 py-4 whitespace-nowrap">
                     {{ $customer['full_name'] }}
@@ -74,14 +76,22 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                     {{ $customer['address'] }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    {{ $staffsList[$customer['staff_id']] }}
+                <td class="px-6 py-4 whitespace-nowrap font-medium">
+                    <a href="{{ route('admin.staff.show', ['staff' => $customer['staff_id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                        {{ $staffsList[$customer['staff_id']] }}
+                    </a>
                 </td>
                 <td class="px-6 py-4">
                     {{ $customerTypes[$customer['type']] }}
                 </td>
-                <td class="px-6 py-4">
-                    {{ $customer['account']['username'] ?? "Not found" }}
+                <td class="px-6 py-4 font-medium">
+                    @if (!empty($customer['account']))
+                        <a href="{{ route('admin.user.show', ['user' => $customer['account']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $customer['account']['username'] }}
+                        </a>
+                    @else
+                        Not found
+                    @endif
                 </td>
                 <td class="px-6 py-4">
                     <span class="font-semibold text-{{ $customerStatusColors[$customer['status']] ?? 'red' }}-500">{{ $customerStatuses[$customer['status']] }}</span>

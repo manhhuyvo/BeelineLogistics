@@ -60,20 +60,23 @@
                     {{ $index + 1 }}
                 </th>
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {{ $user['username'] }}
+                <a href="{{ route('admin.user.show', ['user' => $user['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">{{ $user['username'] }}</a>
                 </th>
                 <td class="px-6 py-4">
                     @if (!empty($owners[$user['id']]))
-                        {{ $owners[$user['id']]['full_name'] ?? 'Name Unknown' }}
-                        <strong>
                         @if ($user['target'] == User::TARGET_STAFF)
-                            ({{ $owners[$user['id']]['position'] ?? 'Position Unknown' }})
+                        <a href="{{ route('admin.staff.show', ['staff' => $owners[$user['id']]['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $owners[$user['id']]['full_name'] ?? 'Name Unknown' }} <b>({{ $owners[$user['id']]['position'] ?? 'Position Unknown' }})</b>
+                        </a>
                         @elseif ($user['target'] == User::TARGET_CUSTOMER)
-                            ({{ $owners[$user['id']]['customer_id'] ?? 'Customer ID Unknown' }})
+                        <a href="{{ route('admin.customer.show', ['customer' => $owners[$user['id']]['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $owners[$user['id']]['full_name'] ?? 'Name Unknown' }} <b>({{ $owners[$user['id']]['customer_id'] ?? 'Customer ID Unknown' }})
+                        </a>
                         @elseif ($user['target'] == User::TARGET_SUPPLIER)
-                            ({{ $owners[$user['id']]['type'] ?? 'Type Unknown' }})
+                        <a href="{{ route('admin.supplier.show', ['supplier' => $owners[$user['id']]['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $owners[$user['id']]['full_name'] ?? 'Name Unknown' }} <b>({{ $owners[$user['id']]['type'] ?? 'Type Unknown' }})
+                        </a>
                         @endif
-                        </strong>
                     @else
                     Not provided
                     @endif

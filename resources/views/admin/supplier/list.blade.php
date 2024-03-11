@@ -60,7 +60,9 @@
                     {{ $index + 1 }}
                 </th>
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {{ $supplier['full_name'] }}
+                    <a href="{{ route('admin.supplier.show', ['supplier' => $supplier['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
+                        {{ $supplier['full_name'] }}
+                    </a>
                 </th>
                 <td class="px-6 py-4">
                     {{ $supplier['phone'] }}
@@ -74,8 +76,14 @@
                 <td class="px-6 py-4">
                     {{ $supplierTypes[$supplier['type']] }}
                 </td>
-                <td class="px-6 py-4">
-                    {{ $supplier['account']['username'] ?? "Not found" }}
+                <td class="px-6 py-4 font-medium">
+                    @if (!empty($supplier['account']))
+                    <a href="{{ route('admin.user.show', ['user' => $supplier['account']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                        {{ $supplier['account']['username'] }}
+                    </a>
+                    @else
+                        Not Found
+                    @endif
                 </td>
                 <td class="px-6 py-4">
                     <span class="font-semibold text-{{ $supplierStatusColors[$supplier['status']] ?? 'red' }}-500">{{ $supplierStatuses[$supplier['status']] }}</span>

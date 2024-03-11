@@ -70,21 +70,29 @@
                         <span class="bg-{{ $ticketStatusColors[$ticket['status']] }}-500 py-2 px-3 rounded-lg text-white">{{ Str::upper($ticketStatuses[$ticket['status']]) }}</span>
                     </th>
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        <a href="{{ route('admin.ticket.show', ['ticket' => $ticket['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $ticket['id'] }}<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
+                        <a href="{{ route('admin.ticket.show', ['ticket' => $ticket['id']]) }}" target="_blank" class="flex items-center text-blue-700 justify-center hover:underline hover:text-blue-500">#{{ $ticket['id'] }}<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
                     </th>
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                        {{ $ticket['customer']['customer_id'] }} {{ $ticket['customer']['full_name'] }}
+                        <a href="{{ route('admin.customer.show', ['customer' => $ticket['customer']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $ticket['customer']['customer_id'] }} {{ $ticket['customer']['full_name'] }}
+                        </a>
                     </th>
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                        {{ e($ticket['title'] ?? '') }}
+                        {{ $ticket['title'] ?? '' }}
                     </th>
-                    <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                    <td scope="row" class="px-6 py-4 whitespace-nowrap font-medium">
                         @if ($ticket['user_created']['target'] == User::TARGET_CUSTOMER)
-                        {{ $ticket['user_created']['owner']['customer_id'] ?? 'a' }} {{ $ticket['user_created']['owner']['full_name'] ?? 'a' }}
+                            <a href="{{ route('admin.customer.show', ['customer' => $ticket['user_created']['owner']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                                <b>[CUSTOMER]</b> {{ $ticket['user_created']['owner']['customer_id'] ?? 'a' }} {{ $ticket['user_created']['owner']['full_name'] ?? 'a' }}
+                            </a>
                         @elseif ($ticket['user_created']['target'] == User::TARGET_STAFF)
-                        {{ e($ticket['user_created']['owner']['full_name'] ?? '') }} {{ Staff::MAP_POSITIONS[$ticket['user_created']['owner']['position']] ?? '' }}
+                            <a href="{{ route('admin.staff.show', ['staff' => $ticket['user_created']['owner']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                                <b>[STAFF]</b> {{ $ticket['user_created']['owner']['full_name'] ?? '' }} ({{ Staff::MAP_POSITIONS[$ticket['user_created']['owner']['position']] ?? '' }})
+                            </a>                            
                         @else
-                        Supplier {{ e($ticket['user_created']['owner']['full_name'] ?? '') }}
+                            <a href="{{ route('admin.supplier.show', ['supplier' => $ticket['user_created']['owner']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                                <b>[SUPPLIER]</b> {{ $ticket['user_created']['owner']['full_name'] ?? '' }}
+                            </a>
                         @endif
                     </td>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap ">
@@ -96,9 +104,13 @@
                     <td scope="row" class="px-6 py-4 whitespace-nowrap">
                         @if (!empty($ticket['user_solved']))
                             @if ($ticket['user_solved']['target'] == User::TARGET_STAFF)
-                                {{ e($ticket['user_solved']['owner']['full_name'] ?? '') }} {{ Staff::MAP_POSITIONS[$ticket['user_solved']['owner']['position']] ?? '' }}
+                                <a href="{{ route('admin.staff.show', ['staff' => $ticket['user_created']['owner']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                                    <b>[STAFF]</b> {{ $ticket['user_solved']['owner']['full_name'] ?? '' }} ({{ Staff::MAP_POSITIONS[$ticket['user_solved']['owner']['position']] ?? '' }})
+                                </a>
                             @else
-                            Supplier {{ e($ticket['user_solved']['owner']['full_name'] ?? '') }}
+                                <a href="{{ route('admin.supplier.show', ['supplier' => $ticket['user_created']['owner']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                                    <b>[SUPPLIER]</b> {{ $ticket['user_solved']['owner']['full_name'] ?? '' }}
+                                </a>
                             @endif
                         @endif
                     </td>

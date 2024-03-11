@@ -17,9 +17,17 @@ use App\Enums\GeneralEnum;
 use App\Enums\CurrencyAndCountryEnum;
 use App\Models\Product;
 use Illuminate\Validation\Rule;
+use App\Repositories\Customer\LogRepo;
 
 class CustomerController extends Controller
 {
+    private $customerLogRepo;
+
+    public function __construct(LogRepo $customerLogRepo)
+    {
+        $this->customerLogRepo = $customerLogRepo;
+    }
+
     /** Display the page for list of all customers */
     public function index(Request $request)
     {
@@ -171,6 +179,29 @@ class CustomerController extends Controller
         $customer->default_sender = !empty($customer->default_sender) ? unserialize($data['default_sender']) : []; // turn default sender to array
         $customer->default_receiver = !empty($customer->default_receiver) ? unserialize($data['default_receiver']) : []; // turn default sender to array
         $customer->price_configs = !empty($customer->price_configs) ? unserialize($data['price_configs']) : []; // turn price configs to array
+        
+
+        $allLogs = $this->customerLogRepo->findAllByTargetIdWithPagination(
+            $customer->id,
+            $request->all(),
+            ['*'],
+            ['target', 'action_user.staff', 'action_user.customer'],
+            [
+                'orderByDesc' => ['id'],
+            ],
+        );  
+        $allLogs = $allLogs->appends(request()->except('page'));       
+        $returnData = collect($allLogs)->only('data')->toArray();
+        $paginationData = collect($allLogs)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
 
         $viewData = [            
             'user' => $user,
@@ -184,6 +215,8 @@ class CustomerController extends Controller
             'services' => GeneralEnum::MAP_SERVICES,
             'currentCountriesMeta' => $countryMeta ? $countryMeta->getValue() : [],
             'currentServicesMeta' => $serviceMeta ? $serviceMeta->getValue() : [],
+            'logData' => $returnData,
+            'pagination' => $paginationData,
         ];
 
         if (!empty($customer->price_configs)) {

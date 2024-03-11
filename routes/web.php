@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\CountryServiceConfigurationController;
 use App\Http\Controllers\Admin\Staff\LogController as StaffLogController;
 use App\Http\Controllers\Admin\User\LogController as UserLogController;
 use App\Http\Controllers\Admin\Supplier\LogController as SupplierLogController;
+use App\Http\Controllers\Admin\Customer\LogController as CustomerLogController;
 use App\Models\Staff;
 
 // CUSTOMER INCLUDES
@@ -176,6 +177,7 @@ Route::prefix('admin')->group(function () {
 
         /** [CUSTOMER ROUTES] */
         Route::get('/customer', [CustomerController::class, 'index'])->name('admin.customer.list');
+        Route::get('/customer/log', [CustomerLogController::class, 'index'])->name('admin.customer.log');
         Route::get('/customer/create', [CustomerController::class, 'create'])->name('admin.customer.create.form');
         Route::post('/customer', [CustomerController::class, 'store'])->name('admin.customer.store');
         Route::get('/customer/{customer}', [CustomerController::class, 'show'])->name('admin.customer.show');

@@ -35,6 +35,10 @@ Breadcrumbs::for('admin.customer.list', function (BreadcrumbTrail $trail): void 
     $trail->parent('admin.dashboard');
     $trail->push('Customer', route('admin.customer.list'));
 });
+Breadcrumbs::for('admin.customer.log', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Customer Logs', route('admin.customer.log'));
+});
 Breadcrumbs::for('admin.customer.create.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.customer.list');
     $trail->push('Add New Customer', route('admin.customer.create.form'));

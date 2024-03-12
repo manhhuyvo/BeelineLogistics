@@ -25,14 +25,6 @@ class Payment extends Model
         'payment_date',
     ];
 
-    const PAYMENT_METHOD_TRANSFER = '1';
-    const PAYMENT_METHOD_CASH = '2';
-    
-    const MAP_PAYMENT_METHOD = [
-        self::PAYMENT_METHOD_TRANSFER => 'Bank Transfer',
-        self::PAYMENT_METHOD_CASH => 'Cash',
-    ];
-
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class, 'invoice_id', 'id');

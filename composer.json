@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.0.2",
         "diglactic/laravel-breadcrumbs": "^8.1",
+        "doctrine/dbal": "^3.8",
         "guzzlehttp/guzzle": "^7.2",
         "kyslik/column-sortable": "^6.5",
         "laravel/framework": "^9.19",

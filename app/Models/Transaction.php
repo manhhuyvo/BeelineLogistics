@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Invoice;
 use App\Models\Bill;
 use App\Models\SalaryPayCheck;
@@ -26,23 +26,23 @@ class Transaction extends Model
         'transaction_date',
     ];
 
-    public function payment(): BelongsTo
+    public function payment(): HasOne
     {
-        return $this->belongsTo(Payment::class, 'payment_id', 'id');
+        return $this->hasOne(Payment::class, 'transaction_id', 'id');
     }
 
-    public function invoice(): BelongsTo
+    public function invoice(): ?Invoice
     {
-        return $this->belongsTo(Invoice::class, 'target_id', 'id');
+        return Invoice::find($this->target_id);
     }
 
-    public function bill(): BelongsTo
+    public function bill(): ?Bill
     {
-        return $this->belongsTo(Bill::class, 'target_id', 'id');
+        return Bill::find($this->target_id);
     }
 
-    public function paycheck(): BelongsTo
+    public function paycheck(): ?SalaryPayCheck
     {
-        return $this->belongsTo(SalaryPayCheck::class, 'target_id', 'id');
+        return SalaryPayCheck::find($this->target_id);
     }
 }

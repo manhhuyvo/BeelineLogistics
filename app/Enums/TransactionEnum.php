@@ -31,4 +31,14 @@ class TransactionEnum
         self::TYPE_CREDIT => 'Credit',
         self::TYPE_DEBIT => 'Debit',
     ];
+
+    const FILTERABLE_COLUMNS = [
+        'target',
+        'target_id',
+        'amount',
+        'description',
+        'status',
+        'note',
+        'transaction_date',
+    ];
 }

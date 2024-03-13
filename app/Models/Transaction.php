@@ -19,7 +19,6 @@ class Transaction extends Model
     protected $fillable = [
         'target',
         'target_id',
-        'payment_id',
         'amount',
         'description',
         'note',

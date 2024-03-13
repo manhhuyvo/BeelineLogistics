@@ -31,4 +31,15 @@ class PaymentEnum
         self::STATUS_DECLINED => 'red',
         self::STATUS_DELETED => 'gray',
     ];
+
+    const FILTERABLE_COLUMNS = [
+        'transaction_id',
+        'user_id',
+        'staff_id',
+        'amount',
+        'description',
+        'payment_method',
+        'status',
+        'payment_date',
+    ];
 }

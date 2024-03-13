@@ -5,7 +5,7 @@ namespace App\Repositories\Base;
 use App\Repositories\Contracts\BaseLogRepoInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Repositories\BaseRepo;
+use App\Repositories\Base\BaseRepo;
 use Carbon\Carbon;
 
 class BaseLogRepo extends BaseRepo implements BaseLogRepoInterface

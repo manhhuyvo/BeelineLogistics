@@ -118,4 +118,18 @@ class InvoiceEnum
         'note',
         'date_created',
     ];
+
+    const FILTERABLE_COLUMNS = [
+        'id',
+        'customer_name',
+        'reference',
+        'total_amount',
+        'outstanding_amount',
+        'unit',
+        'status',
+        'payment_status',
+        'invoice_items',
+        'staff_created',
+        'note',
+    ];
 }

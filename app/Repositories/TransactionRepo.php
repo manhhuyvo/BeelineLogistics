@@ -6,6 +6,7 @@ use App\Repositories\Base\BaseRepo;
 use App\Models\Transaction;
 use App\Enums\TransactionEnum;
 use App\Repositories\PaymentRepo;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -94,8 +95,11 @@ class TransactionRepo extends BaseRepo
 
         $paymentPayload = array_merge(['transaction_id' => $transaction->id], $paymentPayload);
 
-        $paymentReceiptPath = $this->paymentRepo->addPaymentReceipt($request, $transactionPayload['target'], $transactionPayload['target_id']);
-        $paymentPayload = array_merge($paymentPayload, ['payment_receipt' => $paymentReceiptPath]);
+        // If this payment has a payment receipt, then we store that file and update the path
+        if ($request->hasFile('payment_receipt')) {
+            $paymentReceiptPath = $this->paymentRepo->addPaymentReceipt($request, $transactionPayload['target'], $transactionPayload['target_id']);
+            $paymentPayload = array_merge($paymentPayload, ['payment_receipt' => $paymentReceiptPath]);
+        }
 
         $payment = $this->paymentRepo->create($paymentPayload);
 
@@ -151,5 +155,17 @@ class TransactionRepo extends BaseRepo
         }
 
         return $this->paymentRepo->deletePayment($model->payment);
+    }
+
+    public function makeDataFromRequest(Request $request, ?string $target = null, ?int $targetId = null): array
+    {
+        return [
+            'target' => $target,
+            'target_id' => $targetId,
+            'amount' => (float) $request->get('amount', 0),
+            'description' => $request->get('description', ''),
+            'note' => $request->get('note', ''),
+            'transaction_date' => $request->get('payment_date', Carbon::now()),
+        ];
     }
 }

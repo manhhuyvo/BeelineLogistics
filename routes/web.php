@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\User\LogController as UserLogController;
 use App\Http\Controllers\Admin\Supplier\LogController as SupplierLogController;
 use App\Http\Controllers\Admin\Customer\LogController as CustomerLogController;
 use App\Models\Staff;
+use App\Http\Controllers\Admin\Invoice\TransactionController as InvoiceTransactionController;
 
 // CUSTOMER INCLUDES
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
@@ -123,7 +124,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice.list');
         Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('admin.invoice.create.form');
-        Route::post('/invoice/{invoice}/add-payment', [InvoiceController::class, 'addPayment'])->name('admin.invoice.add-payment');
+        Route::post('/invoice/{invoice}/transaction', [InvoiceTransactionController::class, 'store'])->name('admin.invoice.transaction.store');
         Route::post('/invoice', [InvoiceController::class, 'store'])->name('admin.invoice.store');
         Route::post('/invoice/bulk', [InvoiceController::class, 'bulk'])->name('admin.invoice.bulk');
         Route::post('/invoice/export', [InvoiceController::class, 'export'])->name('admin.invoice.export');

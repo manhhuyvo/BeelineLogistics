@@ -7,8 +7,10 @@
 
 <div class="relative sm:rounded-lg">
     @include('admin.layout.response')
-    <h2 class="text-2xl font-medium mt-2 mb-3">View Invoice Details</h2>
-    <h2 class="text-xl font-bold absolute top-0 right-0 text-{{ $paymentStatusColors[$invoice['payment_status']] }}-500 px-3 py-2 border-solid border-{{ $paymentStatusColors[$invoice['payment_status']] }}-500 border-[3px] rounded-lg">{{ Str::upper($paymentStatuses[$invoice['payment_status']]) }}</h2>
+    <div class="flex justify-between items-start w-full">
+        <h2 class="text-2xl font-medium mt-2 mb-3">View Invoice Details</h2>
+        <h2 class="text-xl font-bold text-{{ $paymentStatusColors[$invoice['payment_status']] }}-500 px-3 py-2 border-solid border-{{ $paymentStatusColors[$invoice['payment_status']] }}-500 border-[3px] rounded-lg">{{ Str::upper($paymentStatuses[$invoice['payment_status']]) }}</h2>
+    </div>
     <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 py-1">
         <div class="w-full flex flex-col gap-3 px-3 py-2 justify-center">
             <!-- INVOICE DETAILS -->

@@ -17,7 +17,7 @@ class Payment extends Model
 
     protected $fillable = [
         'transaction_id',
-        'user_id', // User who added this payment to the fulfillment
+        'user_id', // User who added this payment
         'staff_id', // Staff who appoved or declined or deleted this payment
         'amount',
         'description',

@@ -1,8 +1,5 @@
-<form method="POST" action="{{ route('admin.invoice.add-payment', ['invoice' => $invoice['id']]) }}" class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 flex flex-col gap-3 px-3 py-3 justify-center" enctype="multipart/form-data">
+<form method="POST" action="{{ route('admin.invoice.transaction.store', ['invoice' => $invoice['id']]) }}" class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 flex flex-col gap-3 px-3 py-3 justify-center" enctype="multipart/form-data">
     <input name="_token" type="hidden" value="{{ csrf_token() }}" id="csrfToken"/>
-    <input type="hidden" name="invoice_id" value="{{ $invoice['id'] }}" readonly />
-    <input type="hidden" name="user_id" value="{{ $user->id }}" readonly />
-    <input type="hidden" name="status" value="{{ ProductPaymentEnum::STATUS_PENDING }}" readonly />
     <p class="text-lg font-medium text-blue-600 mt-1">
         Add a payment
     </p>
@@ -33,6 +30,12 @@
         <label for="payment_receipt" class="mb-2 text-sm font-medium text-gray-900">Payment Receipt</label>
         <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" aria-describedby="file_input_help" id="file_input" type="file" name="payment_receipt">
         <p class="mt-1 text-sm text-gray-500" id="file_input_help">SVG, PNG, JPG</p>
+    </div>
+    <div class="flex flex-col flex-1">
+        <div class="flex flex-col flex-2">
+            <label for="note" class="mb-2 text-sm font-medium text-gray-900">Note</label>
+            <textarea id="note" name="note" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 resize-none" rows=4 placeholder="Extra note">{{ $request['note'] ?? '' }}</textarea>
+        </div>
     </div>
     <div class="row flex justify-center">
         <button type="submit" class="px-3 py-2 rounded-[5px] text-sm bg-blue-600 text-white font-medium w-auto hover:bg-blue-500 flex items-center gap-2">

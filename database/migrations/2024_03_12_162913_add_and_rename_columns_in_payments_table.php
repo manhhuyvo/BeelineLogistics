@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::table('payments', function (Blueprint $table) {
             $table->renameColumn('invoice_id', 'transaction_id');
             $table->unsignedBigInteger('user_id')->index();
-            $table->unsignedBigInteger('staff_id')->index();
+            $table->unsignedBigInteger('staff_id')->index()->nullable();
             $table->longText('payment_receipt');
             $table->string('status', 20);
 

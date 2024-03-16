@@ -63,4 +63,18 @@ class PaymentRepo extends BaseRepo
     {
         return $model->update(['status' => PaymentEnum::STATUS_DELETED]);
     }
+
+    public function makeDataFromRequest(Request $request): array
+    {
+        return [
+            'user_id' => getUserLoggedIn()->id ?? null,
+            'staff_id' => null,
+            'payment_receipt' => '',
+            'payment_date' => $request->get('payment_date', Carbon::now()),
+            'status' => PaymentEnum::STATUS_PENDING,
+            'amount' => (float) $request->get('amount', 0),
+            'description' => $request->get('description', ''),
+            'payment_method' => $request->get('payment_method', PaymentEnum::PAYMENT_METHOD_CASH),
+        ];
+    }
 }

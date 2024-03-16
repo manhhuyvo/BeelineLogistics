@@ -15,6 +15,13 @@ use App\Models\Supplier;
 use App\Helpers\ViewResponseFormat;
 use App\Helpers\ApiResponseFormat;
 
+if (!function_exists('getUserLoggedIn')) {
+    function getUserLoggedIn()
+    {
+        return Auth::user();
+    }
+}
+
 if (!function_exists('generateRandomString')) {
     function generateRandomString(int $outputLength = 5)
     {

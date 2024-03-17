@@ -152,6 +152,7 @@
             <i class="fa-solid fa-arrow-right"></i>
         </a>
     </div>
-    @include('admin.invoice.add-payment')
+    @include('admin.invoice.components.add-payment')
+    @include('admin.invoice.components.transactions')
 </div>
 @endsection

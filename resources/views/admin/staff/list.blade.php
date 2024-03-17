@@ -66,7 +66,9 @@
                     {{ $index + 1 }}
                 </th>
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {{ $staff['full_name'] }}
+                    <a href="{{ route('admin.staff.show', ['staff' => $staff['id']]) }}" class="underline text-blue-700 hover:text-blue-500" target="_blank">
+                        {{ $staff['full_name'] }}
+                    </a>
                 </th>
                 <td class="px-6 py-4 whitespace-nowrap">
                     {{ $staff['phone'] }}
@@ -80,8 +82,14 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                     {{ $staffTypes[$staff['type']] }}
                 </td>
-                <td class="px-6 py-4">
-                    {{ $staff['account']['username'] ?? "Not found" }}
+                <td class="px-6 py-4 font-medium">
+                    @if (!empty($staff['account']))
+                    <a href="{{ route('admin.user.show', ['user' => $staff['account']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                        {{ $staff['account']['username'] }}
+                    </a>
+                    @else
+                        Not Found
+                    @endif
                 </td>
                 <td class="px-6 py-4">
                     {{ $staffPositions[$staff['position']] }}

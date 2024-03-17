@@ -55,4 +55,21 @@ class SupplierEnum
         self::SERVICE_CHECKOUT => 'Checkout',
         self::SERVICE_FULFILLMENT => 'Fulfillment',
     ];
+
+    /** Supplier Logs */
+    const LOG_FILTERABLE_COLUMNS = [
+        'description',
+        'target_id',
+        'action_by_id',
+    ];
+
+    const LOG_COLUMNS = [
+        'full_name' => 'Full Name',
+        'phone' => 'Phone',
+        'address' => 'Address',
+        'type' => 'Type',
+        'company' => 'Company',
+        'status' => 'Status',
+        'note' => 'Note',
+    ];
 }

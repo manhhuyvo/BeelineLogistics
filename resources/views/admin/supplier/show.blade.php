@@ -91,6 +91,13 @@
             <i class="fa-solid fa-arrow-right"></i>
         </a>
     </div>
+    <div class="w-full mt-4 mb-4 rounded-lg bg-white shadow-lg border-solid border-[1px] border-gray-200 pt-2 pb-4 px-3">
+        <p class="text-lg font-medium text-blue-600">
+            Action Logs
+        </p>
+            @include ('admin.layout.general-log-table')
+        </div>        
+    </div>
 </div>
 
 @endsection

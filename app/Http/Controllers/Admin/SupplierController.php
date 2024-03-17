@@ -14,9 +14,17 @@ use App\Enums\GeneralEnum;
 use App\Enums\SupplierEnum;
 use App\Enums\SupplierMetaEnum;
 use Illuminate\Validation\Rule;
+use App\Repositories\Supplier\LogRepo;
 
 class SupplierController extends Controller
 {
+    private $supplierLogRepo;
+
+    public function __construct(LogRepo $supplierLogRepo)
+    {
+        $this->supplierLogRepo = $supplierLogRepo;
+    }
+
     /** Display the page for list of all suppliers */
     public function index(Request $request)
     {
@@ -114,6 +122,28 @@ class SupplierController extends Controller
         $countryMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_COUNTRY);
         $serviceMeta = $supplier->getMeta(SupplierMetaEnum::META_AVAILABLE_SERVICE);
 
+        $allLogs = $this->supplierLogRepo->findAllByTargetIdWithPagination(
+            $supplier->id,
+            $request->all(),
+            ['*'],
+            ['target', 'action_user', 'action_user.staff', 'action_user.supplier'],
+            [
+                'orderByDesc' => ['id'],
+            ],
+        );  
+        $allLogs = $allLogs->appends(request()->except('page'));       
+        $returnData = collect($allLogs)->only('data')->toArray();
+        $paginationData = collect($allLogs)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
+
         return view('admin.supplier.show', [
             'supplier' => $supplier->toArray(),
             'supplierTypes' => SupplierEnum::MAP_TYPES,
@@ -123,6 +153,8 @@ class SupplierController extends Controller
             'services' => SupplierEnum::MAP_SERVICES,
             'currentCountriesMeta' => $countryMeta ? $countryMeta->getValue() : [],
             'currentServicesMeta' => $serviceMeta ? $serviceMeta->getValue() : [],
+            'logData' => $returnData,
+            'pagination' => $paginationData,
         ]);
     }
 

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Customer;
 use App\Models\Invoice\Item as InvoiceItem;
 use App\Enums\InvoiceEnum;
+use App\Enums\TransactionEnum;
 
 class Invoice extends Model
 {
@@ -50,9 +51,10 @@ class Invoice extends Model
         return $this->belongsTo(Staff::class, 'staff_id', 'id');
     }
 
-    public function payments(): HasMany
+    public function transactions(): HasMany
     {
-        return $this->hasMany(Payment::class, 'invoice_id', 'id');
+        return $this->hasMany(Transaction::class, 'target_id', 'id')
+            ->where('target', '=', TransactionEnum::TARGET_INVOICE);
     }
 
     public static function boot()

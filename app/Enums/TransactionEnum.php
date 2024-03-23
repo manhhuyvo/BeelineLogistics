@@ -32,6 +32,11 @@ class TransactionEnum
         self::TYPE_DEBIT => 'Debit',
     ];
 
+    const MAP_TYPE_COLORS = [
+        self::TYPE_CREDIT => 'green',
+        self::TYPE_DEBIT => 'red',
+    ];
+
     const FILTERABLE_COLUMNS = [
         'target',
         'target_id',

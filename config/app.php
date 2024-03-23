@@ -4,10 +4,12 @@ use App\Enums\CurrencyAndCountryEnum;
 use App\Enums\FulfillmentEnum;
 use App\Enums\GeneralEnum;
 use App\Enums\InvoiceEnum;
+use App\Enums\PaymentEnum;
 use App\Enums\ProductPaymentEnum;
 use App\Enums\StaffEnum;
 use App\Enums\SupplierEnum;
 use App\Enums\SupportTicketEnum;
+use App\Enums\TransactionEnum;
 use App\Enums\UserEnum;
 use App\Models\User;
 use App\Models\Supplier;
@@ -265,6 +267,8 @@ return [
         'StaffEnum' => StaffEnum::class,
         'UserEnum' => UserEnum::class,
         'SupplierEnum' => SupplierEnum::class,
+        'TransactionEnum' => TransactionEnum::class,
+        'PaymentEnum' => PaymentEnum::class,
     ])->toArray(),
 
 ];

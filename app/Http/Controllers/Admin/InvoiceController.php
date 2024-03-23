@@ -158,6 +158,8 @@ class InvoiceController extends Controller
             return collect($item)->toArray();
         })->toArray();
 
+        $invoice->load(['transactions', 'transactions.payment']);
+
         // Turn the invoice and its relationships into an array
         $invoice = collect($invoice)->toArray();
 

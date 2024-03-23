@@ -30,7 +30,7 @@ class Payment extends Model
     protected $casts = [
         'created_at' => 'date:d/m/Y H:i:s',        
         'updated_at' => 'date:d/m/Y H:i:s',
-        'payment_date' => 'date:d/m/Y H:i:s',
+        'payment_date' => 'date:d/m/Y',
     ];
 
     public function transaction(): BelongsTo

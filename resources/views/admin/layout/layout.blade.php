@@ -16,10 +16,16 @@
     <script src="https://kit.fontawesome.com/520bf41886.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <!-- Alpine v3 -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Focus plugin -->
+    <script defer src="https://unpkg.com/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
     
     <title>Beeline Logsitics - Manangement System</title>
 </head>
 <body>
+    @livewire('livewire-ui-modal')
     @php
        $user = Auth::user(); 
     @endphp

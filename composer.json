@@ -13,7 +13,9 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "spatie/laravel-image-optimizer": "^1.7"
+        "livewire/livewire": "^2.12",
+        "spatie/laravel-image-optimizer": "^1.7",
+        "wire-elements/modal": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

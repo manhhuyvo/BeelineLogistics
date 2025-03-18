@@ -80,35 +80,81 @@
                  <span class="ml-3">Dashboard</span>
               </a>
            </li>
-           @if ( in_array($user->level, [StaffModel::POSITION_DIRECTOR]))
+           @if ( in_array($user->level, [StaffModel::POSITION_DIRECTOR]))           
            <li>
-              <a href="{{ route('admin.staff.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+               <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100" aria-controls="sidebar-product-dropdown" data-collapse-toggle="sidebar-staffs-dropdown">                  
                   <i class="fa-solid fa-user-secret flex-shrink-0 text-[19px] ml-[2px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
-                 <span class="ml-3">Staffs</span>
-              </a>
-           </li>
+                  <span class="flex-1 ml-3 text-left whitespace-nowrap">Staffs</span>
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                  </svg>
+               </button>
+               <ul id="sidebar-staffs-dropdown" class="hidden bg-gray-100 text-sm">
+                  <li>
+                     <a href="{{ route('admin.staff.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Staffs List</a>
+                  </li>
+                  <li>
+                     <a href="{{ route('admin.staff.log') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Staff Logs</a>
+                  </li>
+               </ul>
+            </li>          
            <li>
-              <a href="{{ route('admin.supplier.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                  <i class="fa-solid fa-truck-field flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
-                 <span class="ml-3">Suppliers</span>
-              </a>
-           </li>
-           @endif
+               <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100" aria-controls="sidebar-product-dropdown" data-collapse-toggle="sidebar-suppliers-dropdown">                  
+               <i class="fa-solid fa-truck-field flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
+                  <span class="flex-1 ml-3 text-left whitespace-nowrap">Suppliers</span>
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                  </svg>
+               </button>
+               <ul id="sidebar-suppliers-dropdown" class="hidden bg-gray-100 text-sm">
+                  <li>
+                     <a href="{{ route('admin.supplier.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Suppliers List</a>
+                  </li>
+                  <li>
+                     <a href="{{ route('admin.supplier.log') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Supplier Logs</a>
+                  </li>
+               </ul>
+            </li>
+           @endif                     
            <li>
-              <a href="{{ route('admin.customer.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                 <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
-                    <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
-                 </svg>
-                 <span class="flex-1 ml-3 whitespace-nowrap">Customers</span>
-              </a>
-           </li>
-           @if (in_array($user->level, [StaffModel::POSITION_DIRECTOR, StaffModel::POSITION_ACCOUNTANT]) && $user->staff->isAdmin())
+               <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100" aria-controls="sidebar-product-dropdown" data-collapse-toggle="sidebar-customers-dropdown">
+                  <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                     <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
+                  </svg>
+                  <span class="flex-1 ml-3 text-left whitespace-nowrap">Customers</span>
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                  </svg>
+               </button>
+               <ul id="sidebar-customers-dropdown" class="hidden bg-gray-100 text-sm">
+                  <li>
+                     <a href="{{ route('admin.customer.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Customers List</a>
+                  </li>
+                  <li>
+                     <a href="{{ route('admin.customer.log') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">Customer Logs</a>
+                  </li>
+               </ul>
+            </li>
+           @if (in_array($user->level, [StaffModel::POSITION_DIRECTOR, StaffModel::POSITION_ACCOUNTANT]) && $user->staff->isAdmin())                      
            <li>
-              <a href="{{ route('admin.user.list') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+               <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100" aria-controls="sidebar-product-dropdown" data-collapse-toggle="sidebar-users-dropdown">
                   <i class="fa-solid fa-user-check flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>
-                 <span class="flex-1 ml-3 whitespace-nowrap">Users</span>
-              </a>
-           </li>
+                  <span class="flex-1 ml-3 text-left whitespace-nowrap">Users</span>
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                  </svg>
+               </button>
+               <ul id="sidebar-users-dropdown" class="hidden bg-gray-100 text-sm">
+                  <li>
+                     <a href="{{ route('admin.user.list') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">
+                        Users List
+                     </a>
+                  </li>
+                  <li>
+                     <a href="{{ route('admin.user.log') }}" class="flex items-center w-full py-2 px-[4.5] text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200">User Logs</a>
+                  </li>
+               </ul>
+            </li>
            <li>
               <a href="{{ route('admin.country-service-configuration.show') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   <i class="fa-solid fa-earth-americas flex-shrink-0 text-[19px] ml-[1px] text-gray-500 transition duration-75 group-hover:text-gray-900"></i>

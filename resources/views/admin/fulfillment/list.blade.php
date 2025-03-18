@@ -113,10 +113,15 @@
                         @if (!empty($fulfillment['support_tickets']) && count($fulfillment['support_tickets']) > 0)
                             <span class="px-1.5 text-[10px] text-white rounded-lg bg-red-500 absolute top-25 right-0">{{ count($fulfillment['support_tickets']) }}</span>
                         @endif
-                        <a href="{{ route('admin.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline hover:text-blue-500">#{{ $fulfillment['id'] }} ({{ e($fulfillment['fulfillment_number'] ?: 'Unknown') }})<i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i></a>
+                        <a href="{{ route('admin.fulfillment.show', ['fulfillment' => $fulfillment['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline text-blue-700 hover:text-blue-500">
+                            #{{ $fulfillment['id'] }} ({{ e($fulfillment['fulfillment_number'] ?: 'Unknown') }})
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i>
+                        </a>
                     </th>
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                        {{ $fulfillment['customer']['customer_id'] }} {{ $fulfillment['customer']['full_name'] }}
+                        <a href="{{ route('admin.customer.show', ['customer' => $fulfillment['customer']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $fulfillment['customer']['customer_id'] }} {{ $fulfillment['customer']['full_name'] }}
+                        </a>
                     </th>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $countries[$fulfillment['country']] ?? '' }}
@@ -129,7 +134,7 @@
                     </td>
                     <td scope="row" class="px-6 py-4 whitespace-nowrap">
                         {{ $fulfillment['address'] }},
-                        @if (!empty($fulfillment['address2']))
+                        @if (!empty($fulfillment['address2']))w
                         {{ $fulfillment['address2'] }},
                         @endif
                         {{ $fulfillment['suburb'] }}
@@ -137,8 +142,10 @@
                         {{ $fulfillment['postcode'] }},
                         {{ $countries[$fulfillment['country']] ?? '' }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        {{ $fulfillment['staff']['full_name'] }} ({{ Str::upper(Staff::MAP_POSITIONS[$fulfillment['staff']['position']]) }})
+                    <td class="px-6 py-4 whitespace-nowrap font-medium">
+                        <a href="{{ route('admin.staff.show', ['staff' => $fulfillment['staff']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $fulfillment['staff']['full_name'] }} ({{ Str::upper(Staff::MAP_POSITIONS[$fulfillment['staff']['position']]) }})
+                        </a>                        
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         {{ $shippingTypes[$fulfillment['shipping_type']] ?? '' }}

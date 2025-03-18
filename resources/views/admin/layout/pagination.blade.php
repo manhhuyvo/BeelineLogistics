@@ -1,5 +1,5 @@
 @if (!empty($pagination))
-<nav class="flex flex-col items-start justify-between py-2 px-[2px]" aria-label="Table navigation">
+<nav class="flex flex-col items-start justify-between pb-2 px-[2px]" aria-label="Table navigation">
     <div class="text-sm sm:flex-1 w-full inline-flex justify-end sm:my-0 my-2 relative">
         @if (count($pagination['links']) >= 7)
         <button id="paginate-btn-dropdown" class="cursor-pointer bg-gray-100 hover:bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 flex gap-2 items-center justify-center py-2 text-gray-600 w-[80px]">

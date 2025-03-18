@@ -37,7 +37,7 @@
                         Index
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
-                        Invoice ID
+                        Invoice Number
                     </th>
                     <th scope="col" class="px-6 sm:py-3 py-2 whitespace-nowrap">
                         Customer Name
@@ -89,11 +89,16 @@
                     <th scope="col" class="pl-4 py-3 whitespace-nowrap">
                         {{ $index + 1 }}
                     </th>
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {{ $invoice['id'] }}
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap relative">
+                        <a href="{{ route('admin.invoice.show', ['invoice' => $invoice['id']]) }}" target="_blank" class="flex items-center justify-center hover:underline text-blue-700 hover:text-blue-500">
+                            #{{ $invoice['id'] }}
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-2"></i>
+                        </a>
                     </th>
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                        {{ $invoice['customer']['customer_id'] }} {{ $invoice['customer']['full_name'] }}
+                        <a href="{{ route('admin.customer.show', ['customer' => $invoice['customer']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $invoice['customer']['customer_id'] }} {{ $invoice['customer']['full_name'] }}
+                        </a>
                     </th>
                     <td class="px-6 py-4 whitespace-nowrap">
                         {{ e(Str::limit($invoice['reference'] ?? '', 40, $end='...')) }}
@@ -120,8 +125,10 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         {{ count($invoice['items']) }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        {{ $invoice['staff']['full_name'] }} ({{ Str::upper(Staff::MAP_POSITIONS[$invoice['staff']['position']]) }})
+                    <td class="px-6 py-4 whitespace-nowrap font-medium">                        
+                        <a href="{{ route('admin.staff.show', ['staff' => $invoice['staff']['id']]) }}" class="underline hover:text-gray-400" target="_blank">
+                            {{ $invoice['staff']['full_name'] }} ({{ Str::upper(Staff::MAP_POSITIONS[$invoice['staff']['position']]) }})
+                        </a>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         {{ e(Str::limit($invoice['note'] ?? '', 40, $end='...')) }}

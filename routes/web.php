@@ -21,6 +21,10 @@ use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Admin\SupportTicketCommentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CountryServiceConfigurationController;
+use App\Http\Controllers\Admin\Staff\LogController as StaffLogController;
+use App\Http\Controllers\Admin\User\LogController as UserLogController;
+use App\Http\Controllers\Admin\Supplier\LogController as SupplierLogController;
+use App\Http\Controllers\Admin\Customer\LogController as CustomerLogController;
 use App\Models\Staff;
 
 // CUSTOMER INCLUDES
@@ -76,6 +80,7 @@ Route::prefix('admin')->group(function () {
 
         /* [STAFF ROUTES] */
         Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.list');
+        Route::get('/staff/log', [StaffLogController::class, 'index'])->name('admin.staff.log');
         Route::get('/staff/create', [StaffController::class, 'create'])->name('admin.staff.create.form');
         Route::post('/staff', [StaffController::class, 'store'])->name('admin.staff.store');
         Route::get('/staff/{staff}', [StaffController::class, 'show'])->name('admin.staff.show');
@@ -85,6 +90,7 @@ Route::prefix('admin')->group(function () {
 
         /** [SUPPLIER ROUTES] */
         Route::get('/supplier', [SupplierController::class, 'index'])->name('admin.supplier.list');
+        Route::get('/supplier/log', [SupplierLogController::class, 'index'])->name('admin.supplier.log');
         Route::get('/supplier/create', [SupplierController::class, 'create'])->name('admin.supplier.create.form');
         Route::post('/supplier', [SupplierController::class, 'store'])->name('admin.supplier.store');
         Route::post('/supplier/{supplier}/country-config', [SupplierController::class, 'countryConfig'])->name('admin.supplier.country-config');
@@ -98,6 +104,7 @@ Route::prefix('admin')->group(function () {
     Route::group(['middleware' => 'staff.permission:' . Staff::POSITION_DIRECTOR . '|' . Staff::POSITION_ACCOUNTANT], function () {
         /* [USER MANAGEMENT] */
         Route::get('/user', [UserController::class, 'index'])->name('admin.user.list');
+        Route::get('/user/log', [UserLogController::class, 'index'])->name('admin.user.log');
         Route::get('/user/create', [UserController::class, 'create'])->name('admin.user.create.form');
         Route::post('/user', [UserController::class, 'store'])->name('admin.user.store');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('admin.user.show');
@@ -170,6 +177,7 @@ Route::prefix('admin')->group(function () {
 
         /** [CUSTOMER ROUTES] */
         Route::get('/customer', [CustomerController::class, 'index'])->name('admin.customer.list');
+        Route::get('/customer/log', [CustomerLogController::class, 'index'])->name('admin.customer.log');
         Route::get('/customer/create', [CustomerController::class, 'create'])->name('admin.customer.create.form');
         Route::post('/customer', [CustomerController::class, 'store'])->name('admin.customer.store');
         Route::get('/customer/{customer}', [CustomerController::class, 'show'])->name('admin.customer.show');

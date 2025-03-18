@@ -13,6 +13,10 @@ Breadcrumbs::for('admin.staff.list', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Staff', route('admin.staff.list'));
 });
+Breadcrumbs::for('admin.staff.log', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Staff Logs', route('admin.staff.log'));
+});
 Breadcrumbs::for('admin.staff.show', function (BreadcrumbTrail $trail, $staff): void {
     $trail->parent('admin.staff.list');
     $trail->push("{$staff->full_name}", route('admin.staff.show', ['staff' => $staff->id]));
@@ -30,6 +34,10 @@ Breadcrumbs::for('admin.staff.create.form', function (BreadcrumbTrail $trail): v
 Breadcrumbs::for('admin.customer.list', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Customer', route('admin.customer.list'));
+});
+Breadcrumbs::for('admin.customer.log', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Customer Logs', route('admin.customer.log'));
 });
 Breadcrumbs::for('admin.customer.create.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.customer.list');
@@ -53,6 +61,10 @@ Breadcrumbs::for('admin.supplier.list', function (BreadcrumbTrail $trail): void 
     $trail->parent('admin.dashboard');
     $trail->push('Supplier', route('admin.supplier.list'));
 });
+Breadcrumbs::for('admin.supplier.log', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Supplier Logs', route('admin.supplier.log'));
+});
 Breadcrumbs::for('admin.supplier.create.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.supplier.list');
     $trail->push('Add New Supplier', route('admin.supplier.create.form'));
@@ -70,6 +82,10 @@ Breadcrumbs::for('admin.supplier.edit.form', function (BreadcrumbTrail $trail, $
 Breadcrumbs::for('admin.user.list', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('User', route('admin.user.list'));
+});
+Breadcrumbs::for('admin.user.log', function (BreadcrumbTrail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('User Logs', route('admin.user.log'));
 });
 Breadcrumbs::for('admin.user.create.form', function (BreadcrumbTrail $trail): void {
     $trail->parent('admin.user.list');

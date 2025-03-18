@@ -5,12 +5,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Enums\ResponseMessageEnum;
+use App\Enums\UserEnum;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Repositories\Staff\LogRepo;
 
 class StaffController extends Controller
 {
+    private $staffLogRepo;
+
+    public function __construct(LogRepo $staffLogRepo)
+    {
+        $this->staffLogRepo = $staffLogRepo;
+    }
+
     /** 
      * Return view list of all staffs
      */
@@ -70,6 +79,28 @@ class StaffController extends Controller
         $data = collect($staff)->toArray();
         $staff->salary_configs = !empty($staff->salary_configs) ? unserialize($data['salary_configs']) : []; // turn salary configs to array
 
+        $allLogs = $this->staffLogRepo->findAllByTargetIdWithPagination(
+            $staff->id,
+            $request->all(),
+            ['*'],
+            ['target', 'action_user', 'action_user.staff'],
+            [
+                'orderByDesc' => ['id'],
+            ],
+        );  
+        $allLogs = $allLogs->appends(request()->except('page'));       
+        $returnData = collect($allLogs)->only('data')->toArray();
+        $paginationData = collect($allLogs)->except(['data'])->toArray();
+
+        // Only cut the next and previous buttons if count > 7
+        if (count($paginationData['links']) >= 7) {
+            $paginationDataLinks = collect($paginationData['links'])->filter(function($each) {
+                return !Str::contains($each['label'], ['Previous', 'Next']);
+            });
+
+            $paginationData['links'] = $paginationDataLinks;
+        }
+
         return view('admin.staff.show', [
             'staff' => $staff->toArray(),            
             'staffPositions' => Staff::MAP_POSITIONS,
@@ -78,6 +109,8 @@ class StaffController extends Controller
             'staffStatusColors' => Staff::MAP_STATUSES_COLOR,
             'staffCommissionUnits' => Staff::MAP_COMMISSION_UNITS,
             'staffCommissionTypes' => Staff::MAP_COMMISSION_TYPES,
+            'logData' => $returnData,
+            'pagination' => $paginationData,
         ]);
     }
 
